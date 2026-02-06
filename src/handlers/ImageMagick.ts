@@ -34,6 +34,7 @@ class ImageMagickHandler implements FormatHandler {
         !mimeType
         || mimeType.startsWith("text/")
         || mimeType.startsWith("video/")
+        || mimeType === "application/json"
       ) return;
       this.supportedFormats.push({
         name: format.description,
