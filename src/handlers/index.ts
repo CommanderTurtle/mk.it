@@ -9,6 +9,7 @@ import renameHandler from "./rename.ts";
 import envelopeHandler from "./envelope.ts";
 import svgForeignObjectHandler from "./svgForeignObject.ts";
 import qoiFuHandler from "./qoi-fu.ts";
+import sppdHandler from "./sppd.ts";
 
 const handlers: FormatHandler[] = [
   new canvasToBlobHandler(),
@@ -20,5 +21,6 @@ const handlers: FormatHandler[] = [
   new envelopeHandler(),
   new svgForeignObjectHandler(),
   new qoiFuHandler(),
+  new sppdHandler(),
 ];
 export default handlers;
