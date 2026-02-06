@@ -25,6 +25,8 @@ Here's how to deploy this project locally:
 3. Run `bun install` to install dependencies.
 4. Run `bunx vite` to start the development server.
 
+_The following steps are optional, but recommended for performance:_
+
 When you first open the page, it'll take a while to generate the list of supported formats for each tool. If you open the console, you'll see it complaining a bunch about missing caches.
 
 After this is done (indicated by a `Built initial format list` message in the console), use `printSupportedFormatCache()` to get a JSON string with the cache data. You can then save this string to `cache.json` to skip that loading screen on startup.
