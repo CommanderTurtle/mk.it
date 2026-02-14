@@ -204,6 +204,7 @@ async function buildOptionList () {
       newOption.setAttribute("format-index", (allOptions.length - 1).toString());
       newOption.setAttribute("mime-type", format.mime);
 
+      const formatDescriptor = format.format.toUpperCase();
       if (simpleMode) {
         // Hide any handler-specific information in simple mode
         const cleanName = format.name
@@ -211,9 +212,9 @@ async function buildOptionList () {
           .filter((_, i) => i % 2 === 0)
           .filter(c => c != "")
           .join(" ");
-        newOption.appendChild(document.createTextNode(cleanName + ` (${format.mime})`));
+        newOption.appendChild(document.createTextNode(`${formatDescriptor} - ${cleanName} (${format.mime})`));
       } else {
-        newOption.appendChild(document.createTextNode(format.name + ` (${format.mime}) ${handler.name}`));
+        newOption.appendChild(document.createTextNode(`${formatDescriptor} - ${format.name} (${format.mime}) ${handler.name}`));
       }
 
       const clickHandler = (event: Event) => {
