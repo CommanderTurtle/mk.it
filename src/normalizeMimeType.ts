@@ -4,6 +4,8 @@ function normalizeMimeType (mime: string) {
     case "audio/vnd.wave": return "audio/wav";
     case "image/x-icon": return "image/vnd.microsoft.icon";
     case "image/qoi": return "image/x-qoi";
+    case "video/bink": return "video/vnd.radgamettools.bink";
+    case "video/binka": return "audio/vnd.radgamettools.bink";
   }
   return mime;
 }
