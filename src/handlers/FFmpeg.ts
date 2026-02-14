@@ -93,7 +93,7 @@ class FFmpegHandler implements FormatHandler {
 
       return {
         extension: stdout.split("Common extensions: ")[1].split(".")[0].split(",")[0],
-        mimeType: stdout.split("Mime type: ")[1].split(".")[0]
+        mimeType: stdout.split("Mime type: ")[1].split("\n")[0].split(".").slice(0, -1).join(".")
       };
     }
 
