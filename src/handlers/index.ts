@@ -12,6 +12,7 @@ import qoiFuHandler from "./qoi-fu.ts";
 import sppdHandler from "./sppd.ts";
 import threejsHandler from "./threejs.ts";
 import sqlite3Handler from "./sqlite.ts";
+import markdownHandler from "./markdown.ts";
 
 const handlers: FormatHandler[] = [];
 try { handlers.push(new canvasToBlobHandler()) } catch (_) { };
@@ -27,5 +28,5 @@ try { handlers.push(new qoiFuHandler()) } catch (_) { };
 try { handlers.push(new sppdHandler()) } catch (_) { };
 try { handlers.push(new threejsHandler()) } catch (_) { };
 try { handlers.push(new sqlite3Handler()) } catch (_) { };
-
+try { handlers.push(new markdownHandler()) } catch (_) { };
 export default handlers;
