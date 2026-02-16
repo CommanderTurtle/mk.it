@@ -7,6 +7,8 @@ This is not just terrible for privacy, it's also incredibly lame. What if you _r
 
 [Convert.to.it](https://convert.to.it/) aims to be a tool that "just works". You're almost _guaranteed_ to get an output - perhaps not always the one you expected, but it'll try its best to not leave you hanging.
 
+For a semi-technical overview of this tool, check out the video: https://youtu.be/btUbcsTbVA8
+
 ## Usage
 
 1. Go to [convert.to.it](https://convert.to.it/)
