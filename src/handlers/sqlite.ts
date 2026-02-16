@@ -15,7 +15,7 @@ class sqlite3Handler implements FormatHandler {
         extension: "db",
         mime: "application/vnd.sqlite3",
         from: true,
-        to: true,
+        to: false,
         internal: "sqlite3"
       },
       {
@@ -23,7 +23,7 @@ class sqlite3Handler implements FormatHandler {
         format: "csv",
         extension: "csv",
         mime: "text/csv",
-        from: true,
+        from: false,
         to: true,
         internal: "csv"
       },
@@ -50,58 +50,50 @@ class sqlite3Handler implements FormatHandler {
     outputFormat: FileFormat
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
-    console.log(inputFiles);
+    console.log(inputFormat, outputFormat);
 
     const sqlite3 = await sqlite3InitModule();
 
-    for (const file of inputFiles) {
-        const p = sqlite3.wasm.allocFromTypedArray(file.bytes);
+    if (inputFormat.internal == "sqlite3" && outputFormat.internal == "csv") {
+        for (const file of inputFiles) {
+            const p = sqlite3.wasm.allocFromTypedArray(file.bytes);
 
-        const db = new sqlite3.oo1.DB();
-        const flags = sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE;
-        const rc = sqlite3.capi.sqlite3_deserialize(
-            db.pointer,
-            "main",
-            p,
-            file.bytes.byteLength,
-            file.bytes.byteLength,
-            flags
-        );
-        db.checkRc(rc);
+            const db = new sqlite3.oo1.DB();
+            if (!db.pointer) {
+                throw new Error("Database pointer is undefined")
+            }
+            const flags = sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE;
+            const rc = sqlite3.capi.sqlite3_deserialize(
+                db.pointer,
+                "main",
+                p,
+                file.bytes.byteLength,
+                file.bytes.byteLength,
+                flags
+            );
+            db.checkRc(rc);
 
-        
-        for (const table of this.getTables(db)) {
-            const csvData: any[][] = [];
-            const stmt = db.prepare(`SELECT * FROM ${table}`);
-            const headers = stmt.getColumnNames();
-            try {
-              while (stmt.step()) {
-                let row: any[] = [];
-                for (let j = 0; j < stmt.columnCount; j++) {
-                    row.push(stmt.get(j));
+            
+            for (const table of this.getTables(db)) {
+                const stmt = db.prepare(`SELECT * FROM ${table}`);
+                let csvStr = stmt.getColumnNames().join(",") + "\n";
+                try {
+                  while (stmt.step()) {
+                    const row = Array.from({length: stmt.columnCount }, (_, j) => stmt.get(j))
+                    csvStr += row.join(", ") + "\n"
+                  }
+                } finally {
+                    stmt.finalize();
                 }
-                csvData.push(row);
-              }
 
-              csvData[0] = headers; // Can do this as first row is dummy data for some reason
-              console.log(csvData);
-            } finally {
-                stmt.finalize();
+                const encoder = new TextEncoder()
+                outputFiles.push({
+                    name: table,
+                    bytes: new Uint8Array(encoder.encode(csvStr))
+                })
             }
-
-             
-            const lines: string[] = []
-            for (const row of csvData) {
-                lines.push(row.join(", "))
-            }
-
-            const encoder = new TextEncoder()
-            outputFiles.push({
-                name: table,
-                bytes: new Uint8Array(encoder.encode(lines.join("\n")))
-            })
-        }
-     }
+         }
+    }
 
 
 
