@@ -190,7 +190,9 @@ async function buildOptionList () {
   for (const handler of handlers) {
     if (!window.supportedFormatCache.has(handler.name)) {
       console.warn(`Cache miss for formats of handler "${handler.name}".`);
-      await handler.init();
+      try {
+        await handler.init();
+      } catch (_) { continue; }
       if (handler.supportedFormats) {
         window.supportedFormatCache.set(handler.name, handler.supportedFormats);
         console.info(`Updated supported format cache for "${handler.name}".`);
@@ -319,7 +321,9 @@ async function attemptConvertPath (files: FileData[], path: ConvertPathNode[]) {
     try {
       let supportedFormats = window.supportedFormatCache.get(handler.name);
       if (!handler.ready) {
-        await handler.init();
+        try {
+          await handler.init();
+        } catch (_) { return null; }
         if (handler.supportedFormats) {
           window.supportedFormatCache.set(handler.name, handler.supportedFormats);
           supportedFormats = handler.supportedFormats;
