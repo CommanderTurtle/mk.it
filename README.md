@@ -22,7 +22,7 @@ For a semi-technical overview of this tool, check out the video: https://youtu.b
 
 Here's how to deploy this project locally:
 
-1. Clone this repository.
+1. Clone this repository ***WITH SUBMODULES***. You can use `git clone --recursive https://github.com/p2r3/convert` for that. Omitting submodules will leave you missing a few dependencies.
 2. Install [Bun](https://bun.sh/).
 3. Run `bun install` to install dependencies.
 4. Run `bunx vite` to start the development server.
