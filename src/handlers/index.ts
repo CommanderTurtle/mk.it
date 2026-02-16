@@ -11,6 +11,7 @@ import svgForeignObjectHandler from "./svgForeignObject.ts";
 import qoiFuHandler from "./qoi-fu.ts";
 import sppdHandler from "./sppd.ts";
 import threejsHandler from "./threejs.ts";
+import sqlite3Handler from "./sqlite.ts";
 import markdownHandler from "./markdown.ts";
 import vtfHandler from "./vtf.ts";
 
@@ -27,6 +28,7 @@ try { handlers.push(new svgForeignObjectHandler()) } catch (_) { };
 try { handlers.push(new qoiFuHandler()) } catch (_) { };
 try { handlers.push(new sppdHandler()) } catch (_) { };
 try { handlers.push(new threejsHandler()) } catch (_) { };
+try { handlers.push(new sqlite3Handler()) } catch (_) { };
 try { handlers.push(new markdownHandler()) } catch (_) { };
 try { handlers.push(new vtfHandler()) } catch (_) { };
 export default handlers;
