@@ -85,6 +85,8 @@ const fileSelectHandler = (event: Event) => {
   if (event instanceof DragEvent) {
     inputFiles = event.dataTransfer?.files;
     if (inputFiles) event.preventDefault();
+  } else if (event instanceof ClipboardEvent) {
+    inputFiles = event.clipboardData?.files;
   } else {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) return;
@@ -93,6 +95,7 @@ const fileSelectHandler = (event: Event) => {
 
   if (!inputFiles) return;
   const files = Array.from(inputFiles);
+  if (files.length === 0) return;
 
   if (files.some(c => c.type !== files[0].type)) {
     return alert("All input files must be of the same type.");
@@ -143,10 +146,11 @@ const fileSelectHandler = (event: Event) => {
 };
 
 // Add the file selection handler to both the file input element and to
-// the window as a drag-and-drop event.
+// the window as a drag-and-drop event, and to the clipboard paste event.
 ui.fileInput.addEventListener("change", fileSelectHandler);
 window.addEventListener("drop", fileSelectHandler);
 window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("paste", fileSelectHandler);
 
 /**
  * Display an on-screen popup.
