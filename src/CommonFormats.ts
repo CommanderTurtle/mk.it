@@ -10,6 +10,12 @@ const CommonFormats = {
         "png",
         "image/png"
     ),
+    JPEG: new FormatDefinition(
+        "Joint Photographic Experts Group JFIF",
+        "jpeg",
+        "jpg",
+        "image/jpeg"
+    ),
     JSON: new FormatDefinition(
         "JavaScript Object Notation",
         "json",
