@@ -47,6 +47,12 @@ const CommonFormats = {
         "text",
         "txt",
         "text/plain"
+    ),
+    HTML: new FormatDefinition(
+        "Hypertext Markup Language",
+        "html",
+        "html",
+        "text/html"
     )
 }
 
