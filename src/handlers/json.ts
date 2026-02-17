@@ -36,7 +36,7 @@ export class toJsonHandler implements FormatHandler {
       to: false,
       internal: "yaml"
     },
-    CommonFormats.JSON.handled("json", false, true)
+    CommonFormats.JSON.supported("json", false, true)
   ];
 
   async init() {
@@ -127,7 +127,7 @@ export class fromJsonHandler {
       to: true,
       internal: "yaml"
     },
-    CommonFormats.JSON.handled("json", true, false)
+    CommonFormats.JSON.supported("json", true, false)
   ];
 
   async init() {

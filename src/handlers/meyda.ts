@@ -8,7 +8,7 @@ class meydaHandler implements FormatHandler {
 
   public name: string = "meyda";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PNG.handled("image", true, true),
+    CommonFormats.PNG.supported("image", true, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",

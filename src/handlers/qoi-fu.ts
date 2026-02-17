@@ -7,7 +7,7 @@ class qoiFuHandler implements FormatHandler {
 
   public name: string = "qoi-fu";
   public supportedFormats: FileFormat[] = [
-    CommonFormats.PNG.handled("png", true, true),
+    CommonFormats.PNG.supported("png", true, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",

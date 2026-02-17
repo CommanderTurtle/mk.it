@@ -47,7 +47,7 @@ export class FormatDefinition implements IFormatDefinition {
    * @param to Whether conversion **to** this format is supported.
    * @returns 
    */
-  handled(ref: string, from: boolean, to: boolean): FileFormat {
+  supported(ref: string, from: boolean, to: boolean): FileFormat {
     return {
       ...this,
       internal: ref,

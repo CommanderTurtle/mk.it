@@ -187,7 +187,7 @@ class sppdHandler implements FormatHandler {
       to: false,
       internal: "dem"
     },
-    CommonFormats.PNG.handled("png", false, true),
+    CommonFormats.PNG.supported("png", false, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",
@@ -197,7 +197,7 @@ class sppdHandler implements FormatHandler {
       to: true,
       internal: "jpeg"
     },
-    CommonFormats.JSON.handled("json", false, true)
+    CommonFormats.JSON.supported("json", false, true)
   ];
 
   public ready: boolean = false;
