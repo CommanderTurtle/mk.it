@@ -21,6 +21,30 @@ const CommonFormats = {
         "json",
         "json",
         "application/json"
+    ),
+    WebP: new FormatDefinition(
+        "WebP",
+        "webp",
+        "webp",
+        "image/webp"
+    ),
+    GIF: new FormatDefinition(
+        "CompuServe Graphics Interchange Format (GIF)",
+        "gif",
+        "gif",
+        "image/gif"
+    ),
+    SVG: new FormatDefinition(
+        "Scalable Vector Graphics",
+        "svg",
+        "svg",
+        "image/svg+xml"
+    ),
+    TEXT: new FormatDefinition(
+        "Plain Text",
+        "text",
+        "txt",
+        "text/plain"
     )
 }
 
