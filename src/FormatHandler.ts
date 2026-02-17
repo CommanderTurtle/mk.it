@@ -27,10 +27,10 @@ export interface FileFormat extends IFormatDefinition {
  * that can be supported by handlers.
  */
 export class FormatDefinition implements IFormatDefinition {
-  public name: string;
-  public format: string;
-  public extension: string;
-  public mime: string;
+  public readonly name: string;
+  public readonly format: string;
+  public readonly extension: string;
+  public readonly mime: string;
 
   constructor(name: string, format: string, extension: string, mime: string) {
     this.name = name
