@@ -3,6 +3,7 @@
 
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
+import CommonFormats from "src/CommonFormats.ts";
 
 if (typeof window !== "undefined") {
   (window as any).Buffer = Buffer;
@@ -32,15 +33,7 @@ class flptojsonHandler implements FormatHandler {
       to: false,
       internal: "flp"
     },
-    {
-      name: "JavaScript Object Notation",
-      format: "json",
-      extension: "json",
-      mime: "application/json",
-      from: false,
-      to: true,
-      internal: "json"
-    }
+    CommonFormats.JSON.handled("json", false, true)
   ];
 
   public ready: boolean = true;

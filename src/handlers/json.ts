@@ -1,3 +1,4 @@
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import parseXML from "./envelope/parseXML.js";
 import * as yaml from "@std/yaml";
@@ -35,15 +36,7 @@ export class toJsonHandler implements FormatHandler {
       to: false,
       internal: "yaml"
     },
-    {
-      name: "JavaScript Object Notation",
-      format: "json",
-      extension: "json",
-      mime: "application/json",
-      from: false,
-      to: true,
-      internal: "json"
-    },
+    CommonFormats.JSON.handled("json", false, true)
   ];
 
   async init() {
@@ -134,15 +127,7 @@ export class fromJsonHandler {
       to: true,
       internal: "yaml"
     },
-    {
-      name: "JavaScript Object Notation",
-      format: "json",
-      extension: "json",
-      mime: "application/json",
-      from: true,
-      to: false,
-      internal: "json"
-    },
+    CommonFormats.JSON.handled("json", true, false)
   ];
 
   async init() {
