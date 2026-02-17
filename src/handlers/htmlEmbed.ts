@@ -1,3 +1,4 @@
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 class htmlEmbedHandler implements FormatHandler {
@@ -13,15 +14,7 @@ class htmlEmbedHandler implements FormatHandler {
       to: true,
       internal: "html"
     },
-    {
-      name: "Portable Network Graphics",
-      format: "png",
-      extension: "png",
-      mime: "image/png",
-      from: true,
-      to: false,
-      internal: "png"
-    },
+    CommonFormats.PNG.handled("png", true, false),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",

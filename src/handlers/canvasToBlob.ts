@@ -1,3 +1,4 @@
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { imageToText, rgbaToGrayscale } from "./image-to-txt/src/convert.ts";
 
@@ -6,15 +7,7 @@ class canvasToBlobHandler implements FormatHandler {
   public name: string = "canvasToBlob";
 
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Portable Network Graphics",
-      format: "png",
-      extension: "png",
-      mime: "image/png",
-      from: true,
-      to: true,
-      internal: "png"
-    },
+    CommonFormats.PNG.handled("png", true, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",
