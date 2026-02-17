@@ -1,5 +1,6 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler";
 import * as NBT from "nbtify";
+import CommonFormats from "src/CommonFormats";
 
 class nbtHandler implements FormatHandler {
     public name: string = "nbt";
@@ -19,15 +20,7 @@ class nbtHandler implements FormatHandler {
                 to: true,
                 internal: "nbt"
             },
-            {
-                name: "JavaScript Object Notation",
-                format: "json",
-                extension: "json",
-                mime: "application/json",
-                from: true,
-                to: true,
-                internal: "json"
-            },
+            CommonFormats.JSON.handled("json", true, true),
             {
                 name: "String Named Binary Tag",
                 format: "SNBT",
