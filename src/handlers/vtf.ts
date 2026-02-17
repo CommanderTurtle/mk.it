@@ -1,3 +1,4 @@
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 const TEXTUREFLAGS_ENVMAP = 0x00004000;
@@ -809,15 +810,7 @@ class vtfHandler implements FormatHandler {
       to: false,
       internal: "vtf"
     },
-    {
-      name: "Portable Network Graphics",
-      format: "png",
-      extension: "png",
-      mime: "image/png",
-      from: false,
-      to: true,
-      internal: "png"
-    },
+    CommonFormats.PNG.handled("png", false, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",

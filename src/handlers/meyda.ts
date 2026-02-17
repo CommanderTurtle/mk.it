@@ -1,21 +1,14 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import Meyda from "meyda";
+import CommonFormats from "src/CommonFormats.ts";
 import { WaveFile } from "wavefile";
 
 class meydaHandler implements FormatHandler {
 
   public name: string = "meyda";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Portable Network Graphics",
-      format: "png",
-      extension: "png",
-      mime: "image/png",
-      from: true,
-      to: true,
-      internal: "image"
-    },
+    CommonFormats.PNG.handled("image", true, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",

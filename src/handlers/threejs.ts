@@ -1,3 +1,4 @@
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import * as THREE from "three";
@@ -17,15 +18,7 @@ class threejsHandler implements FormatHandler {
       to: false,
       internal: "glb"
     },
-    {
-      name: "Portable Network Graphics",
-      format: "png",
-      extension: "png",
-      mime: "image/png",
-      from: false,
-      to: true,
-      internal: "png"
-    },
+    CommonFormats.PNG.handled("png", false, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",

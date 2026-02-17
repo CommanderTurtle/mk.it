@@ -187,15 +187,7 @@ class sppdHandler implements FormatHandler {
       to: false,
       internal: "dem"
     },
-    {
-      name: "Portable Network Graphics",
-      format: "png",
-      extension: "png",
-      mime: "image/png",
-      from: false,
-      to: true,
-      internal: "png"
-    },
+    CommonFormats.PNG.handled("png", false, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",
