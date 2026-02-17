@@ -22,7 +22,7 @@ const CommonFormats = {
         "json",
         "application/json"
     ),
-    WebP: new FormatDefinition(
+    WEBP: new FormatDefinition(
         "WebP",
         "webp",
         "webp",
