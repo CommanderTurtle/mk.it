@@ -33,7 +33,7 @@ class flptojsonHandler implements FormatHandler {
       to: false,
       internal: "flp"
     },
-    CommonFormats.JSON.handled("json", false, true)
+    CommonFormats.JSON.supported("json", false, true)
   ];
 
   public ready: boolean = true;

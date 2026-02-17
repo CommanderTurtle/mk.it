@@ -20,7 +20,7 @@ class nbtHandler implements FormatHandler {
                 to: true,
                 internal: "nbt"
             },
-            CommonFormats.JSON.handled("json", true, true),
+            CommonFormats.JSON.supported("json", true, true),
             {
                 name: "String Named Binary Tag",
                 format: "SNBT",

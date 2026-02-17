@@ -18,7 +18,7 @@ class threejsHandler implements FormatHandler {
       to: false,
       internal: "glb"
     },
-    CommonFormats.PNG.handled("png", false, true),
+    CommonFormats.PNG.supported("png", false, true),
     {
       name: "Joint Photographic Experts Group JFIF",
       format: "jpeg",
