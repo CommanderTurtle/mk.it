@@ -6,6 +6,7 @@ import htmlEmbedHandler from "./htmlEmbed.ts";
 import FFmpegHandler from "./FFmpeg.ts";
 import pdftoimgHandler from "./pdftoimg.ts";
 import ImageMagickHandler from "./ImageMagick.ts";
+import svgTraceHandler from "./svgTrace.ts";
 import { renameZipHandler, renameTxtHandler } from "./rename.ts";
 import envelopeHandler from "./envelope.ts";
 import svgForeignObjectHandler from "./svgForeignObject.ts";
@@ -24,6 +25,7 @@ import flptojsonHandler from "./flptojson.ts";
 import floHandler from "./flo.ts";
 
 const handlers: FormatHandler[] = [];
+try { handlers.push(new svgTraceHandler()) } catch (_) { };
 try { handlers.push(new canvasToBlobHandler()) } catch (_) { };
 try { handlers.push(new meydaHandler()) } catch (_) { };
 try { handlers.push(new htmlEmbedHandler()) } catch (_) { };
