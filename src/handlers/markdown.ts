@@ -7,6 +7,7 @@ import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
 import remarkGfm from "remark-gfm";
+import CommonFormats from "src/CommonFormats.ts";
 
 class markdownHandler implements FormatHandler {
 
@@ -21,15 +22,7 @@ class markdownHandler implements FormatHandler {
       to: true,
       internal: "md"
     },
-    {
-      name: "HyperText Markup Language",
-      format: "html",
-      extension: "html",
-      mime: "text/html",
-      from: true,
-      to: true,
-      internal: "html"
-    }
+    CommonFormats.HTML.supported("html", true, true)
   ];
   public ready = false;
 

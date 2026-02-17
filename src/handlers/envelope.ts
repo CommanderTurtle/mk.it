@@ -4,6 +4,7 @@ import { parseODT, parseODP, parseODS } from "./envelope/parseODF.js";
 import parseDOCX from "./envelope/parseDOCX.js";
 import parsePPTX from "./envelope/parsePPTX.js";
 import parseXLSX from "./envelope/parseXLSX.js";
+import CommonFormats from "src/CommonFormats.ts";
 
 class envelopeHandler implements FormatHandler {
 
@@ -64,15 +65,7 @@ class envelopeHandler implements FormatHandler {
       to: false,
       internal: "ods"
     },
-    {
-      name: "Hypertext Markup Language",
-      format: "html",
-      extension: "html",
-      mime: "text/html",
-      from: false,
-      to: true,
-      internal: "html"
-    }
+    CommonFormats.HTML.supported("html", false, true)
   ];
 
   public ready: boolean = true;

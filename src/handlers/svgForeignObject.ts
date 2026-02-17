@@ -6,15 +6,7 @@ class svgForeignObjectHandler implements FormatHandler {
   public name: string = "svgForeignObject";
 
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Hypertext Markup Language",
-      format: "html",
-      extension: "html",
-      mime: "text/html",
-      from: true,
-      to: false,
-      internal: "html"
-    },
+    CommonFormats.HTML.supported("html", true, false),
     CommonFormats.SVG.supported("svg", false, true),
   ];
 
