@@ -40,7 +40,7 @@ export class FormatDefinition implements IFormatDefinition {
   }
 
   /**
-   * Returns `FileFormat` object that uses this format definitions 
+   * Returns `FileFormat` object that uses this format definition 
    * and specified options
    * @param ref Format identifier for the handler's internal reference.
    * @param from Whether conversion **from** this format is supported.
