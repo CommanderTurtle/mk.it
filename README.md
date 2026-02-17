@@ -35,6 +35,8 @@ If this seems like a lot, please remember - a developer will have to do 100x mor
 
 **If you're submitting a bug report,** you only need to do step 1 - check if the problem isn't already reported by someone else. Bug reports are generally quite important otherwise.
 
+Though please note, "converting X to Y doesn't work" is **not** a bug report.  However, "converting X to Y works but not how I expected" likely **is** a bug report.
+
 ## Deployment
 
 ### Local development (Bun + Vite)
