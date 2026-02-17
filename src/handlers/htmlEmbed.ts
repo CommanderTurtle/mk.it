@@ -19,15 +19,7 @@ class htmlEmbedHandler implements FormatHandler {
     CommonFormats.WEBP.supported("webp", true, false),
     CommonFormats.GIF.supported("gif", true, false),
     CommonFormats.SVG.supported("svg", true, false),
-    {
-      name: "Plain Text",
-      format: "text",
-      extension: "txt",
-      mime: "text/plain",
-      from: true,
-      to: false,
-      internal: "text"
-    },
+    CommonFormats.TEXT.supported("text", true, false),
     {
       name: "MPEG-4 Part 14",
       format: "mp4",
