@@ -12,15 +12,7 @@ class canvasToBlobHandler implements FormatHandler {
     CommonFormats.WEBP.supported("webp", true, true),
     CommonFormats.GIF.supported("gif", true, false),
     CommonFormats.SVG.supported("svg", true, false),
-    {
-      name: "Plain Text",
-      format: "text",
-      extension: "txt",
-      mime: "text/plain",
-      from: true,
-      to: true,
-      internal: "text"
-    }
+    CommonFormats.TEXT.supported("text", true, true)
   ];
 
   #canvas?: HTMLCanvasElement;
