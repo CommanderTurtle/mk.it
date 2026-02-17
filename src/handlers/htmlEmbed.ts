@@ -5,15 +5,7 @@ class htmlEmbedHandler implements FormatHandler {
 
   public name: string = "htmlEmbed";
   public supportedFormats: FileFormat[] = [
-    {
-      name: "Hypertext Markup Language",
-      format: "html",
-      extension: "html",
-      mime: "text/html",
-      from: false,
-      to: true,
-      internal: "html"
-    },
+    CommonFormats.HTML.supported("html", false, true),
     CommonFormats.PNG.supported("png", true, false),
     CommonFormats.JPEG.supported("jpeg", true, false),
     CommonFormats.WEBP.supported("webp", true, false),
