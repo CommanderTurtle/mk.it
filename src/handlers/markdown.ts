@@ -13,15 +13,7 @@ class markdownHandler implements FormatHandler {
 
   public name = "markdown";
   public supportedFormats = [
-    {
-      name: "Markdown Document",
-      format: "md",
-      extension: "md",
-      mime: "text/markdown",
-      from: true,
-      to: true,
-      internal: "md"
-    },
+    CommonFormats.MD.supported("md", true, true),
     CommonFormats.HTML.supported("html", true, true)
   ];
   public ready = false;
