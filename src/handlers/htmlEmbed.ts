@@ -16,15 +16,7 @@ class htmlEmbedHandler implements FormatHandler {
     },
     CommonFormats.PNG.supported("png", true, false),
     CommonFormats.JPEG.supported("jpeg", true, false),
-    {
-      name: "WebP",
-      format: "webp",
-      extension: "webp",
-      mime: "image/webp",
-      from: true,
-      to: false,
-      internal: "webp"
-    },
+    CommonFormats.WEBP.supported("webp", true, false),
     {
       name: "CompuServe Graphics Interchange Format (GIF)",
       format: "gif",

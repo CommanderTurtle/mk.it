@@ -20,15 +20,7 @@ class threejsHandler implements FormatHandler {
     },
     CommonFormats.PNG.supported("png", false, true),
     CommonFormats.JPEG.supported("jpeg", false, true),
-    {
-      name: "WebP",
-      format: "webp",
-      extension: "webp",
-      mime: "image/webp",
-      from: false,
-      to: true,
-      internal: "webp"
-    },
+    CommonFormats.WEBP.supported("webp", false, true)
   ];
   public ready: boolean = false;
 

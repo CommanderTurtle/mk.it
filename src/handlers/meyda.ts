@@ -10,15 +10,7 @@ class meydaHandler implements FormatHandler {
   public supportedFormats: FileFormat[] = [
     CommonFormats.PNG.supported("image", true, true),
     CommonFormats.JPEG.supported("image", true, true),
-    {
-      name: "WebP",
-      format: "webp",
-      extension: "webp",
-      mime: "image/webp",
-      from: true,
-      to: true,
-      internal: "image"
-    }
+    CommonFormats.WEBP.supported("image", true, true),
   ];
   public ready: boolean = false;
 
