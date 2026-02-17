@@ -1,4 +1,8 @@
-export interface FileFormat {
+
+/**
+ * Definition of file format. Contains format defined constants like mime type and names
+ */
+export interface IFormatDefinition {
   /** Format description (long name) for displaying to the user. */
   name: string;
   /** Short, "formal" name for displaying to the user. */
@@ -7,6 +11,9 @@ export interface FileFormat {
   extension: string;
   /** MIME type. */
   mime: string;
+}
+
+export interface FileFormat extends IFormatDefinition {
   /** Whether conversion **from** this format is supported. */
   from: boolean;
   /** Whether conversion **to** this format is supported. */
@@ -14,6 +21,42 @@ export interface FileFormat {
   /** Format identifier for the handler's internal reference. */
   internal: string;
 }
+
+/**
+ * Class containing format definition and method used to produce FileFormat 
+ * that can be supported by handlers.
+ */
+export class FormatDefinition implements IFormatDefinition {
+  public name: string;
+  public format: string;
+  public extension: string;
+  public mime: string;
+
+  constructor(name: string, format: string, extension: string, mime: string) {
+    this.name = name
+    this.format = format
+    this.extension = extension
+    this.mime = mime
+  }
+
+  /**
+   * Returns `FileFormat` object that uses this format definitions 
+   * and specified options
+   * @param ref Format identifier for the handler's internal reference.
+   * @param from Whether conversion **from** this format is supported.
+   * @param to Whether conversion **to** this format is supported.
+   * @returns 
+   */
+  handled(ref: string, from: boolean, to: boolean): FileFormat {
+    return {
+      ...this,
+      internal: ref,
+      from: from,
+      to: to
+    }
+  }
+}
+
 
 export interface FileData {
   /** File name with extension. */
