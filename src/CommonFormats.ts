@@ -54,6 +54,12 @@ const CommonFormats = {
         "html",
         "text/html"
     ),
+    MD: new FormatDefinition(
+        "Markdown Document",
+        "md",
+        "md",
+        "text/markdown"
+    ),
     // audio
     MP3: new FormatDefinition(
         "MP3 Audio",
