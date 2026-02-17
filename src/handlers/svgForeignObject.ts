@@ -1,3 +1,4 @@
+import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 class svgForeignObjectHandler implements FormatHandler {
@@ -14,15 +15,7 @@ class svgForeignObjectHandler implements FormatHandler {
       to: false,
       internal: "html"
     },
-    {
-      name: "Scalable Vector Graphics",
-      format: "svg",
-      extension: "svg",
-      mime: "image/svg+xml",
-      from: false,
-      to: true,
-      internal: "svg"
-    }
+    CommonFormats.SVG.supported("svg", false, true),
   ];
 
   public ready: boolean = true;
