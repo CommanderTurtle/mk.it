@@ -27,6 +27,7 @@ import flptojsonHandler from "./flptojson.ts";
 import floHandler from "./flo.ts";
 import batToExeHandler from "./batToExe.ts";
 import textEncodingHandler from "./textEncoding.ts";
+import lzhHandler from "./lzh.ts";
 
 const handlers: FormatHandler[] = [];
 try { handlers.push(new svgTraceHandler()) } catch (_) { };
@@ -57,6 +58,10 @@ try { handlers.push(new flptojsonHandler()) } catch (_) { };
 try { handlers.push(new floHandler()) } catch (_) { };
 try { handlers.push(new batToExeHandler()) } catch (_) { };
 try { handlers.push(new textEncodingHandler()) } catch (_) { };
+<<<<<<< master
+try { handlers.push(new lzhHandler()) } catch (_) { };
+=======
 try { handlers.push(new pandocHandler()) } catch (_) { };
+>>>>>>> master
 
 export default handlers;
