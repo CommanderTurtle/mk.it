@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@preact/preset-vite": "^2.10.3",
     "puppeteer": "^24.36.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
@@ -35,6 +36,7 @@
     "pako": "^2.1.0",
     "pdftoimg-js": "^0.2.5",
     "pe-library": "^2.0.1",
+    "preact": "^10.28.3",
     "three": "^0.182.0",
     "three-bvh-csg": "^0.0.17",
     "three-mesh-bvh": "^0.9.8",
