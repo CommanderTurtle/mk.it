@@ -3,6 +3,8 @@ import { useRef, useState } from 'preact/hooks'
 import uploadImage from '../img/fa-upload-solid-full.svg';
 import logoImage from '../../../favicon.ico';
 
+import DarkModeToggle from './DarkModeToggle';
+
 import './UploadField.css'
 
 interface UploadFieldComponentProps {
@@ -52,7 +54,9 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 						<img class="upload-card-logo" src={ logoImage } alt="Logo" />
 						<span class="upload-card-title">Convert to it!</span>
 					</h1>
-					<div class="upload-card-theme-toggle"></div>
+					<div class="upload-card-theme-toggle">
+						<DarkModeToggle />
+					</div>
 				</div>
 
 				<div

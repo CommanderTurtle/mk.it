@@ -10,6 +10,7 @@
 		align-self: center;
 		display: flex;
 		flex-direction: column;
+		position: relative;
 		/* padding: 2em; */
 
 		background-color: var(--bg-card);
@@ -35,6 +36,12 @@
 			}
 		}
 
+		.upload-card-theme-toggle {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+		}
+
 		.upload-card-dropzone-hint {
 			&.active-drag {
 				border-width: .5rem;
@@ -52,8 +59,8 @@
 			user-select: none;
 			cursor: pointer;
 
-			background-color: var(--bg-3);
-			border: .15rem dashed rgba(0 0 0 / .07);
+			background-color: var(--bg-card-alt);
+			border: 0.15rem dashed var(--border-primary);
 			border-radius: 20px;
 
 			>* {
@@ -68,7 +75,7 @@
 			.upload-card-dropzone-icon-container {
 				background-color: var(--bg-card);
 				aspect-ratio: 1 / 1;
-				padding: .5em;
+				padding: 0.5em;
 				border-radius: 100vh;
 
 				.upload-card-dropzone-icon {
@@ -84,7 +91,7 @@
 				border-radius: 8px;
 				padding: .75em;
 				background-color: var(--highlight-color);
-				color: white;
+				color:  var(--text-inverse);
 				font-weight: bold;
 				transition: box-shadow 150ms, translate 150ms;
 
@@ -96,7 +103,7 @@
 			}
 
 			.upload-card-dropzone-subtext {
-				color: gray;
+				color: var(--text-muted);
 			}
 		}
 
@@ -109,16 +116,16 @@
 
 			button {
 				appearance: none;
-				border: .1rem solid rgba(0 0 0 / .1);
+				border: .1rem solid var(--border-primary);
 				border-radius: 8px;
 				padding: .75em;
-				color: gray;
+				color: var(--text-muted);
 				background: transparent;
 				transition: border 150ms;
 
 				&:hover,
 				&:focus-visible {
-					border: .1rem solid rgba(0 0 0 / .5);
+					border: .1rem solid var(--border-secondary);
 				}
 			}
 		}

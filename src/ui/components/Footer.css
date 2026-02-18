@@ -12,7 +12,7 @@ footer {
 	color: gray;
 	padding-block: .25em;
 	padding-inline: 1em;
-	background-color: var(--bg-2);
+	background-color: var(--bg-section);
 
 	.footer-item {
 		display: flex;
