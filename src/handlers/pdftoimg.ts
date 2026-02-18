@@ -23,7 +23,8 @@ class pdftoimgHandler implements FormatHandler {
       mime: "application/pdf",
       from: true,
       to: false,
-      internal: "pdf"
+      internal: "pdf",
+      category: "document"
     },
     {
       name: "Portable Network Graphics",
@@ -32,7 +33,9 @@ class pdftoimgHandler implements FormatHandler {
       mime: "image/png",
       from: false,
       to: true,
-      internal: "png"
+      internal: "png",
+      category: "image",
+      lossless: false // Because the conversion from pdf to png is lossy, even though png itself is a lossless format
     },
     {
       name: "Joint Photographic Experts Group JFIF",
@@ -41,7 +44,9 @@ class pdftoimgHandler implements FormatHandler {
       mime: "image/jpeg",
       from: false,
       to: true,
-      internal: "jpeg"
+      internal: "jpeg",
+      category: "image",
+      lossless: false // Because the conversion from pdf to jpeg is lossy, and jpeg itself is a lossy format
     }
   ];
 

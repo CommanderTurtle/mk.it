@@ -13,6 +13,10 @@ export interface FileFormat {
   to: boolean;
   /** Format identifier for the handler's internal reference. */
   internal: string;
+  /** Category for grouping formats. */
+  category?: Array<string> | string
+  /** Whether the format is lossless (if applicable). */
+  lossless?: boolean;
 }
 
 export interface FileData {

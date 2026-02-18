@@ -13,7 +13,9 @@ class qoiFuHandler implements FormatHandler {
       mime: "image/png",
       from: true,
       to: true,
-      internal: "png"
+      internal: "png",
+      category: "image",
+      lossless: true
     },
     {
       name: "Joint Photographic Experts Group JFIF",
@@ -22,7 +24,9 @@ class qoiFuHandler implements FormatHandler {
       mime: "image/jpeg",
       from: true,
       to: true,
-      internal: "jpeg"
+      internal: "jpeg",
+      category: "image",
+      lossless: false
     },
     {
       name: "WebP",
@@ -31,7 +35,9 @@ class qoiFuHandler implements FormatHandler {
       mime: "image/webp",
       from: true,
       to: true,
-      internal: "webp"
+      internal: "webp",
+      category: "image",
+      lossless: false
     },
     {
       name: "CompuServe Graphics Interchange Format (GIF)",
@@ -40,7 +46,8 @@ class qoiFuHandler implements FormatHandler {
       mime: "image/gif",
       from: true,
       to: false,
-      internal: "gif"
+      internal: "gif",
+      category: ["image", "video"]
     },
     {
       name: "Scalable Vector Graphics",
@@ -49,7 +56,8 @@ class qoiFuHandler implements FormatHandler {
       mime: "image/svg+xml",
       from: true,
       to: false,
-      internal: "svg"
+      internal: "svg",
+      category: ["image", "vector", "document"]
     },
     {
       name: "Quite OK Image",
@@ -58,7 +66,9 @@ class qoiFuHandler implements FormatHandler {
       mime: "image/x-qoi",
       from: true,
       to: true,
-      internal: "qoi"
+      internal: "qoi",
+      category: "image",
+      lossless: true
     }
   ];
   public ready: boolean = false;
