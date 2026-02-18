@@ -18,9 +18,11 @@ class nbtHandler implements FormatHandler {
                 mime: "application/x-minecraft-nbt",
                 from: true,
                 to: true,
-                internal: "nbt"
+                internal: "nbt",
+                category: "data",
+                lossless: true
             },
-            CommonFormats.JSON.supported("json", true, true),
+            CommonFormats.JSON.supported("json", true, true, true),
             {
                 name: "String Named Binary Tag",
                 format: "SNBT",
@@ -28,7 +30,9 @@ class nbtHandler implements FormatHandler {
                 mime: "application/x-minecraft-snbt",
                 from: true,
                 to: true,
-                internal: "snbt"
+                internal: "snbt",
+                category: "data",
+                lossless: true
             },
         ]
         this.ready = true
@@ -66,10 +70,10 @@ class nbtHandler implements FormatHandler {
                 })
             }
         }
-        
+
         // snbt <-> nbt
         if (inputFormat.internal == "snbt" && outputFormat.internal == "nbt") {
-            for (const file of inputFiles) { 
+            for (const file of inputFiles) {
                 const text = decoder.decode(file.bytes)
                 const nbt = NBT.parse(text)
                 const bd = await NBT.write(nbt)

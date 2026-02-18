@@ -9,11 +9,11 @@ if (typeof window !== "undefined") {
   (window as any).Buffer = Buffer;
 }
 
-import { 
-  parseFlp, 
-  readProjectMeta, 
-  readProjectTimeInfo, 
-  listSamples, 
+import {
+  parseFlp,
+  readProjectMeta,
+  readProjectTimeInfo,
+  listSamples,
   listPlugins,
   getFlVersion,
   getPPQ
@@ -31,7 +31,8 @@ class flptojsonHandler implements FormatHandler {
       mime: "application/octet-stream",
       from: true,
       to: false,
-      internal: "flp"
+      internal: "flp",
+      category: "audio",
     },
     CommonFormats.JSON.supported("json", false, true)
   ];
@@ -70,7 +71,7 @@ class flptojsonHandler implements FormatHandler {
         const timeInfo = readProjectTimeInfo(parsed);
         const samples = listSamples(parsed);
         const plugins = listPlugins(parsed);
-        
+
         const version = getFlVersion(parsed) || "Unknown";
         const ppq = getPPQ(parsed) || 96;
 
@@ -86,8 +87,8 @@ class flptojsonHandler implements FormatHandler {
             ppq: ppq
           },
           stats: {
-            created: timeInfo.creationDate instanceof Date 
-                ? timeInfo.creationDate.toISOString() 
+            created: timeInfo.creationDate instanceof Date
+                ? timeInfo.creationDate.toISOString()
                 : null,
             workTimeSeconds: timeInfo.workTimeSeconds || 0
           },
@@ -108,9 +109,9 @@ class flptojsonHandler implements FormatHandler {
         const baseName = inputFile.name.split(".")[0];
         const newName = `${baseName}.json`;
 
-        outputFiles.push({ 
-          bytes: outputBytes, 
-          name: newName 
+        outputFiles.push({
+          bytes: outputBytes,
+          name: newName
         });
 
       } catch (e: any) { // Error handling

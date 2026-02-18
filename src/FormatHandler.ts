@@ -20,10 +20,14 @@ export interface FileFormat extends IFormatDefinition {
   to: boolean;
   /** Format identifier for the handler's internal reference. */
   internal: string;
+  /** Category for grouping formats. */
+  category?: Array<string> | string
+  /** Whether the format is lossless (if applicable). */
+  lossless?: boolean;
 }
 
 /**
- * Class containing format definition and method used to produce FileFormat 
+ * Class containing format definition and method used to produce FileFormat
  * that can be supported by handlers.
  */
 export class FormatDefinition implements IFormatDefinition {
@@ -40,19 +44,21 @@ export class FormatDefinition implements IFormatDefinition {
   }
 
   /**
-   * Returns `FileFormat` object that uses this format definition 
+   * Returns `FileFormat` object that uses this format definition
    * and specified options
    * @param ref Format identifier for the handler's internal reference.
    * @param from Whether conversion **from** this format is supported.
    * @param to Whether conversion **to** this format is supported.
-   * @returns 
+   * @param lossless (Optional) Whether the format is lossless in this context. Defaults to `false`.
+   * @returns
    */
-  supported(ref: string, from: boolean, to: boolean): FileFormat {
+  supported(ref: string, from: boolean, to: boolean, lossless?: boolean): FileFormat {
     return {
       ...this,
       internal: ref,
       from: from,
-      to: to
+      to: to,
+      lossless: lossless
     }
   }
 }

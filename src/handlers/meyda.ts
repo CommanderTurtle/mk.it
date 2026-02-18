@@ -28,7 +28,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/wav",
       from: dummy.canPlayType("audio/wav") !== "",
       to: true,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction
     });
     if (dummy.canPlayType("audio/mpeg")) this.supportedFormats.push(
       CommonFormats.MP3.supported("audio", true, false)
@@ -40,7 +42,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/ogg",
       from: true,
       to: false,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction
     });
     if (dummy.canPlayType("audio/flac")) this.supportedFormats.push({
       name: "Free Lossless Audio Codec",
@@ -49,7 +53,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/flac",
       from: true,
       to: false,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction
     });
     dummy.remove();
 
