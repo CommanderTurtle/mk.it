@@ -39,7 +39,6 @@ try { handlers.push(new ImageMagickHandler()) } catch (_) { };
 try { handlers.push(renameZipHandler) } catch (_) { };
 try { handlers.push(renameTxtHandler) } catch (_) { };
 try { handlers.push(new envelopeHandler()) } catch (_) { };
-try { handlers.push(new pandocHandler()) } catch (_) { };
 try { handlers.push(new svgForeignObjectHandler()) } catch (_) { };
 try { handlers.push(new qoiFuHandler()) } catch (_) { };
 try { handlers.push(new sppdHandler()) } catch (_) { };
@@ -58,5 +57,6 @@ try { handlers.push(new flptojsonHandler()) } catch (_) { };
 try { handlers.push(new floHandler()) } catch (_) { };
 try { handlers.push(new batToExeHandler()) } catch (_) { };
 try { handlers.push(new textEncodingHandler()) } catch (_) { };
+try { handlers.push(new pandocHandler()) } catch (_) { };
 
 export default handlers;
