@@ -341,6 +341,9 @@ async function attemptConvertPath (files: FileData[], path: ConvertPathNode[]) {
     } catch (e) {
       console.log(path.map(c => c.format.format));
       console.error(handler.name, `${path[i].format.format} → ${path[i + 1].format.format}`, e);
+      ui.popupBox.innerHTML = `<h2>Finding conversion route...</h2>
+        <p>Looking for a valid path...</p>`;
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       return null;
     }
   }
