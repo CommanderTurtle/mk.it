@@ -88,6 +88,7 @@ Below is a super barebones handler that does absolutely nothing. You can use thi
 // file: dummy.ts
 
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import CommonFormats from "src/CommonFormats.ts";
 
 class dummyHandler implements FormatHandler {
 
@@ -97,15 +98,11 @@ class dummyHandler implements FormatHandler {
 
   async init () {
     this.supportedFormats = [
-      {
-        name: "Portable Network Graphics",
-        format: "png",
-        extension: "png",
-        mime: "image/png",
-        from: false,
-        to: false,
-        internal: "png"
-      },
+      // Create a FileFormat based on the common PNG definition.
+      // "png" is this handler's internal format identifier.
+      // Both `from` and `to` are set to false, meaning this handler
+      // does not support conversion from or to PNG.
+      CommonFormats.PNG.supported("png", false, false)
     ];
     this.ready = true;
   }
