@@ -24,7 +24,8 @@ class pdftoimgHandler implements FormatHandler {
       mime: "application/pdf",
       from: true,
       to: false,
-      internal: "pdf"
+      internal: "pdf",
+      category: "document"
     },
     CommonFormats.PNG.supported("png", false, true),
     CommonFormats.JPEG.supported("jpeg", false, true),

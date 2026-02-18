@@ -189,7 +189,7 @@ class sppdHandler implements FormatHandler {
     },
     CommonFormats.PNG.supported("png", false, true),
     CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.JSON.supported("json", false, true)
+    CommonFormats.JSON.supported("json", false, true, true)
   ];
 
   public ready: boolean = false;
