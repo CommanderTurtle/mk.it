@@ -4,6 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <script>
+    const stored = localStorage.getItem("theme");
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const theme = stored || (systemDark ? "dark" : "light");
+    document.documentElement.dataset.theme = theme;
+  </script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="base.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -14,6 +20,4 @@
 
 </body>
 <script type="module" src="src/main.ts"></script>
-<script type="module" src="src/ui/index.tsx"></script>
-
 </html>

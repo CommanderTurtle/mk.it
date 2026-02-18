@@ -3,6 +3,11 @@ import normalizeMimeType from "./normalizeMimeType.js";
 import handlers from "./handlers";
 import { TraversionGraph } from "./TraversionGraph.js";
 
+import { initTheme } from "./ui/theme";
+initTheme();
+
+import "./ui/index";
+
 /** Files currently selected for conversion */
 let selectedFiles: File[] = [];
 /**
