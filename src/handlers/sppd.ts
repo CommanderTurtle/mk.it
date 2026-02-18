@@ -193,7 +193,9 @@ class sppdHandler implements FormatHandler {
       mime: "image/png",
       from: false,
       to: true,
-      internal: "png"
+      internal: "png",
+      category: "image",
+      lossless: false // Because the conversion from demo to png is lossy, even though png itself is a lossless format
     },
     {
       name: "Joint Photographic Experts Group JFIF",
@@ -202,7 +204,9 @@ class sppdHandler implements FormatHandler {
       mime: "image/jpeg",
       from: false,
       to: true,
-      internal: "jpeg"
+      internal: "jpeg",
+      category: "image",
+      lossless: false // Because the conversion from demo to jpeg is lossy, and jpeg itself is a lossy format
     },
     {
       name: "JavaScript Object Notation",
@@ -211,7 +215,9 @@ class sppdHandler implements FormatHandler {
       mime: "application/json",
       from: false,
       to: true,
-      internal: "json"
+      internal: "json",
+      category: "data",
+      lossless: false // Unsure about it, but assuming demo state destructuring and reconstruction is lossy in some way
     }
   ];
 

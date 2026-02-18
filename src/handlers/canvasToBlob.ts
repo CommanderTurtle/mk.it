@@ -13,7 +13,9 @@ class canvasToBlobHandler implements FormatHandler {
       mime: "image/png",
       from: true,
       to: true,
-      internal: "png"
+      internal: "png",
+      category: "image",
+      lossless: true
     },
     {
       name: "Joint Photographic Experts Group JFIF",
@@ -22,7 +24,9 @@ class canvasToBlobHandler implements FormatHandler {
       mime: "image/jpeg",
       from: true,
       to: true,
-      internal: "jpeg"
+      internal: "jpeg",
+      category: "image",
+      lossless: false
     },
     {
       name: "WebP",
@@ -31,7 +35,9 @@ class canvasToBlobHandler implements FormatHandler {
       mime: "image/webp",
       from: true,
       to: true,
-      internal: "webp"
+      internal: "webp",
+      category: "image",
+      lossless: false
     },
     {
       name: "CompuServe Graphics Interchange Format (GIF)",
@@ -40,7 +46,8 @@ class canvasToBlobHandler implements FormatHandler {
       mime: "image/gif",
       from: true,
       to: false,
-      internal: "gif"
+      internal: "gif",
+      category: ["image", "video"]
     },
     {
       name: "Scalable Vector Graphics",
@@ -49,7 +56,8 @@ class canvasToBlobHandler implements FormatHandler {
       mime: "image/svg+xml",
       from: true,
       to: false,
-      internal: "svg"
+      internal: "svg",
+      category: ["image", "vector", "document"]
     },
     {
       name: "Plain Text",
@@ -58,7 +66,8 @@ class canvasToBlobHandler implements FormatHandler {
       mime: "text/plain",
       from: true,
       to: true,
-      internal: "text"
+      internal: "text",
+      category: "text"
     }
   ];
 

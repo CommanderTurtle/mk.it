@@ -12,7 +12,8 @@ class svgForeignObjectHandler implements FormatHandler {
       mime: "text/html",
       from: true,
       to: false,
-      internal: "html"
+      internal: "html",
+      category: ["document", "text"]
     },
     {
       name: "Scalable Vector Graphics",
@@ -21,7 +22,9 @@ class svgForeignObjectHandler implements FormatHandler {
       mime: "image/svg+xml",
       from: false,
       to: true,
-      internal: "svg"
+      internal: "svg",
+      category: ["image", "vector", "document"],
+      lossless: true // Identical to the input HTML, just wrapped in an SVG foreignObject, so it's lossless
     }
   ];
 

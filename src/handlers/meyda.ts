@@ -14,7 +14,9 @@ class meydaHandler implements FormatHandler {
       mime: "image/png",
       from: true,
       to: true,
-      internal: "image"
+      internal: "image",
+      category: "image",
+      lossless: false // Lossy reconstruction due to 2 channel encoding
     },
     {
       name: "Joint Photographic Experts Group JFIF",
@@ -23,7 +25,9 @@ class meydaHandler implements FormatHandler {
       mime: "image/jpeg",
       from: true,
       to: true,
-      internal: "image"
+      internal: "image",
+      category: "image",
+      lossless: false // Lossy reconstruction due to 2 channel encoding
     },
     {
       name: "WebP",
@@ -32,7 +36,9 @@ class meydaHandler implements FormatHandler {
       mime: "image/webp",
       from: true,
       to: true,
-      internal: "image"
+      internal: "image",
+      category: "image",
+      lossless: false // Lossy reconstruction due to 2 channel encoding
     }
   ];
   public ready: boolean = false;
@@ -51,7 +57,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/wav",
       from: dummy.canPlayType("audio/wav") !== "",
       to: true,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction 
     });
     if (dummy.canPlayType("audio/mpeg")) this.supportedFormats.push({
       name: "MP3 Audio",
@@ -60,7 +68,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/mpeg",
       from: true,
       to: false,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction 
     });
     if (dummy.canPlayType("audio/ogg")) this.supportedFormats.push({
       name: "Ogg Audio",
@@ -69,7 +79,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/ogg",
       from: true,
       to: false,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction 
     });
     if (dummy.canPlayType("audio/flac")) this.supportedFormats.push({
       name: "Free Lossless Audio Codec",
@@ -78,7 +90,9 @@ class meydaHandler implements FormatHandler {
       mime: "audio/flac",
       from: true,
       to: false,
-      internal: "audio"
+      internal: "audio",
+      category: "audio",
+      lossless: false // Lossy reconstruction 
     });
     dummy.remove();
 
@@ -94,7 +108,7 @@ class meydaHandler implements FormatHandler {
     this.ready = true;
 
   }
-
+  
   async doConvert (
     inputFiles: FileData[],
     inputFormat: FileFormat,

@@ -15,7 +15,8 @@ class threejsHandler implements FormatHandler {
       mime: "model/gltf-binary",
       from: true,
       to: false,
-      internal: "glb"
+      internal: "glb",
+      category: "model"
     },
     {
       name: "Portable Network Graphics",
@@ -24,7 +25,9 @@ class threejsHandler implements FormatHandler {
       mime: "image/png",
       from: false,
       to: true,
-      internal: "png"
+      internal: "png",
+      category: "image",
+      lossless: false // Because the conversion from glb to png is lossy, even though png itself is a lossless format
     },
     {
       name: "Joint Photographic Experts Group JFIF",
@@ -33,7 +36,9 @@ class threejsHandler implements FormatHandler {
       mime: "image/jpeg",
       from: false,
       to: true,
-      internal: "jpeg"
+      internal: "jpeg",
+      category: "image",
+      lossless: false // Because the conversion from glb to jpeg is lossy, and jpeg itself is a lossy format
     },
     {
       name: "WebP",
@@ -42,7 +47,9 @@ class threejsHandler implements FormatHandler {
       mime: "image/webp",
       from: false,
       to: true,
-      internal: "webp"
+      internal: "webp",
+      category: "image",
+      lossless: false // Because the conversion from glb to webp is lossy, and webp itself is a lossy format
     },
   ];
   public ready: boolean = false;
