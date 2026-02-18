@@ -1,0 +1,119 @@
+.upload-field {
+	height: 100%;
+	display: flex;
+	flex-grow: 1;
+
+	.upload-card {
+		width: clamp(400px, 75vw, 800px);
+		height: max(450px, 50vh);
+		border-radius: 20px;
+		align-self: center;
+		display: flex;
+		flex-direction: column;
+		/* padding: 2em; */
+
+		background-color: var(--bg-card);
+		box-shadow: 0 15px 15px rgba(0 0 0 / .1);
+		border: .1rem solid rgba(0 0 0 / .1);
+
+		.upload-card-header {
+			display: flex;
+			width: 100%;
+			justify-content: center;
+			border-block-end: .1rem solid rgba(0 0 0 / .1);
+			padding: 2em;
+
+			h1 {
+				font-weight: 900;
+			}
+		}
+
+		.upload-card-dropzone-hint {
+			&.active-drag {
+				border-width: .5rem;
+			}
+
+			min-height: 30px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 1em;
+			flex-grow: 1;
+			margin: 1em;
+
+			user-select: none;
+			cursor: pointer;
+
+			background-color: var(--bg-3);
+			border: .15rem dashed rgba(0 0 0 / .07);
+			border-radius: 20px;
+
+			>* {
+				cursor: pointer;
+			}
+
+			input[type="file"] {
+				display: none;
+				visibility: hidden;
+			}
+
+			.upload-card-dropzone-icon-container {
+				background-color: var(--bg-card);
+				aspect-ratio: 1 / 1;
+				padding: .5em;
+				border-radius: 100vh;
+
+				.upload-card-dropzone-icon {
+					width: 60px;
+					filter: contrast(0);
+				}
+			}
+
+			.upload-card-dropzone-button {
+				appearance: none;
+				border: 0;
+				box-shadow: 0 3px 3px rgba(0 0 0 / .1);
+				border-radius: 8px;
+				padding: .75em;
+				background-color: var(--highlight-color);
+				color: white;
+				font-weight: bold;
+				transition: box-shadow 150ms, translate 150ms;
+
+				&:hover,
+				&:focus-visible {
+					box-shadow: 0 6px 6px rgba(0 0 0 / .07);
+					translate: 0 -.1rem;
+				}
+			}
+
+			.upload-card-dropzone-subtext {
+				color: gray;
+			}
+		}
+
+		.upload-card-buttons {
+			margin-block: auto 0;
+			display: flex;
+			justify-content: center;
+			gap: 1em;
+			margin-block-end: 1em;
+
+			button {
+				appearance: none;
+				border: .1rem solid rgba(0 0 0 / .1);
+				border-radius: 8px;
+				padding: .75em;
+				color: gray;
+				background: transparent;
+				transition: border 150ms;
+
+				&:hover,
+				&:focus-visible {
+					border: .1rem solid rgba(0 0 0 / .5);
+				}
+			}
+		}
+	}
+}

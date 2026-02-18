@@ -36,7 +36,12 @@
     "baseUrl": ".",
     "paths": {
       "qoi-fu": ["./src/handlers/qoi-fu/transpiled/QOI.js"]
-    }
+    },
+    /**
+    * JSX setup
+    */
+    "jsx": "react",
+    "jsxImportSource": "preact"
   },
   "include": [
     "src"
