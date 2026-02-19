@@ -5,9 +5,11 @@ import uploadImage from '../img/fa-upload-solid-full.svg';
 import logoImage from '../img/logo.svg';
 
 import DarkModeToggle from './DarkModeToggle';
+import {Icon} from "./Icon.tsx";
 
 import './UploadField.css'
 import { UploadedFiles } from '..';
+
 
 interface UploadFieldComponentProps {
 	disabled?: boolean
@@ -59,48 +61,48 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 
 	return (
 		<div class="upload-field">
-			<div class="upload-card">
+			<div className="upload-card">
 
-				<div class="upload-card-header">
+				<div className="upload-card-header">
 					<h1>
-						<span
+						<Icon
+							src={logoImage}
+							size={60}
+							color="var(--primary)"
 							className="upload-card-logo"
-							style={{WebkitMaskImage: `url(${logoImage})`, maskImage: `url(${logoImage})`}}
-						></span>
-						<span class="upload-card-title">Convert to it!</span>
+						/>
+						<span className="upload-card-title">Convert to it!</span>
 					</h1>
-					<div class="upload-card-theme-toggle">
-						<DarkModeToggle />
+					<div className="upload-card-theme-toggle">
+						<DarkModeToggle/>
 					</div>
 				</div>
 
 				<div
-					class={ (isDragging ? "active-drag" : "").concat(" upload-card-dropzone-hint") }
-					onClick={ handleClick }
-					onDrop={ handleDrop }
-					onDragOver={ handleDragOver }
-					onDragEnter={ handleDragEnter }
-					onDragLeave={ handleDragLeave }
-					onChange={ handleChange }
+					className={(isDragging ? "active-drag" : "").concat(" upload-card-dropzone-hint")}
+					onClick={handleClick}
+					onDrop={handleDrop}
+					onDragOver={handleDragOver}
+					onDragEnter={handleDragEnter}
+					onDragLeave={handleDragLeave}
+					onChange={handleChange}
 				>
 					<input
-						ref={ fileRef }
+						ref={fileRef}
 						type="file"
 						name="uploadFile"
 						id="uploadFile"
-						// prevent synthetic click from retriggering
-						// the dropzone's onclick handler
-						onClick={ (ev) => ev.stopPropagation() }
-						tabIndex={ 0 }
+						onClick={(ev) => ev.stopPropagation()}
+						tabIndex={0}
 					/>
 					<div className="upload-card-dropzone-icon-container">
-						<div className="upload-card-dropzone-icon"></div>
+						<Icon src={uploadImage} size={40} color="var(--primary)"/>
 					</div>
-					<button class="upload-card-dropzone-button">Click to add your file</button>
+					<button className="upload-card-dropzone-button">Click to add your file</button>
 					<span className="upload-card-dropzone-subtext">or drag and drop here</span>
 				</div>
 
-				<div class="upload-card-buttons">
+				<div className="upload-card-buttons">
 					<button className="button">Advanced mode</button>
 					<button className="button">Help</button>
 				</div>

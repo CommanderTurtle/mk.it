@@ -24,6 +24,7 @@
   --text-black: #000000;
 
   /* Border */
+  --border-light: #E5E7EB;
   --border-primary: #D1D5DB;
   --border-secondary: #475569;
   --border-transparent: #00000000;
@@ -58,7 +59,7 @@
   --text-secondary: #CBD5E1;
   --text-tertiary: #94A3B8;
   --text-muted: #64748B;
-  --text-inverse: #FFFFFF;
+  --text-inverse: #000000;
   --text-black: #000000;
 
   /* Border */
