@@ -35,7 +35,8 @@
      */
     "baseUrl": ".",
     "paths": {
-      "qoi-fu": ["./src/handlers/qoi-fu/transpiled/QOI.js"]
+      "qoi-fu": ["./src/handlers/qoi-fu/transpiled/QOI.js"],
+      "qoa-fu": ["./src/handlers/qoa-fu/transpiled/QOA.js"]
     },
     /**
     * JSX setup
