@@ -40,7 +40,7 @@
     /**
     * JSX setup
     */
-    "jsx": "react",
+    "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
   "include": [
