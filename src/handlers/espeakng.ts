@@ -23,7 +23,7 @@ export class espeakngHandler implements FormatHandler {
       await new Promise<void>(resolve => {
         this.#tts = new SimpleTTS({
           defaultVoice: "en",
-          defaultRate: 350,
+          defaultRate: 220,
           defaultPitch: 200,
           enhanceAudio: true
         });
@@ -49,7 +49,9 @@ export class espeakngHandler implements FormatHandler {
       });
       const samples = audio.getChannelData(0);
       const wav = new WaveFile();
-      wav.fromScratch(1, tts.sampleRate, "32f", samples);
+      // Increasing pitch doesn't seem to do anything, so instead we
+      // decrease playback rate and increase playback sample rate
+      wav.fromScratch(1, tts.sampleRate * 1.4, "32f", samples);
       return {
         name: file.name.split(".")[0]+".wav",
         bytes: wav.toBuffer()
