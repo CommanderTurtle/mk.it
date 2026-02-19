@@ -119,6 +119,8 @@ class FFmpegHandler implements FormatHandler {
       const formats = parts[1].split(",");
 
       if (description.startsWith("piped ")) continue;
+      if (description.toLowerCase().includes("subtitle")) continue;
+      if (description.toLowerCase().includes("manifest")) continue;
 
       for (const format of formats) {
 
@@ -136,11 +138,15 @@ class FFmpegHandler implements FormatHandler {
         }
         mimeType = normalizeMimeType(mimeType);
 
+        let category = mimeType.split("/")[0];
         if (
-          !mimeType.startsWith("video/")
-          && !mimeType.startsWith("audio/")
-          && !mimeType.startsWith("image/")
-        ) continue;
+          category !== "audio"
+          && category !== "video"
+          && category !== "image"
+        ) {
+          if (description.toLowerCase().includes("audio")) category = "audio";
+          else category = "video";
+        }
 
         this.supportedFormats.push({
           name: description + (formats.length > 1 ? (" / " + format) : ""),
@@ -150,7 +156,7 @@ class FFmpegHandler implements FormatHandler {
           from: flags.includes("D"),
           to: flags.includes("E"),
           internal: format,
-          category: mimeType.split("/")[0],
+          category,
           lossless: ["png", "bmp", "tiff"].includes(format)
         });
 
