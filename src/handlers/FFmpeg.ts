@@ -223,6 +223,10 @@ class FFmpegHandler implements FormatHandler {
     const command = ["-hide_banner", "-f", "concat", "-safe", "0", "-i", "list.txt", "-f", outputFormat.internal];
     if (outputFormat.mime === "video/mp4") {
       command.push("-pix_fmt", "yuv420p");
+    } else if (outputFormat.internal === "dvd") {
+      command.push("-vf", "setsar=1", "-target", "ntsc-dvd", "-pix_fmt", "rgb24");
+    } else if (outputFormat.internal === "vcd") {
+      command.push("-vf", "scale=352:288,setsar=1", "-target", "pal-vcd", "-pix_fmt", "rgb24");
     }
     if (args) command.push(...args);
     command.push("output");
