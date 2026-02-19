@@ -140,6 +140,18 @@ class FFmpegHandler implements FormatHandler {
 
         let category = mimeType.split("/")[0];
         if (
+          description.includes("PCM")
+          || description.includes("PWM")
+          || primaryFormat === "aptx"
+          || primaryFormat === "aptx_hd"
+          || primaryFormat === "codec2"
+          || primaryFormat === "codec2raw"
+          || primaryFormat === "apm"
+          || primaryFormat === "alp"
+        ) {
+          category = "audio";
+          mimeType = "audio/" + mimeType.split("/")[1];
+        } else if (
           category !== "audio"
           && category !== "video"
           && category !== "image"
