@@ -3,6 +3,7 @@ import { signal } from "@preact/signals";
 
 import UploadPage from "./pages/Upload";
 import ConversionPage from "./pages/Conversion";
+import { initTheme } from "./theme";
 
 console.log("Rendering UI");
 
@@ -23,4 +24,7 @@ function App() {
 	)
 }
 
+
 render(<App />, document.body);
+
+initTheme();
