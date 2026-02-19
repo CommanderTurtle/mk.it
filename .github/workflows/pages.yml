@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: |
-          export GIT_COMMIT_SHA=${GITHUB_SHA}
+          export GIT_COMMIT_SHA=${{ github.sha }}
           bun run build
 
       - name: Generate cache
