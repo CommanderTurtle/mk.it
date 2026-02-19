@@ -224,7 +224,8 @@ class pandocHandler implements FormatHandler {
         from: inputFormat.internal,
         to: outputFormat.internal,
         "input-files": [inputFile.name],
-        "output-file": "output"
+        "output-file": "output",
+        "embed-resources": true
       }, null, files);
 
       if (stderr) throw stderr;
