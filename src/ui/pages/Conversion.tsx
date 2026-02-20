@@ -3,7 +3,7 @@ import DarkModeToggle from '../components/DarkModeToggle';
 
 import './Conversion.css'
 
-import {Icon} from "../components/Icon.tsx";
+import { Icon } from "../components/Icon.tsx";
 
 import logoImage from '../img/logo.svg';
 import faImageRegular from '../img/fa-image-regular-full.svg';
@@ -16,7 +16,7 @@ import faWrenchSolid from '../img/fa-wrench-solid-full.svg';
 import faChevronDownSolid from '../img/fa-chevron-down-solid-full.svg';
 import faSlidersSolid from '../img/fa-sliders-solid-full.svg';
 import faLinkSolid from '../img/fa-link-solid-full.svg';
-import {useState} from "preact/hooks";
+import { useState } from "preact/hooks";
 
 
 interface ConversionPageProps {
@@ -27,24 +27,24 @@ export default function Conversion(props: ConversionPageProps | undefined) {
     const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
 
     const sidebarLinks = [
-        {label: "Archive", icon: faBoxArchiveSolid},
-        {label: "Image", icon: faImageRegular, active: true},
-        {label: "Document", icon: faFileLinesRegular},
-        {label: "Video", icon: faVideoSolid},
-        {label: "Audio", icon: faMusicSolid},
-        {label: "E-Book", icon: faFileLinesRegular},
+        { label: "Archive", icon: faBoxArchiveSolid },
+        { label: "Image", icon: faImageRegular, active: true },
+        { label: "Document", icon: faFileLinesRegular },
+        { label: "Video", icon: faVideoSolid },
+        { label: "Audio", icon: faMusicSolid },
+        { label: "E-Book", icon: faFileLinesRegular },
     ]
 
     const formatCards = [
-        {badge: "PNG", title: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true},
-        {badge: "JPG", title: "JPEG Image", mime: "image/jpeg", icon: faImageRegular},
-        {badge: "WEBP", title: "WebP Image", mime: "image/webp", icon: faImageRegular},
-        {badge: "GIF", title: "CompuServe GIF", mime: "image/gif", icon: faImageRegular},
-        {badge: "TIFF", title: "Tagged Image File", mime: "image/tiff", icon: faImageRegular},
-        {badge: "BMP", title: "Bitmap", mime: "image/bmp", icon: faImageRegular},
-        {badge: "SVG", title: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular},
-        {badge: "HEIC", title: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular},
-        {badge: "RAW", title: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular},
+        { badge: "PNG", title: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true },
+        { badge: "JPG", title: "JPEG Image", mime: "image/jpeg", icon: faImageRegular },
+        { badge: "WEBP", title: "WebP Image", mime: "image/webp", icon: faImageRegular },
+        { badge: "GIF", title: "CompuServe GIF", mime: "image/gif", icon: faImageRegular },
+        { badge: "TIFF", title: "Tagged Image File", mime: "image/tiff", icon: faImageRegular },
+        { badge: "BMP", title: "Bitmap", mime: "image/bmp", icon: faImageRegular },
+        { badge: "SVG", title: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular },
+        { badge: "HEIC", title: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
+        { badge: "RAW", title: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
     ];
 
     const toggleSettings = () => {
@@ -56,8 +56,8 @@ export default function Conversion(props: ConversionPageProps | undefined) {
             <header className="conversion-header">
                 <div className="header-left">
                     <Icon
-                        src={logoImage}
-                        size={40}
+                        src={ logoImage }
+                        size={ 40 }
                         color="var(--primary)"
                         className="upload-card-logo"
                     />
@@ -65,11 +65,11 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                 </div>
 
                 <div className="header-right">
-                    {/* Desktop File Info */}
+                    {/* Desktop File Info */ }
                     <div className="file-info-badge desktop-only">
                         <Icon
-                            src={faImageRegular}
-                            size={16}
+                            src={ faImageRegular }
+                            size={ 16 }
                             color="var(--text-secondary)"
                         />
                         <span className="file-name">some_image.svg</span>
@@ -86,10 +86,10 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                 </div>
             </header>
 
-            {/* Mobile File Info */}
+            {/* Mobile File Info */ }
             <div className="mobile-file-bar mobile-only">
                 <div className="file-info-badge">
-                    <Icon src={faImageRegular} size={16} color="var(--text-secondary)" />
+                    <Icon src={ faImageRegular } size={ 16 } color="var(--text-secondary)" />
                     <span className="file-name">some_image.svg</span>
                     <select className="format-select">
                         <option value="svg">SVG</option>
@@ -103,36 +103,36 @@ export default function Conversion(props: ConversionPageProps | undefined) {
 
             <main className="conversion-main">
                 <div className="content-wrapper">
-                    {/* Left Sidebar */}
+                    {/* Left Sidebar */ }
                     <aside className="side-nav">
                         <div className="nav-header">
                             <span>Format Category</span>
                         </div>
                         <div className="nav-list scroller">
                             <ul>
-                                {sidebarLinks.map((link, index) => (
-                                    <li key={index}>
-                                        <a href="#" className={link.active ? "active" : undefined}>
+                                { sidebarLinks.map((link, index) => (
+                                    <li key={ index }>
+                                        <a href="#" className={ link.active ? "active" : undefined }>
                                             <Icon
-                                                src={link.icon}
-                                                size={16}
-                                            />{" "}
-                                            {link.label}
+                                                src={ link.icon }
+                                                size={ 16 }
+                                            />{ " " }
+                                            { link.label }
                                         </a>
                                     </li>
-                                ))}
+                                )) }
                             </ul>
                         </div>
                     </aside>
 
-                    {/* Center Browser */}
+                    {/* Center Browser */ }
                     <section className="format-browser">
                         <div className="search-container">
                             <div className="search-input-wrapper">
                                 <Icon
-                                    src={faMagnifyingGlassSolid}
+                                    src={ faMagnifyingGlassSolid }
                                     className="icon"
-                                    size={16}
+                                    size={ 16 }
                                     color="var(--text-secondary)"
                                 />
                                 <input
@@ -145,82 +145,82 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                         <div className="format-list-container scroller">
                             <div className="list-header desktop-only">
                                 <h2>Common Formats</h2>
-                                <span>Showing {formatCards.length} formats</span>
+                                <span>Showing { formatCards.length } formats</span>
                             </div>
 
                             <div className="format-grid">
-                                {formatCards.map((card, index) => (
+                                { formatCards.map((card, index) => (
                                     <div
-                                        key={index}
+                                        key={ index }
                                         className={
                                             card.active ? "format-card active" : "format-card"
                                         }
                                     >
-                                        {/* Mobile Card Layout */}
+                                        {/* Mobile Card Layout */ }
                                         <div className="card-mobile-header mobile-only">
                                             <div className="card-title-group">
-                                                <span className={card.active ? "badge" : "badge gray"}>
-                                                  {card.badge}
+                                                <span className={ card.active ? "badge" : "badge gray" }>
+                                                    { card.badge }
                                                 </span>
-                                                <h3>{card.title}</h3>
+                                                <h3>{ card.title }</h3>
                                             </div>
                                             <div className="card-icon-sm">
                                                 <Icon
-                                                    src={card.icon}
-                                                    size={16}
+                                                    src={ card.icon }
+                                                    size={ 16 }
                                                 />
                                             </div>
                                         </div>
 
-                                        {/* Desktop Card Layout */}
+                                        {/* Desktop Card Layout */ }
                                         <div className="card-desktop-content desktop-only">
                                             <div className="card-top">
                                                 <div className="card-icon-lg">
                                                     <Icon
-                                                        src={card.icon}
-                                                        size={32}
+                                                        src={ card.icon }
+                                                        size={ 32 }
                                                     />
                                                 </div>
-                                                <span className={card.active ? "badge" : "badge gray"}>
-                                                  {card.badge}
+                                                <span className={ card.active ? "badge" : "badge gray" }>
+                                                    { card.badge }
                                                 </span>
                                             </div>
-                                            <h3>{card.title}</h3>
-                                            <p className="mime-type">({card.mime})</p>
+                                            <h3>{ card.title }</h3>
+                                            <p className="mime-type">({ card.mime })</p>
                                         </div>
                                     </div>
-                                ))}
+                                )) }
                             </div>
                         </div>
                     </section>
                 </div>
 
-                {/* Right Settings Sidebar */}
-                <aside className={`settings-sidebar ${isSettingsExpanded ? 'is-expanded' : ''}`}>
-                    <div className="mobile-settings-header mobile-only" onClick={toggleSettings}>
+                {/* Right Settings Sidebar */ }
+                <aside className={ `settings-sidebar ${isSettingsExpanded ? 'is-expanded' : ''}` }>
+                    <div className="mobile-settings-header mobile-only" onClick={ toggleSettings }>
                         <h3>
                             <Icon
-                                src={faWrenchSolid}
-                                size={16}
+                                src={ faWrenchSolid }
+                                size={ 16 }
                                 color="var(--text-secondary)"
-                            />{" "}
+                            />{ " " }
                             Options
                         </h3>
                         <Icon
-                            src={faChevronDownSolid}
-                            size={16}
+                            src={ faChevronDownSolid }
+                            size={ 16 }
                             color="var(--text-secondary)"
-                            className={`chevron-icon ${isSettingsExpanded ? 'rotate' : ''}`}
+                            className={ `chevron-icon ${isSettingsExpanded ? 'rotate' : ''}` }
                         />
                     </div>
 
                     <div className="settings-header desktop-only">
                         <h3>
                             <Icon
-                                src={faSlidersSolid}
-                                size={16}
+                                src={ faSlidersSolid }
+                                size={ 16 }
                                 color="var(--text-secondary)"
-                            />{" "}
+                            />{ " " }
                             Output Settings
                         </h3>
                     </div>
@@ -236,7 +236,7 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                                     </div>
 
                                     <div className="link-icon-wrapper">
-                                        <Icon src={faLinkSolid} size={14} className="link-icon" />
+                                        <Icon src={ faLinkSolid } size={ 14 } className="link-icon" />
                                     </div>
 
                                     <div className="input-wrapper floating-label">

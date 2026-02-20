@@ -10,12 +10,12 @@ type IconProps = {
 };
 
 export function Icon({
-                         src,
-                         size = 24,
-                         color,
-                         className = "",
-                         style = {},
-                     }: IconProps) {
+    src,
+    size = 24,
+    color,
+    className = "",
+    style = {},
+}: IconProps) {
 
     const computedSize = typeof size === "number" ? `${size}px` : size;
 
@@ -30,5 +30,5 @@ export function Icon({
         ...style,
     };
 
-    return <div className={`icon ${className}`} style={maskStyles} />;
+    return <div className={ `icon ${className}` } style={ maskStyles } />;
 }

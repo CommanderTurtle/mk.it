@@ -24,6 +24,13 @@ function App() {
 	)
 }
 
+/**
+ * Debug function to change pages without user workflow
+*/
+// @ts-expect-error
+window.changePage = (page: Pages) => {
+	CurrentPage.value = page
+}
 
 render(<App />, document.body);
 
