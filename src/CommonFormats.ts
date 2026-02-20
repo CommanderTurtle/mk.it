@@ -98,8 +98,8 @@ const CommonFormats = {
     ),
     MD: new FormatDefinition(
         "Markdown Document",
-        "md",
-        "md",
+        "markdown",
+        "markdown",
         "text/markdown",
         ["document", "text"]
     ),
