@@ -39,6 +39,7 @@ import espeakngHandler from "./espeakng.js"
 import textToShellHandler from "./texttoshell.ts";
 import batchHandler from "./batch.ts";
 import bsorHandler from "./bsor.ts";
+import fontHandler from "./font.ts";
 
 const handlers: FormatHandler[] = [];
 try { handlers.push(new svgTraceHandler()) } catch (_) { };
@@ -83,5 +84,6 @@ try { handlers.push(new espeakngHandler()) } catch (_) { };
 try { handlers.push(new textToShellHandler()) } catch (_) { };
 try { handlers.push(new batchHandler()) } catch (_) { };
 try { handlers.push(new bsorHandler()) } catch (_) { };
+try { handlers.push(new fontHandler()) } catch (_) { };
 
 export default handlers;
