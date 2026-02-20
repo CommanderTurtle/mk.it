@@ -33,6 +33,7 @@ import sb3ToHtmlHandler from "./sb3tohtml.ts";
 import libopenmptHandler from "./libopenmpt.ts";
 import { midiCodecHandler, midiSynthHandler } from "./midi.ts";
 import lzhHandler from "./lzh.ts";
+import wadHandler from "./wad.ts";
 import espeakngHandler from "./espeakng.js"
 import textToShellHandler from "./texttoshell.ts";
 import batchHandler from "./batch.ts";
@@ -74,6 +75,7 @@ try { handlers.push(new libopenmptHandler()) } catch (_) { };
 try { handlers.push(new midiCodecHandler()) } catch (_) { };
 try { handlers.push(new midiSynthHandler()) } catch (_) { };
 try { handlers.push(new lzhHandler()) } catch (_) { };
+try { handlers.push(new wadHandler()) } catch (_) { };
 try { handlers.push(new pandocHandler()) } catch (_) { };
 try { handlers.push(new espeakngHandler()) } catch (_) { };
 try { handlers.push(new textToShellHandler()) } catch (_) { };
