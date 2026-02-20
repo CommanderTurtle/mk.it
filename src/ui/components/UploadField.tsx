@@ -1,11 +1,10 @@
-
 import { useRef, useState } from 'preact/hooks'
 
 import uploadImage from '../img/fa-upload-solid-full.svg';
 import logoImage from '../img/logo.svg';
 
 import DarkModeToggle from './DarkModeToggle';
-import {Icon} from "./Icon.tsx";
+import { Icon } from "./Icon.tsx";
 
 import './UploadField.css'
 import { UploadedFiles } from '..';
@@ -66,37 +65,37 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 				<div className="upload-card-header">
 					<h1>
 						<Icon
-							src={logoImage}
-							size={60}
+							src={ logoImage }
+							size={ 60 }
 							color="var(--primary)"
 							className="upload-card-logo"
 						/>
 						<span className="upload-card-title">Convert to it!</span>
 					</h1>
 					<div className="upload-card-theme-toggle">
-						<DarkModeToggle/>
+						<DarkModeToggle />
 					</div>
 				</div>
 
 				<div
-					className={(isDragging ? "active-drag" : "").concat(" upload-card-dropzone-hint")}
-					onClick={handleClick}
-					onDrop={handleDrop}
-					onDragOver={handleDragOver}
-					onDragEnter={handleDragEnter}
-					onDragLeave={handleDragLeave}
-					onChange={handleChange}
+					className={ (isDragging ? "active-drag" : "").concat(" upload-card-dropzone-hint") }
+					onClick={ handleClick }
+					onDrop={ handleDrop }
+					onDragOver={ handleDragOver }
+					onDragEnter={ handleDragEnter }
+					onDragLeave={ handleDragLeave }
+					onChange={ handleChange }
 				>
 					<input
-						ref={fileRef}
+						ref={ fileRef }
 						type="file"
 						name="uploadFile"
 						id="uploadFile"
-						onClick={(ev) => ev.stopPropagation()}
-						tabIndex={0}
+						onClick={ (ev) => ev.stopPropagation() }
+						tabIndex={ 0 }
 					/>
 					<div className="upload-card-dropzone-icon-container">
-						<Icon src={uploadImage} size={40} color="var(--primary)"/>
+						<Icon src={ uploadImage } size={ 40 } color="var(--primary)" />
 					</div>
 					<button className="upload-card-dropzone-button">Click to add your file</button>
 					<span className="upload-card-dropzone-subtext">or drag and drop here</span>
