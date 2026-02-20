@@ -324,6 +324,10 @@ export class TraversionGraph {
             this.dispatchEvent("searching", current.path);
             this.nodes[current.index].edges.forEach(edgeIndex => {
                 let edge = this.edges[edgeIndex];
+                if ( // Always start paths from the exact format that the user selected
+                    current.path.length === 1
+                    && edge.from.format.format !== from.format.format
+                ) return;
                 const indexInVisited = visited.indexOf(edge.to.index);
                 if (indexInVisited >= 0 && indexInVisited < current.visitedBorder) return;
                 const handler = this.handlers.find(h => h.name === edge.handler);
