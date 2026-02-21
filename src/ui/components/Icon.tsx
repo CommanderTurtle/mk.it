@@ -2,11 +2,11 @@ import type { CSSProperties } from "preact";
 import './Icon.css'
 
 type IconProps = {
-    src: string;
-    size?: number | string;
-    color?: string;
-    className?: string;
-    style?: CSSProperties;
+    src: string
+    size?: number | string
+    color?: string
+    className?: string
+    style?: CSSProperties
 };
 
 export function Icon({

@@ -6,8 +6,8 @@ import { selectedFiles } from 'src/main';
 import uploadImage from '../../img/fa-upload-solid-full.svg';
 import logoImage from '../../img/logo.svg';
 
-import DarkModeToggle from '../DarkModeToggle.tsx';
-import { Icon } from "../Icon.tsx";
+import DarkModeToggle from '../DarkModeToggle';
+import { Icon } from "../Icon";
 
 import './UploadField.css'
 

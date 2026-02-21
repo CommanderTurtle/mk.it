@@ -1,16 +1,16 @@
-import { Icon } from "../Icon.tsx";
+import { Icon } from "../Icon";
 import { fromJsonHandler } from "../../../handlers/json.ts";
 
 import "./SideNav.css"
 
 export type FormatCategory = {
-    category: string;
-    icon: string;
-    active?: boolean;
+    category: string
+    icon: string
+    active?: boolean
 }
 
 interface SideNavProps {
-    items: FormatCategory[];
+    items: FormatCategory[]
 }
 
 export default function SideNav({ items }: SideNavProps) {
@@ -21,14 +21,16 @@ export default function SideNav({ items }: SideNavProps) {
             </div>
             <div className="nav-list scroller">
                 <ul>
-                    { items.map((category, index) => (
-                        <li key={ index }>
-                            <a href="#" className={ category.active ? "active" : undefined }>
-                                <Icon src={ category.icon } size={ 16 } />{ " " }
-                                { category.category }
-                            </a>
-                        </li>
-                    )) }
+                    {
+                        items.map((category, index) => (
+                            <li key={ index }>
+                                <a href="#" className={ category.active ? "active" : undefined }>
+                                    <Icon src={ category.icon } size={ 16 } />{ " " }
+                                    { category.category }
+                                </a>
+                            </li>
+                        ))
+                    }
                 </ul>
             </div>
         </aside>

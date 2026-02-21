@@ -1,19 +1,18 @@
-import { Icon } from "../Icon.tsx";
+import { Icon } from "../Icon";
 
-import "./FormatCard.css"
+import "./FormatCard.css";
 
 export type FormatType = {
-    format: string;
-    fullName: string;
-    mime: string;
-    icon: string;
-    active?: boolean;
+    format: string
+    fullName: string
+    mime: string
+    icon: string
+    active?: boolean
 }
 
 type FormatCardProps =
     | { formatType: FormatType }
     | FormatType;
-
 
 export default function FormatCard(props: FormatCardProps) {
     const formatData: FormatType =
