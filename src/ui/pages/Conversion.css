@@ -1,9 +1,9 @@
 .conversion-body {
     background-color: var(--bg-page);
     color: var(--text-secondary);
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
-    width: 100%;
+
     min-width: 100%;
     flex-direction: column;
     overflow: hidden;
