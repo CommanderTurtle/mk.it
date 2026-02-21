@@ -26,7 +26,7 @@ class curaniHandler implements FormatHandler {
                 name: "Microsoft Windows CUR",
                 format: "cur",
                 extension: "cur",
-                mime: "image/vnd.microsoft.icon",
+                mime: "image/vnd.microsoft.cursor",
                 from: true,
                 to: true,
                 internal: "cur",
@@ -53,7 +53,6 @@ class curaniHandler implements FormatHandler {
         inputFormat: FileFormat,
         outputFormat: FileFormat
     ): Promise<FileData[]> {
-        return
         const outputFiles: FileData[] = [];
 
         for (const file of inputFiles) {
@@ -63,7 +62,26 @@ class curaniHandler implements FormatHandler {
                 if (inputFormat.internal === "ani") {
                     // Extract the first frame of the .ani
                     if (outputFormat.internal === "cur") {
-                        throw new Error("NEEDS TO BE IMPLEMENTED.");
+                        let header_hook = 0;
+                        let i = 0;
+
+                        // Finds where the first ICO header is
+                        while (header_hook === 0) {
+                            if (new_file_bytes[i] == 0x28 && new_file_bytes[i+1] == 0x0 && new_file_bytes[i+2] == 0x0 && new_file_bytes[i+3] == 0x0 && new_file_bytes[i+4] == 0x20 && new_file_bytes[i+5] == 0x0 && new_file_bytes[i+6] == 0x0 && new_file_bytes[i+7] == 0x0 && new_file_bytes[i+8] == 0x40) {
+                                header_hook = i;
+                            }
+                            
+                            if (i > new_file_bytes.length) {
+                                throw new Error("FUCK FUCK FUCK.");
+                            }
+                            i += 1;
+                        }
+
+                        // Gets the real start of the ICO
+                        let ico_start = i-23;
+
+                        // I don't think this magic 0x10BE number works for differently-sized .ani files....
+                        new_file_bytes = new_file_bytes.subarray(ico_start,ico_start+0x10BE);
                     }
                     else if (outputFormat.internal === "ico") {
                         throw new Error("Refuse to convert from .ani directly to .ico; must use .cur as an intermediary.");
@@ -133,10 +151,10 @@ class curaniHandler implements FormatHandler {
                 }
 
                 outputFiles.push({
-                    name: "aaaaaaa",
+                    name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
                     bytes: new_file_bytes
                 })
-                //return outputFiles;
+                return outputFiles;
             }
             catch (e) {
                 console.error(e);
