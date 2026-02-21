@@ -1,9 +1,3 @@
-import DarkModeToggle from '../components/DarkModeToggle';
-
-import './Conversion.css'
-
-import { Icon } from "../components/Icon.tsx";
-
 import logoImage from '../img/logo.svg';
 import faImageRegular from '../img/fa-image-regular-full.svg';
 import faBoxArchiveSolid from '../img/fa-box-archive-solid-full.svg';
@@ -11,11 +5,17 @@ import faFileLinesRegular from '../img/fa-file-lines-regular-full.svg';
 import faVideoSolid from '../img/fa-video-solid-full.svg';
 import faMusicSolid from '../img/fa-music-solid-full.svg';
 import faMagnifyingGlassSolid from '../img/fa-magnifying-glass-solid-full.svg';
-import FormatCard, { type FormatType } from "../components/Conversion/FormatCard.tsx";
-import SideNav, { type FormatCategory } from "../components/Conversion/SideNav.tsx";
-import Footer from "../components/Footer.tsx";
-import ConversionSettings from "../components/Conversion/ConversionSettings.tsx";
-import SelectedFileInfo from "../components/Conversion/SelectedFileInfo.tsx";
+
+import './Conversion.css'
+
+import { Icon } from "../components/Icon";
+
+import DarkModeToggle from '../components/DarkModeToggle';
+import FormatCard, { type FormatType } from "../components/Conversion/FormatCard";
+import SideNav, { type FormatCategory } from "../components/Conversion/SideNav";
+import Footer from "../components/Footer";
+import ConversionSettings from "../components/Conversion/ConversionSettings";
+import SelectedFileInfo from "../components/Conversion/SelectedFileInfo";
 
 interface ConversionPageProps {
 

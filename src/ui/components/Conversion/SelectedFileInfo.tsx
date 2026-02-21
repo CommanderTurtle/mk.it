@@ -1,13 +1,14 @@
-import { Icon } from "../Icon.tsx";
+import type { CSSProperties } from "preact";
+
+import faImageRegular from "../../img/fa-image-regular-full.svg";
+
+import { Icon } from "../Icon";
 
 import "./SelectedFileInfo.css"
 
-import faImageRegular from "../../img/fa-image-regular-full.svg";
-import type { CSSProperties } from "preact";
-
 interface SelectedFileInfoProps {
-    className?: string;
-    style?: CSSProperties;
+    className?: string
+    style?: CSSProperties
 }
 
 export default function SelectedFileInfo({ className = "", style = {} }: SelectedFileInfoProps) {
