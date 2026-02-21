@@ -27,7 +27,7 @@
             align-items: center;
             gap: 0.5rem;
 
-            .link-icon-wrapper {
+            .link-icon {
                 background-color: #d1d5db;
                 cursor: pointer;
                 transition: color 0.15s ease;
