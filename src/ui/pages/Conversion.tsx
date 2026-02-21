@@ -17,7 +17,7 @@ import faChevronDownSolid from '../img/fa-chevron-down-solid-full.svg';
 import faSlidersSolid from '../img/fa-sliders-solid-full.svg';
 import faLinkSolid from '../img/fa-link-solid-full.svg';
 import { useState } from "preact/hooks";
-
+import FormatCard, {type FormatType} from "../components/FormatCard.tsx";
 import SideNav, {type FormatCategory} from "../components/SideNav.tsx";
 import Footer from "../components/Footer.tsx";
 
@@ -37,16 +37,16 @@ export default function Conversion(props: ConversionPageProps | undefined) {
         { category: "E-Book", icon: faFileLinesRegular },
     ]
 
-    const formatCards = [
-        { badge: "PNG", title: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true },
-        { badge: "JPG", title: "JPEG Image", mime: "image/jpeg", icon: faImageRegular },
-        { badge: "WEBP", title: "WebP Image", mime: "image/webp", icon: faImageRegular },
-        { badge: "GIF", title: "CompuServe GIF", mime: "image/gif", icon: faImageRegular },
-        { badge: "TIFF", title: "Tagged Image File", mime: "image/tiff", icon: faImageRegular },
-        { badge: "BMP", title: "Bitmap", mime: "image/bmp", icon: faImageRegular },
-        { badge: "SVG", title: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular },
-        { badge: "HEIC", title: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
-        { badge: "RAW", title: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
+    const formatCards: FormatType[] = [
+        { format: "PNG", fullName: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true },
+        { format: "JPG", fullName: "JPEG Image", mime: "image/jpeg", icon: faImageRegular },
+        { format: "WEBP", fullName: "WebP Image", mime: "image/webp", icon: faImageRegular },
+        { format: "GIF", fullName: "CompuServe GIF", mime: "image/gif", icon: faImageRegular },
+        { format: "TIFF", fullName: "Tagged Image File", mime: "image/tiff", icon: faImageRegular },
+        { format: "BMP", fullName: "Bitmap", mime: "image/bmp", icon: faImageRegular },
+        { format: "SVG", fullName: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular },
+        { format: "HEIC", fullName: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
+        { format: "RAW", fullName: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
     ];
 
     const toggleSettings = () => {
@@ -132,52 +132,14 @@ export default function Conversion(props: ConversionPageProps | undefined) {
 
                             <div className="format-grid">
                                 { formatCards.map((card, index) => (
-                                    <div
-                                        key={ index }
-                                        className={
-                                            card.active ? "format-card active" : "format-card"
-                                        }
-                                    >
-                                        {/* Mobile Card Layout */ }
-                                        <div className="card-mobile-header mobile-only">
-                                            <div className="card-title-group">
-                                                <span className={ card.active ? "badge" : "badge gray" }>
-                                                    { card.badge }
-                                                </span>
-                                                <h3>{ card.title }</h3>
-                                            </div>
-                                            <div className="card-icon-sm">
-                                                <Icon
-                                                    src={ card.icon }
-                                                    size={ 16 }
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Desktop Card Layout */ }
-                                        <div className="card-desktop-content desktop-only">
-                                            <div className="card-top">
-                                                <div className="card-icon-lg">
-                                                    <Icon
-                                                        src={ card.icon }
-                                                        size={ 32 }
-                                                    />
-                                                </div>
-                                                <span className={ card.active ? "badge" : "badge gray" }>
-                                                    { card.badge }
-                                                </span>
-                                            </div>
-                                            <h3>{ card.title }</h3>
-                                            <p className="mime-type">({ card.mime })</p>
-                                        </div>
-                                    </div>
+                                    <FormatCard formatType={card}/>
                                 )) }
                             </div>
                         </div>
                     </section>
                 </div>
 
-                {/* Right Settings Sidebar */ }
+                {/* Right Settings Sidebar / Bottom Settings Accordion */ }
                 <aside className={ `settings-sidebar ${isSettingsExpanded ? 'is-expanded' : ''}` }>
                     <div className="mobile-settings-header mobile-only" onClick={ toggleSettings }>
                         <h3>
