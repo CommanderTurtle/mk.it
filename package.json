@@ -6,7 +6,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "src/main-electron.cjs",
+  "main": "src/electron.cjs",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -29,7 +29,7 @@
     },
     "files": [
       "dist/**/*",
-      "src/main-electron.cjs"
+      "src/electron.cjs"
     ],
     "win": {
       "target": "nsis"
