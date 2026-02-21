@@ -51,7 +51,6 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                         src={logoImage}
                         size={40}
                         color="var(--primary)"
-                        className="upload-card-logo"
                     />
                     <h1 className="conversion-title">Convert to it!</h1>
                 </div>
