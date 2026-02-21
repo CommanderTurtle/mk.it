@@ -1,9 +1,8 @@
-
 import DarkModeToggle from '../components/DarkModeToggle';
 
 import './Conversion.css'
 
-import { Icon } from "../components/Icon.tsx";
+import {Icon} from "../components/Icon.tsx";
 
 import logoImage from '../img/logo.svg';
 import faImageRegular from '../img/fa-image-regular-full.svg';
@@ -12,11 +11,11 @@ import faFileLinesRegular from '../img/fa-file-lines-regular-full.svg';
 import faVideoSolid from '../img/fa-video-solid-full.svg';
 import faMusicSolid from '../img/fa-music-solid-full.svg';
 import faMagnifyingGlassSolid from '../img/fa-magnifying-glass-solid-full.svg';
-import { useState } from "preact/hooks";
 import FormatCard, {type FormatType} from "../components/FormatCard.tsx";
 import SideNav, {type FormatCategory} from "../components/SideNav.tsx";
 import Footer from "../components/Footer.tsx";
 import ConversionSettings from "../components/ConversionSettings.tsx";
+import SelectedFileInfo from "../components/SelectedFileInfo.tsx";
 
 interface ConversionPageProps {
 
@@ -49,8 +48,8 @@ export default function Conversion(props: ConversionPageProps | undefined) {
             <header className="conversion-header">
                 <div className="header-left">
                     <Icon
-                        src={ logoImage }
-                        size={ 40 }
+                        src={logoImage}
+                        size={40}
                         color="var(--primary)"
                         className="upload-card-logo"
                     />
@@ -58,54 +57,27 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                 </div>
 
                 <div className="header-right">
-                    {/* Desktop File Info */ }
-                    <div className="file-info-badge desktop-only">
-                        <Icon
-                            src={ faImageRegular }
-                            size={ 16 }
-                            color="var(--text-secondary)"
-                        />
-                        <span className="file-name">some_image.svg</span>
-                        <select className="format-select">
-                            <option value="svg">SVG</option>
-                            <option value="png">PNG</option>
-                            <option value="webp">WEBP</option>
-                            <option value="jpeg">JPEG</option>
-                        </select>
-                        <span className="file-size">2.52 KB</span>
-                    </div>
-
-                    <DarkModeToggle />
+                    {/* Desktop File Info */}
+                    <SelectedFileInfo className="desktop-only"/>
+                    <DarkModeToggle/>
                 </div>
             </header>
 
-            {/* Mobile File Info */ }
-            <div className="mobile-file-bar mobile-only">
-                <div className="file-info-badge">
-                    <Icon src={ faImageRegular } size={ 16 } color="var(--text-secondary)" />
-                    <span className="file-name">some_image.svg</span>
-                    <select className="format-select">
-                        <option value="svg">SVG</option>
-                        <option value="png">PNG</option>
-                        <option value="webp">WEBP</option>
-                        <option value="jpeg">JPEG</option>
-                    </select>
-                    <span className="file-size">2.52 KB</span>
-                </div>
-            </div>
+            {/* Mobile File Info */}
+            <SelectedFileInfo className="mobile-only"/>
 
             <main className="conversion-main">
                 <div className="content-wrapper">
                     <SideNav items={sidebarItems}/>
 
-                    {/* Center Browser */ }
+                    {/* Center Browser */}
                     <section className="format-browser">
                         <div className="search-container">
                             <div className="search-input-wrapper">
                                 <Icon
-                                    src={ faMagnifyingGlassSolid }
+                                    src={faMagnifyingGlassSolid}
                                     className="icon"
-                                    size={ 16 }
+                                    size={16}
                                     color="var(--text-secondary)"
                                 />
                                 <input
@@ -118,19 +90,19 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                         <div className="format-list-container scroller">
                             <div className="list-header desktop-only">
                                 <h2>Common Formats</h2>
-                                <span>Showing { formatCards.length } formats</span>
+                                <span>Showing {formatCards.length} formats</span>
                             </div>
 
                             <div className="format-grid">
-                                { formatCards.map((card, index) => (
+                                {formatCards.map((card, index) => (
                                     <FormatCard formatType={card}/>
-                                )) }
+                                ))}
                             </div>
                         </div>
                     </section>
                 </div>
 
-                {/* Right Settings Sidebar / Bottom Settings Accordion */ }
+                {/* Right Settings Sidebar / Bottom Settings Accordion */}
                 <aside className="settings-sidebar">
                     <ConversionSettings/>
                     <div class="spacer"></div>
