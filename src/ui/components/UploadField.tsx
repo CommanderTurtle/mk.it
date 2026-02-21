@@ -7,7 +7,6 @@ import DarkModeToggle from './DarkModeToggle';
 import { Icon } from "./Icon.tsx";
 
 import './UploadField.css'
-import { UploadedFiles } from '..';
 
 
 interface UploadFieldComponentProps {
@@ -54,8 +53,6 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 			!files
 			|| files.length === 0
 		) return
-
-		UploadedFiles.value.push(...files);
 	}
 
 	return (
