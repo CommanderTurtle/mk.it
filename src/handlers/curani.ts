@@ -53,31 +53,32 @@ class curaniHandler implements FormatHandler {
         inputFormat: FileFormat,
         outputFormat: FileFormat
     ): Promise<FileData[]> {
+        return
         const outputFiles: FileData[] = [];
 
         for (const file of inputFiles) {
             try {
-                new_file_bytes = file.bytes;
+                let new_file_bytes = new Uint8Array(file.bytes);
 
-                if (inputFormat.internal == "ani") {
+                if (inputFormat.internal === "ani") {
                     // Extract the first frame of the .ani
-                    if (outputFormat.internal == "cur") {
+                    if (outputFormat.internal === "cur") {
                         throw new Error("NEEDS TO BE IMPLEMENTED.");
                     }
-                    else if (outputFormat.internal == "ico") {
+                    else if (outputFormat.internal === "ico") {
                         throw new Error("Refuse to convert from .ani directly to .ico; must use .cur as an intermediary.");
                     }
                     else {
                         throw new Error("Invalid output format.");
                     }
                 }
-                else if (inputFormat.internal == "cur") {
+                else if (inputFormat.internal === "cur") {
                     // Turn a static cur into a single-frame .ani
-                    if (outputFormat.internal == "ani") {
+                    if (outputFormat.internal === "ani") {
                         throw new Error("NEEDS TO BE IMPLEMENTED.");
                     }
                     // Convert a .cur into a .ico by removing hotspot and changing format header
-                    else if (outputFormat.internal == "ico") {
+                    else if (outputFormat.internal === "ico") {
                         // 1 for ICO, 2 for CUR
                         new_file_bytes[2] = 1;
 
@@ -99,12 +100,12 @@ class curaniHandler implements FormatHandler {
                         throw new Error("Invalid output format.");
                     }
                 }
-                else if (inputFormat.internal == "ico") {
-                    if (outputFormat.internal == "ani") {
+                else if (inputFormat.internal === "ico") {
+                    if (outputFormat.internal === "ani") {
                         throw new Error("Refuse to convert from .ico directly to .ani; must use .cur as an intermediary.");
                     }
                     // Convert a .cur into a .ico by ADDING hotspot and changing format header
-                    else if (outputFormat.internal == "cur") {
+                    else if (outputFormat.internal === "cur") {
                         // 1 for ICO, 2 for CUR
                         new_file_bytes[2] = 2;
 
@@ -135,7 +136,7 @@ class curaniHandler implements FormatHandler {
                     name: "aaaaaaa",
                     bytes: new_file_bytes
                 })
-                return outputFiles;
+                //return outputFiles;
             }
             catch (e) {
                 console.error(e);
