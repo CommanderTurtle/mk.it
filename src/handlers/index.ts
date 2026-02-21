@@ -1,12 +1,12 @@
 import type { FormatHandler } from "../FormatHandler.ts";
 
-import curaniHandler from "./curani.ts";
 import canvasToBlobHandler from "./canvasToBlob.ts";
 import meydaHandler from "./meyda.ts";
 import htmlEmbedHandler from "./htmlEmbed.ts";
 import FFmpegHandler from "./FFmpeg.ts";
 import pdftoimgHandler from "./pdftoimg.ts";
 import ImageMagickHandler from "./ImageMagick.ts";
+import curaniHandler from "./curani.ts";
 import svgTraceHandler from "./svgTrace.ts";
 import { renameZipHandler, renameTxtHandler } from "./rename.ts";
 import envelopeHandler from "./envelope.ts";
@@ -45,13 +45,13 @@ import asepriteHandler from "./aseprite.ts";
 
 const handlers: FormatHandler[] = [];
 try { handlers.push(new svgTraceHandler()) } catch (_) { };
-try { handlers.push(new curaniHandler()) } catch (_) { };
 try { handlers.push(new canvasToBlobHandler()) } catch (_) { };
 try { handlers.push(new meydaHandler()) } catch (_) { };
 try { handlers.push(new htmlEmbedHandler()) } catch (_) { };
 try { handlers.push(new FFmpegHandler()) } catch (_) { };
 try { handlers.push(new pdftoimgHandler()) } catch (_) { };
 try { handlers.push(new ImageMagickHandler()) } catch (_) { };
+try { handlers.push(new curaniHandler()) } catch (_) { };
 try { handlers.push(renameZipHandler) } catch (_) { };
 try { handlers.push(renameTxtHandler) } catch (_) { };
 try { handlers.push(new envelopeHandler()) } catch (_) { };
