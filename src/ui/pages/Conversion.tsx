@@ -104,7 +104,7 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                 {/* Right Settings Sidebar / Bottom Settings Accordion */}
                 <aside className="settings-sidebar">
                     <ConversionSettings/>
-                    <div class="spacer"></div>
+                    <div className="spacer"></div>
                     <div className="action-footer">
                         <button className="btn-convert">Convert!</button>
                     </div>
