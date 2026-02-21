@@ -90,7 +90,7 @@ class curaniHandler implements FormatHandler {
                     while (true) {
                         if (new_file_bytes[i] == 0x69 && new_file_bytes[i+1] == 0x63 && new_file_bytes[i+2] == 0x6F && new_file_bytes[i+3] == 0x6E && new_file_bytes[i+4] == 0xBE) {
                             header_hook_2 = i;
-                            //ico_distance = header_hook_2 - header_hook - 8 - 1;
+                            ico_distance = header_hook_2 - header_hook - 8;
                             break;
                         }
                         
