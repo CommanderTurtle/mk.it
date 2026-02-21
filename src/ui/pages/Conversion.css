@@ -63,41 +63,6 @@
     }
 }
 
-.file-info-badge {
-    background: var(--bg-section);
-    border: 1px solid var(--border-light);
-    padding: 0.4rem 0.75rem;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-
-    .file-name {
-        font-weight: 500;
-        color: var(--text-primary);
-        max-width: 150px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .file-size {
-        color: var(--text-muted);
-        padding-left: 0.5rem;
-        border-left: 1px solid var(--border-primary);
-    }
-
-    .format-select {
-        background: var(--bg-input);
-        color: var(--text-tertiary);
-        border: 1px solid var(--border-primary);
-        border-radius: 4px;
-        font-size: 0.75rem;
-        padding: 2px 4px;
-    }
-}
-
 .conversion-main {
     display: flex;
     flex: 1;
@@ -263,30 +228,5 @@
 .mobile-only {
     @media (min-width: 1025px) {
         display: none !important;
-    }
-}
-
-.mobile-file-bar {
-    padding: 1rem;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-light);
-}
-
-.mobile-settings-header {
-    user-select: none;
-    cursor: pointer;
-    border-radius: 8px;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    h3 {
-        font-size: 0.9rem;
-    }
-
-    &:hover {
-        background: var(--bg-page);
-        color: var(--primary);
     }
 }
