@@ -403,8 +403,8 @@ window.tryConvertByTraversing = async function (
   return null;
 }
 
-function downloadFile (bytes: Uint8Array, name: string, mime: string) {
-  const blob = new Blob([bytes as BlobPart], { type: mime });
+function downloadFile (bytes: Uint8Array, name: string) {
+  const blob = new Blob([bytes as BlobPart], { type: "application/octet-stream" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = name;
@@ -441,7 +441,7 @@ ui.convertButton.onclick = async function () {
         inputFormat.mime === outputFormat.mime
         && inputFormat.format === outputFormat.format
       ) {
-        downloadFile(inputBytes, inputFile.name, inputFormat.mime);
+        downloadFile(inputBytes, inputFile.name);
         continue;
       }
       inputFileData.push({ name: inputFile.name, bytes: inputBytes });
@@ -459,7 +459,7 @@ ui.convertButton.onclick = async function () {
     }
 
     for (const file of output.files) {
-      downloadFile(file.bytes, file.name, outputFormat.mime);
+      downloadFile(file.bytes, file.name);
     }
 
     window.showPopup(
