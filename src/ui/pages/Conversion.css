@@ -214,16 +214,16 @@
             gap: 0.5rem;
 
             .link-icon-wrapper {
-                color: #d1d5db;
+                background-color: #d1d5db;
                 cursor: pointer;
                 transition: color 0.15s ease;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-top: 2px; /* Minor adjustment to center with the input bulk */
+                margin-top: 2px;
 
                 &:hover {
-                    color: var(--primary);
+                    background-color: var(--primary);
                 }
             }
         }
