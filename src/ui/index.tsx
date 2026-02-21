@@ -12,7 +12,7 @@ export const enum Pages {
 	Conversion = "conversionPage"
 }
 
-export const CurrentPage = signal<Pages>(Pages.Upload);
+export const CurrentPage = signal<Pages>(Pages.Conversion);
 
 function App() {
 	return (
