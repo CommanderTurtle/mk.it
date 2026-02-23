@@ -21,28 +21,28 @@ interface ConversionPageProps {
 
 }
 
+const sidebarItems: FormatCategory[] = [
+    { category: "Archive", icon: faBoxArchiveSolid },
+    { category: "Image", icon: faImageRegular, active: true },
+    { category: "Document", icon: faFileLinesRegular },
+    { category: "Video", icon: faVideoSolid },
+    { category: "Audio", icon: faMusicSolid },
+    { category: "E-Book", icon: faFileLinesRegular },
+]
+
+const formatCards: FormatType[] = [
+    { format: "PNG", fullName: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true },
+    { format: "JPG", fullName: "JPEG Image", mime: "image/jpeg", icon: faImageRegular },
+    { format: "WEBP", fullName: "WebP Image", mime: "image/webp", icon: faImageRegular },
+    { format: "GIF", fullName: "CompuServe GIF", mime: "image/gif", icon: faImageRegular },
+    { format: "TIFF", fullName: "Tagged Image File", mime: "image/tiff", icon: faImageRegular },
+    { format: "BMP", fullName: "Bitmap", mime: "image/bmp", icon: faImageRegular },
+    { format: "SVG", fullName: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular },
+    { format: "HEIC", fullName: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
+    { format: "RAW", fullName: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
+];
+
 export default function Conversion(props: ConversionPageProps | undefined) {
-    const sidebarItems: FormatCategory[] = [
-        { category: "Archive", icon: faBoxArchiveSolid },
-        { category: "Image", icon: faImageRegular, active: true },
-        { category: "Document", icon: faFileLinesRegular },
-        { category: "Video", icon: faVideoSolid },
-        { category: "Audio", icon: faMusicSolid },
-        { category: "E-Book", icon: faFileLinesRegular },
-    ]
-
-    const formatCards: FormatType[] = [
-        { format: "PNG", fullName: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true },
-        { format: "JPG", fullName: "JPEG Image", mime: "image/jpeg", icon: faImageRegular },
-        { format: "WEBP", fullName: "WebP Image", mime: "image/webp", icon: faImageRegular },
-        { format: "GIF", fullName: "CompuServe GIF", mime: "image/gif", icon: faImageRegular },
-        { format: "TIFF", fullName: "Tagged Image File", mime: "image/tiff", icon: faImageRegular },
-        { format: "BMP", fullName: "Bitmap", mime: "image/bmp", icon: faImageRegular },
-        { format: "SVG", fullName: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular },
-        { format: "HEIC", fullName: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
-        { format: "RAW", fullName: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
-    ];
-
     return (
         <div className="conversion-body">
             <header className="conversion-header">
