@@ -1,0 +1,22 @@
+#popup {
+	padding: 1em;
+	text-align: center;
+
+	background-color: var(--bg-card-alt);
+	color: var(--text-on-primary);
+
+	border: 0;
+	border-radius: 8px;
+
+	/* position: absolute has unbelievable quirks */
+	margin: auto;
+
+	h1 {
+		margin-block-end: .5em;
+	}
+
+	&::backdrop {
+		backdrop-filter: brightness(0.7) blur(4px);
+		background: rgba(0 0 0 / 0.4);
+	}
+}
