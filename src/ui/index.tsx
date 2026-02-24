@@ -4,6 +4,8 @@ import { signal } from "@preact/signals";
 import UploadPage from "./pages/Upload";
 import ConversionPage from "./pages/Conversion";
 import { initTheme } from "./theme";
+import type { PopupDataContainer } from "./PopupStore";
+import Popup from "./components/Popup";
 
 console.log("Rendering UI");
 
@@ -13,12 +15,18 @@ export const enum Pages {
 }
 
 export const CurrentPage = signal<Pages>(Pages.Upload);
+export let PopupData = signal<PopupDataContainer>({
+	title: "Loading tools...",
+	text: "Please wait while the app loads conversion tools.",
+	dismissible: false
+})
 
 function App() {
 	return (
 		<>
 			{ CurrentPage.value === Pages.Conversion && <ConversionPage /> }
 			{ CurrentPage.value === Pages.Upload && <UploadPage /> }
+			<Popup />
 		</>
 	)
 }
