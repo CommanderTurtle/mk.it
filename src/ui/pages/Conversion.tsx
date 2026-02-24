@@ -16,6 +16,7 @@ import SideNav, { type FormatCategory } from "../components/Conversion/SideNav";
 import Footer from "../components/Footer";
 import ConversionSettings from "../components/Conversion/ConversionSettings";
 import SelectedFileInfo from "../components/Conversion/SelectedFileInfo";
+import { AllOptions } from 'src/main.new';
 
 interface ConversionPageProps {
 
@@ -41,6 +42,20 @@ const formatCards: FormatType[] = [
     { format: "HEIC", fullName: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
     { format: "RAW", fullName: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
 ];
+
+/**
+ * Maps all supported formats into UI format cards
+ */
+function getConversionFormats(): FormatType[] {
+    if (AllOptions) {
+        return AllOptions.map((oldFormat) => ({
+            format: oldFormat.format.format,
+            fullName: oldFormat.format.name,
+            icon: faImageRegular, // placeholder
+            mime: oldFormat.format.mime
+        }))
+    } else throw new Error("Can't build format list!");
+}
 
 export default function Conversion(props: ConversionPageProps | undefined) {
     return (
@@ -93,9 +108,11 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                             </div>
 
                             <div className="format-grid">
-                                { formatCards.map((card, index) => (
-                                    <FormatCard formatType={ card } />
-                                )) }
+                                {
+                                    getConversionFormats().map((card, index) => (
+                                        <FormatCard formatType={ card } />
+                                    ))
+                                }
                             </div>
                         </div>
                     </section>
