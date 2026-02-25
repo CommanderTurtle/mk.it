@@ -3,7 +3,7 @@ import normalizeMimeType from "./normalizeMimeType.js";
 import handlers from "./handlers";
 import { TraversionGraph } from "./TraversionGraph.js";
 import { PopupData } from "./ui/index.js";
-import { openPopup } from "./ui/PopupStore.js";
+import { closePopup, openPopup } from "./ui/PopupStore.js";
 
 /**
  * Files currently selected for conversion
@@ -74,14 +74,11 @@ async function buildOptionList() {
 
 		for (const format of supportedFormats) {
 			if (!format.mime) continue;
-
 			AllOptions.push({ format, handler });
-
-			if (SimpleMode) {
-
-			}
 		}
 	}
+
+	closePopup();
 }
 
 async function attemptConvertPath(files: FileData[], path: ConvertPathNode[]) {
@@ -131,7 +128,11 @@ async function attemptConvertPath(files: FileData[], path: ConvertPathNode[]) {
 	}
 }
 
-window.tryConvertByTraversing = async function (files: FileData[], from: ConvertPathNode, to: ConvertPathNode) {
+window.tryConvertByTraversing = async function (
+	files: FileData[],
+	from: ConvertPathNode,
+	to: ConvertPathNode
+) {
 	for await (const path of window.traversionGraph.searchPath(from, to, SimpleMode)) {
 		// Use exact output format if the target handler supports it
 		if (path.at(-1)?.handler === to.handler) {
@@ -141,6 +142,14 @@ window.tryConvertByTraversing = async function (files: FileData[], from: Convert
 		if (attempt) return attempt;
 	}
 	return null;
+}
+
+function downloadFile(bytes: Uint8Array, name: string, mime: string) {
+	const blob = new Blob([bytes as BlobPart], { type: mime });
+	const link = document.createElement("a");
+	link.href = URL.createObjectURL(blob);
+	link.download = name;
+	link.click();
 }
 
 try {
