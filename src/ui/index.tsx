@@ -4,7 +4,7 @@ import { signal } from "@preact/signals";
 import UploadPage from "./pages/Upload";
 import ConversionPage from "./pages/Conversion";
 import { initTheme } from "./theme";
-import type { PopupDataContainer } from "./PopupStore";
+import { openPopup, type PopupDataContainer } from "./PopupStore";
 import Popup from "./components/Popup";
 
 console.log("Rendering UI");
@@ -40,5 +40,7 @@ window.changePage = (page: Pages) => {
 }
 
 render(<App />, document.body);
+
+openPopup();
 
 initTheme();

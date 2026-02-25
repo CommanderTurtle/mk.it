@@ -1,3 +1,4 @@
+import type { FormatTypeCard } from "src/ui/pages/Conversion";
 import { Icon } from "../Icon";
 
 import "./FormatCard.css";
@@ -10,16 +11,19 @@ export type FormatType = {
     active?: boolean
 }
 
-type FormatCardProps =
-    | { formatType: FormatType }
-    | FormatType;
+interface FormatCardProps {
+    formatType: FormatType
+    id: string
+    selected: boolean
+    onSelect: (id: string) => void
+}
 
 export default function FormatCard(props: FormatCardProps) {
     const formatData: FormatType =
         "formatType" in props ? props.formatType : props;
 
     return (
-        <div className={ formatData.active ? "format-card active" : "format-card" }>
+        <div className={ `format-card ${props.selected ? "active" : ""}` } onClick={ () => props.onSelect(props.id) }>
             {/* Mobile Card Layout */ }
             <div className="card-mobile-header mobile-only">
                 <div className="card-title-group">

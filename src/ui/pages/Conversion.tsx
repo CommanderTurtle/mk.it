@@ -18,6 +18,9 @@ import ConversionSettings from "../components/Conversion/ConversionSettings";
 import SelectedFileInfo from "../components/Conversion/SelectedFileInfo";
 import { AllOptions } from 'src/main.new';
 
+import { useDebouncedCallback } from 'use-debounce';
+import { useState } from 'preact/hooks';
+
 interface ConversionPageProps {
 
 }
@@ -29,35 +32,65 @@ const sidebarItems: FormatCategory[] = [
     { category: "Video", icon: faVideoSolid },
     { category: "Audio", icon: faMusicSolid },
     { category: "E-Book", icon: faFileLinesRegular },
-]
-
-const formatCards: FormatType[] = [
-    { format: "PNG", fullName: "Portable Network Graphics", mime: "image/png", icon: faImageRegular, active: true },
-    { format: "JPG", fullName: "JPEG Image", mime: "image/jpeg", icon: faImageRegular },
-    { format: "WEBP", fullName: "WebP Image", mime: "image/webp", icon: faImageRegular },
-    { format: "GIF", fullName: "CompuServe GIF", mime: "image/gif", icon: faImageRegular },
-    { format: "TIFF", fullName: "Tagged Image File", mime: "image/tiff", icon: faImageRegular },
-    { format: "BMP", fullName: "Bitmap", mime: "image/bmp", icon: faImageRegular },
-    { format: "SVG", fullName: "Scalable Vector Graphics", mime: "image/svg+xml", icon: faImageRegular },
-    { format: "HEIC", fullName: "High Efficiency Image File", mime: "image/heic", icon: faImageRegular },
-    { format: "RAW", fullName: "Raw Image Data", mime: "image/x-raw", icon: faImageRegular },
 ];
 
-/**
- * Maps all supported formats into UI format cards
- */
-function getConversionFormats(): FormatType[] {
-    if (AllOptions) {
-        return AllOptions.map((oldFormat) => ({
-            format: oldFormat.format.format,
-            fullName: oldFormat.format.name,
-            icon: faImageRegular, // placeholder
-            mime: oldFormat.format.mime
-        }))
-    } else throw new Error("Can't build format list!");
-}
+export type FormatTypeCard = FormatType & { id: string }
+type SearchProps = Set<keyof FormatType>
 
 export default function Conversion(props: ConversionPageProps | undefined) {
+    const AvailableConversionFormats: FormatTypeCard[] = getConversionFormats();
+    const [formatCards, setFormatCards] = useState(AvailableConversionFormats);
+    const [selectedConversionFormat, setSelectedConversionFormat] = useState<string | null>(null);
+
+    /**
+     * Maps all supported formats into UI format cards
+     */
+    function getConversionFormats(): FormatTypeCard[] {
+        if (AllOptions) {
+            return AllOptions.map((oldFormat) => ({
+                format: oldFormat.format.format,
+                fullName: oldFormat.format.name,
+                icon: faImageRegular, // placeholder
+                mime: oldFormat.format.mime,
+                id: `${oldFormat.format.name}-${oldFormat.format.mime}-${oldFormat.format.format}`
+            }))
+        } else throw new Error("Can't build format list! Failed to get global format list");
+    }
+
+    /**
+     * Filter available cards according to the search term and where to search for it
+     * @param term The term to search
+     * @param searchWhere Where to search
+     */
+    function filterFormats(term: string, searchWhere: SearchProps): FormatTypeCard[] {
+        let filteredFormats: FormatTypeCard[] = [];
+        AvailableConversionFormats.forEach((format) => {
+            searchWhere.forEach((prop) => {
+                if ((format[prop] as string).toLowerCase().includes(term)) filteredFormats.push(format);
+            })
+        })
+        return filteredFormats;
+    }
+
+    const debounceWaitMs = 250;
+    /**
+     * Search within these properties of the format cards
+     */
+    const searchProps: SearchProps = new Set(['fullName', 'format', 'mime']);
+    /**
+     * Debounce handler for the search.
+     * If the input is empty, return all formats
+     */
+    const handleDebounceSearch = useDebouncedCallback((searchTerm) => {
+        if (searchTerm === "") {
+            setFormatCards(AvailableConversionFormats)
+        } else {
+            const searchResults = filterFormats(searchTerm, searchProps);
+            setFormatCards(searchResults)
+            console.debug("Debounced", searchResults)
+        };
+    }, debounceWaitMs)
+
     return (
         <div className="conversion-body">
             <header className="conversion-header">
@@ -82,7 +115,7 @@ export default function Conversion(props: ConversionPageProps | undefined) {
 
             <main className="conversion-main">
                 <div className="content-wrapper">
-                    <SideNav items={ sidebarItems } />
+                    {/* <SideNav items={ sidebarItems } /> */ }
 
                     {/* Center Browser */ }
                     <section className="format-browser">
@@ -97,20 +130,27 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                                 <input
                                     type="text"
                                     placeholder="Search for any format (e.g. PNG, MP4, WAV)..."
+                                    onInput={ (ev) => handleDebounceSearch(ev.currentTarget.value) }
                                 />
                             </div>
                         </div>
 
                         <div className="format-list-container scroller">
                             <div className="list-header desktop-only">
-                                <h2>Common Formats</h2>
+                                {/* <h2>Common Formats</h2> */}
                                 <span>Showing { formatCards.length } formats</span>
                             </div>
 
                             <div className="format-grid">
                                 {
-                                    getConversionFormats().map((card, index) => (
-                                        <FormatCard formatType={ card } />
+                                    formatCards.map((card, i) => (
+                                        <FormatCard
+                                            selected={ card.id.concat(`-${i}`) === selectedConversionFormat }
+                                            onSelect={ setSelectedConversionFormat }
+                                            formatType={ card }
+                                            key={ card.id.concat(`-${i}`) }
+                                            id={ card.id.concat(`-${i}`) }
+                                        />
                                     ))
                                 }
                             </div>
