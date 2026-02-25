@@ -1,7 +1,7 @@
 import { useRef, useState } from 'preact/hooks';
 
 import { CurrentPage, Pages } from '../../index';
-import { selectedFiles } from 'src/main';
+import { SelectedFiles, setSimpleMode, SimpleMode } from 'src/main.new';
 
 import uploadImage from '../../img/fa-upload-solid-full.svg';
 import logoImage from '../../img/logo.svg';
@@ -10,7 +10,6 @@ import DarkModeToggle from '../DarkModeToggle';
 import { Icon } from "../Icon";
 
 import './UploadField.css'
-
 
 interface UploadFieldComponentProps {
 	disabled?: boolean
@@ -57,8 +56,23 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 			|| files.length === 0
 		) return
 
-		selectedFiles.push(...files);
+
+		SelectedFiles.push(...files);
 		CurrentPage.value = Pages.Conversion;
+	}
+
+	const enum AdvancedModeTexts {
+		SIMPLE = "Simple mode",
+		ADVANCED = "Advanced mode"
+	}
+	const [advancedModeText, setAdvancedModeText] = useState<AdvancedModeTexts>(AdvancedModeTexts.ADVANCED);
+
+	const onAdvancedModeClick = (ev: MouseEvent) => {
+		setSimpleMode(!SimpleMode)
+		setAdvancedModeText(SimpleMode ? AdvancedModeTexts.ADVANCED : AdvancedModeTexts.SIMPLE);
+		if (SimpleMode) {
+			document.body.style.setProperty("--primary", "#1C77FF");
+		} else document.body.style.setProperty("--primary", "#FF6F1C");
 	}
 
 	return (
@@ -105,7 +119,12 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 				</div>
 
 				<div className="upload-card-buttons">
-					<button className="button">Advanced mode</button>
+					<button
+						className="button"
+						onClick={ onAdvancedModeClick }
+					>
+						{ advancedModeText }
+					</button>
 					<button className="button">Help</button>
 				</div>
 
