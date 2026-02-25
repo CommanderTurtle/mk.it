@@ -27,7 +27,6 @@ export default function Popup() {
 	// Listen to soft-dismiss events
 	useEffect(() => {
 		window.addEventListener("keydown", (ev: KeyboardEvent) => {
-			ev.preventDefault();
 			if (
 				ev.key == "Escape"
 				&& (typeof PopupData.value.dismissible === "undefined" || PopupData.value.dismissible)
