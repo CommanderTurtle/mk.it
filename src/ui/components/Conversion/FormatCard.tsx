@@ -9,7 +9,6 @@ export type FormatType = {
     fullName: string
     mime: string
     icon: string
-    handler: string
     active?: boolean
 }
 
