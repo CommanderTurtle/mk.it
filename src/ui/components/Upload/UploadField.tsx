@@ -71,8 +71,8 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 		setSimpleMode(!SimpleMode)
 		setAdvancedModeText(SimpleMode ? AdvancedModeTexts.ADVANCED : AdvancedModeTexts.SIMPLE);
 		if (SimpleMode) {
-			document.body.style.setProperty("--primary", "#1C77FF");
-		} else document.body.style.setProperty("--primary", "#FF6F1C");
+			document.documentElement.style.setProperty("--primary", "#1C77FF");
+		} else document.documentElement.style.setProperty("--primary", "#FF6F1C");
 	}
 
 	return (
