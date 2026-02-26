@@ -18,6 +18,7 @@ interface UploadFieldComponentProps {
 
 export default function UploadField({ disabled = false }: UploadFieldComponentProps) {
 	const [isDragging, setIsDragging] = useState(false);
+	const [isDisabled, setIsDisabled] = useState(disabled);
 	const dragCounter = useRef<number>(0);
 
 	const fileRef = useRef<HTMLInputElement>(null);
@@ -50,6 +51,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 	}
 
 	const handleChange = (_ev: preact.TargetedEvent<HTMLInputElement, Event>) => {
+		setIsDisabled(true);
 		const files = fileRef.current?.files;
 		// check if files uploaded were empty
 		if (
@@ -102,7 +104,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 	}
 
 	return (
-		<div class="upload-field">
+		<div class={ `upload-field ${isDisabled ? 'upload-field-disabled' : null}` }>
 			<div className="upload-card">
 
 				<div className="upload-card-header">
