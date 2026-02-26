@@ -89,7 +89,7 @@ export default function Conversion(props: ConversionPageProps | undefined) {
             const searchResults = filterFormats(searchTerm, searchProps);
             setFormatCards(searchResults)
             console.debug("Debounced", searchResults)
-        };
+        }
     }, debounceWaitMs)
 
     return (
