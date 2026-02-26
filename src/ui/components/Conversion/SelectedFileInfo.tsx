@@ -5,6 +5,7 @@ import faImageRegular from "../../img/fa-image-regular-full.svg";
 import { Icon } from "../Icon";
 
 import "./SelectedFileInfo.css"
+import { SelectedFiles } from "src/main.new";
 
 interface SelectedFileInfoProps {
     className?: string
@@ -19,14 +20,7 @@ export default function SelectedFileInfo({ className = "", style = {} }: Selecte
                 size={ 16 }
                 color="var(--text-secondary)"
             />
-            <span className="file-name">some_image.svg</span>
-            <select className="format-select">
-                <option value="svg">SVG</option>
-                <option value="png">PNG</option>
-                <option value="webp">WEBP</option>
-                <option value="jpeg">JPEG</option>
-            </select>
-            <span className="file-size">2.52 KB</span>
+            <span className="file-name">{ SelectedFiles[0].name }</span>
         </div>
     );
 }
