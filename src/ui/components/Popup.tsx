@@ -31,7 +31,7 @@ export default function Popup() {
 			if (
 				ev.key == "Escape"
 				&& (typeof PopupData.value.dismissible === "undefined" || PopupData.value.dismissible)
-			) ref.current?.close();
+			) popupOpen.value = false;
 		})
 	}, [])
 
