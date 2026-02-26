@@ -29,6 +29,8 @@
     padding: 0 1.5rem;
     z-index: 20;
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
 
     .header-left {
         display: flex;
@@ -144,7 +146,7 @@
     flex-direction: column;
 
     position: sticky;
-    bottom: 1em;
+    bottom: 0;
 
     @media (max-width: 1024px) {
         width: 100%;
