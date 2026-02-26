@@ -133,6 +133,7 @@
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 1rem;
     overflow: hidden;
+    padding: .5rem;
 }
 
 .settings-sidebar {
@@ -141,6 +142,9 @@
     border-left: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
+
+    position: sticky;
+    bottom: 1em;
 
     @media (max-width: 1024px) {
         width: 100%;
