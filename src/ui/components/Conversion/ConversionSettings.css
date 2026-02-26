@@ -1,6 +1,6 @@
 .conversion-settings {
     background: var(--bg-card);
-    border-left: 1px solid var(--border-light);
+    /* border-left: 1px solid var(--border-light); */
     display: flex;
     flex-direction: column;
 
