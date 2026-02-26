@@ -18,7 +18,8 @@ export const CurrentPage = signal<Pages>(Pages.Upload);
 export let PopupData = signal<PopupDataContainer>({
 	title: "Loading tools...",
 	text: "Please wait while the app loads conversion tools.",
-	dismissible: false
+	dismissible: false,
+	buttonText: 'Ignore'
 })
 
 function App() {

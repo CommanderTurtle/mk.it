@@ -27,6 +27,7 @@ export default function Popup() {
 	// Listen to soft-dismiss events
 	useEffect(() => {
 		window.addEventListener("keydown", (ev: KeyboardEvent) => {
+			if (ev.key == "Escape") ev.preventDefault();
 			if (
 				ev.key == "Escape"
 				&& (typeof PopupData.value.dismissible === "undefined" || PopupData.value.dismissible)
@@ -41,6 +42,18 @@ export default function Popup() {
 		>
 			<h1>{ PopupData.value.title }</h1>
 			<p>{ PopupData.value.text }</p>
+			{
+				PopupData.value.buttonText &&
+				<button onClick={
+					() => {
+						if (typeof PopupData.value.buttonOnClick === "function") {
+							return PopupData.value.buttonOnClick
+						} else {
+							popupOpen.value = false
+						}
+					}
+				}>{ PopupData.value.buttonText }</button>
+			}
 		</dialog>
 	);
 }
