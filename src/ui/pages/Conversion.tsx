@@ -26,12 +26,12 @@ interface ConversionPageProps {
 }
 
 const sidebarItems: FormatCategory[] = [
-    { category: "Archive", icon: faBoxArchiveSolid },
-    { category: "Image", icon: faImageRegular, active: true },
-    { category: "Document", icon: faFileLinesRegular },
-    { category: "Video", icon: faVideoSolid },
-    { category: "Audio", icon: faMusicSolid },
-    { category: "E-Book", icon: faFileLinesRegular },
+    { id: "arc", category: "Archive", icon: faBoxArchiveSolid },
+    { id: "img", category: "Image", icon: faImageRegular},
+    { id: "doc", category: "Document", icon: faFileLinesRegular },
+    { id: "vid", category: "Video", icon: faVideoSolid },
+    { id: "aud", category: "Audio", icon: faMusicSolid },
+    { id: "ebk", category: "E-Book", icon: faFileLinesRegular },
 ];
 
 export type FormatTypeCard = FormatType & { id: string; handlerName: string }
@@ -116,7 +116,7 @@ export default function Conversion(props: ConversionPageProps | undefined) {
 
             <main className="conversion-main">
                 <div className="content-wrapper">
-                    {/* <SideNav items={ sidebarItems } /> */ }
+                    <SideNav items={ sidebarItems } />
 
                     {/* Center Browser */ }
                     <section className="format-browser">
