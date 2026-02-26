@@ -10,7 +10,9 @@ export const Category = {
     AUDIO: "audio",
     ARCHIVE: "archive",
     SPREADSHEET: "spreadsheet",
-    PRESENTATION: "presentation"
+    PRESENTATION: "presentation",
+    FONT: "font",
+    CODE: "code"
 }
 
 /**
@@ -98,8 +100,8 @@ const CommonFormats = {
     ),
     MD: new FormatDefinition(
         "Markdown Document",
-        "md",
-        "md",
+        "markdown",
+        "markdown",
         "text/markdown",
         ["document", "text"]
     ),
@@ -109,6 +111,20 @@ const CommonFormats = {
         "bat",
         "text/windows-batch",
         ["text"]
+    ),
+    PYTHON: new FormatDefinition(
+        "Python Script",
+        "py",
+        "py",
+        "text/x-python",
+        Category.CODE
+    ),
+    SH: new FormatDefinition(
+        "Shell Script",
+        "sh",
+        "sh",
+        "application/x-sh",
+        Category.TEXT
     ),
     // audio
     MP3: new FormatDefinition(
@@ -183,7 +199,51 @@ const CommonFormats = {
         "pptx",
         "pptx",
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        Category.PRESENTATION
+        [Category.PRESENTATION, Category.DOCUMENT]
+    ),
+    // fonts
+    TTF: new FormatDefinition(
+        "TrueType Font",
+        "ttf",
+        "ttf",
+        "font/ttf",
+        [Category.FONT]
+    ),
+    OTF: new FormatDefinition(
+        "OpenType Font",
+        "otf",
+        "otf",
+        "font/otf",
+        [Category.FONT]
+    ),
+    WOFF: new FormatDefinition(
+        "Web Open Font Format",
+        "woff",
+        "woff",
+        "font/woff",
+        [Category.FONT]
+    ),
+    WOFF2: new FormatDefinition(
+        "Web Open Font Format 2.0",
+        "woff2",
+        "woff2",
+        "font/woff2",
+        [Category.FONT]
+    ),
+    // music notation
+    MUSICXML: new FormatDefinition(
+        "MusicXML",
+        "musicxml",
+        "musicxml",
+        "application/vnd.recordare.musicxml+xml",
+        Category.DOCUMENT
+    ),
+    MXL: new FormatDefinition(
+        "MusicXML Compressed",
+        "mxl",
+        "mxl",
+        "application/vnd.recordare.musicxml",
+        Category.DOCUMENT
     )
 }
 
