@@ -83,23 +83,19 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 		PopupData.value.contents = (
 			<>
 				<h1>Help</h1>
-				<p>Placeholder</p>
-				{/* <h2>What's convert.to.it?</h2>
-				<p>convert.to.it performs all of its processing in your browser using native conversion methods built into your browser, or through specialized conversion handlers that use modules and libraries, still on your device!</p>
-				<p>No data ever leaves your device. It is 100% private</p>
-				<h2>What makes convert.to.it different from other converters?</h2>
-				<p>convert.to.it lets you convert <b>any file</b> to <b>any file</b>. Why convert <code>mp4</code> to <code>mp3</code> when you can turn it into a PowerPoint presentation? Or convert your <code>wav</code> music into a <code>png</code>?</p>
-				<p>We don't limit what you can do. Try everything if you want!</p>
-				<h2>Converting files</h2>
+				<p><b>Truly universal online file converter.</b></p>
+				<p>Many online file conversion tools are <b>boring</b> and <b>insecure</b>. They only allow conversion between two formats in the same medium (images to images, videos to videos, etc.), and they require that you <i>upload your files to some server</i>.</p>
+				<p>This is not just terrible for privacy, it's also incredibly lame. What if you <i>really</i> need to convert an AVI video to a PDF document? Try to find an online tool for that, I dare you.</p>
+				<p>Convert.to.it aims to be a tool that "just works". You're almost <i>guaranteed</i> to get an output - perhaps not always the one you expected, but it'll try its best to not leave you hanging.</p>
+				<h2>Usage</h2>
 				<ol>
-					<li>Drag and drop, or click/tap the upload area to upload a file of your choosing</li>
-					<li>Choose your desired conversion target in the next page</li>
-					<li>Click/tap the Convert button</li>
-					<li>Wait for the conversion to finish</li>
-					<li>Download your converted file</li>
+					<li>Upload your file using the file browser, or drag and drop your file.</li>
+					<li>Select an output format.</li>
+					<li>Click <b>Convert!</b></li>
+					<li>Hopefully, after a bit (or a lot) of thinking, the program will spit out the file you wanted.</li>
 				</ol>
 				<h2>Advanced mode</h2>
-				<p>Advanced mode exposes additional conversion methods for some file types. If you do not intend on using a specific conversion method, it's better to leave it in Simple mode</p> */}
+				<p>Advanced mode exposes additional conversion methods for some file types. If you do not intend on using a specific conversion method, it's better to leave it in Simple mode.</p>
 			</>
 		)
 		popupOpen.value = true;
@@ -144,7 +140,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 					<div className="upload-card-dropzone-icon-container">
 						<Icon src={ uploadImage } size={ 40 } color="var(--primary)" />
 					</div>
-					<button className="upload-card-dropzone-button">Click to add your file</button>
+					<button className="upload-card-dropzone-button" tabindex={ 1 }>Click to add your file</button>
 					<span className="upload-card-dropzone-subtext">or drag and drop here</span>
 				</div>
 
@@ -152,12 +148,14 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 					<button
 						className="button"
 						onClick={ onAdvancedModeClick }
+						tabIndex={ 3 }
 					>
 						{ advancedModeText }
 					</button>
 					<button
 						className="button"
 						onClick={ onHelpClick }
+						tabIndex={ 2 }
 					>Help</button>
 				</div>
 
