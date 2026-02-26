@@ -45,9 +45,11 @@
 
 :root[data-theme="dark"] {
   /* Background */
-  --bg-page: #0F172A;
+  --bg-page: color-mix(in lch increasing hue, var(--primary), black 80%);
+  /* --bg-page: #0F172A; */
   --bg-section: #111827;
-  --bg-card: #1E293B;
+  --bg-card: color-mix(in hsl, var(--primary), black 70%);
+  /* --bg-card: #1E293B; */
   --bg-card-alt: hsl(from var(--primary) calc(h - 1.9) calc(s - 66) calc(l - 34.1));
   --bg-card-alt-hover: hsl(from var(--primary) calc(h - 0.4) calc(s - 65.7) calc(l - 27.5));
   --bg-input: #1E293B;
