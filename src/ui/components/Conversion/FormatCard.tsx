@@ -2,12 +2,14 @@ import type { FormatTypeCard } from "src/ui/pages/Conversion";
 import { Icon } from "../Icon";
 
 import "./FormatCard.css";
+import { SimpleMode } from "src/main.new";
 
 export type FormatType = {
     format: string
     fullName: string
     mime: string
     icon: string
+    handler: string
     active?: boolean
 }
 
@@ -15,6 +17,7 @@ interface FormatCardProps {
     formatType: FormatType
     id: string
     selected: boolean
+    handler: string
     onSelect: (id: string) => void
 }
 
@@ -44,9 +47,14 @@ export default function FormatCard(props: FormatCardProps) {
                     <div className="card-icon-lg">
                         <Icon src={ formatData.icon } size={ 32 } />
                     </div>
-                    <span className={ formatData.active ? "badge" : "badge gray" }>
+                    <span className="badge">
                         { formatData.format }
                     </span>
+                    {
+                        (!SimpleMode) && (<span className="badge gray">
+                            { props.handler }
+                        </span>)
+                    }
                 </div>
                 <h3>{ formatData.fullName }</h3>
                 <p className="mime-type">({ formatData.mime })</p>
