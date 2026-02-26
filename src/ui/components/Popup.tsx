@@ -35,13 +35,21 @@ export default function Popup() {
 		})
 	}, [])
 
+	const getPopupContents = () => {
+		return (PopupData.value.contents) ? PopupData.value.contents : (
+			<>
+				<h1>{ PopupData.value.title }</h1>
+				<p>{ PopupData.value.text }</p>
+			</>
+		)
+	}
+
 	return (
 		<dialog
 			id="popup"
 			ref={ ref }
 		>
-			<h1>{ PopupData.value.title }</h1>
-			<p>{ PopupData.value.text }</p>
+			{ getPopupContents() }
 			{
 				PopupData.value.buttonText &&
 				<button onClick={

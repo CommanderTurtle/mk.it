@@ -1,6 +1,6 @@
 import { useRef, useState } from 'preact/hooks';
 
-import { CurrentPage, Pages } from '../../index';
+import { CurrentPage, Pages, PopupData } from '../../index';
 import { SelectedFiles, setSimpleMode, SimpleMode } from 'src/main.new';
 
 import uploadImage from '../../img/fa-upload-solid-full.svg';
@@ -10,6 +10,7 @@ import DarkModeToggle from '../DarkModeToggle';
 import { Icon } from "../Icon";
 
 import './UploadField.css'
+import { popupOpen } from 'src/ui/PopupStore';
 
 interface UploadFieldComponentProps {
 	disabled?: boolean
@@ -56,7 +57,6 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 			|| files.length === 0
 		) return
 
-
 		SelectedFiles.push(...files);
 		CurrentPage.value = Pages.Conversion;
 	}
@@ -67,12 +67,42 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 	}
 	const [advancedModeText, setAdvancedModeText] = useState<AdvancedModeTexts>(AdvancedModeTexts.ADVANCED);
 
-	const onAdvancedModeClick = (ev: MouseEvent) => {
+	const onAdvancedModeClick = (ev: preact.TargetedMouseEvent<HTMLButtonElement>) => {
 		setSimpleMode(!SimpleMode)
 		setAdvancedModeText(SimpleMode ? AdvancedModeTexts.ADVANCED : AdvancedModeTexts.SIMPLE);
 		if (SimpleMode) {
 			document.documentElement.style.setProperty("--primary", "#1C77FF");
 		} else document.documentElement.style.setProperty("--primary", "#FF6F1C");
+	}
+
+	const onHelpClick = (ev: preact.TargetedMouseEvent<HTMLButtonElement>) => {
+		PopupData.value = {
+			dismissible: true,
+			buttonText: "OK"
+		}
+		PopupData.value.contents = (
+			<>
+				<h1>Help</h1>
+				<p>Placeholder</p>
+				{/* <h2>What's convert.to.it?</h2>
+				<p>convert.to.it performs all of its processing in your browser using native conversion methods built into your browser, or through specialized conversion handlers that use modules and libraries, still on your device!</p>
+				<p>No data ever leaves your device. It is 100% private</p>
+				<h2>What makes convert.to.it different from other converters?</h2>
+				<p>convert.to.it lets you convert <b>any file</b> to <b>any file</b>. Why convert <code>mp4</code> to <code>mp3</code> when you can turn it into a PowerPoint presentation? Or convert your <code>wav</code> music into a <code>png</code>?</p>
+				<p>We don't limit what you can do. Try everything if you want!</p>
+				<h2>Converting files</h2>
+				<ol>
+					<li>Drag and drop, or click/tap the upload area to upload a file of your choosing</li>
+					<li>Choose your desired conversion target in the next page</li>
+					<li>Click/tap the Convert button</li>
+					<li>Wait for the conversion to finish</li>
+					<li>Download your converted file</li>
+				</ol>
+				<h2>Advanced mode</h2>
+				<p>Advanced mode exposes additional conversion methods for some file types. If you do not intend on using a specific conversion method, it's better to leave it in Simple mode</p> */}
+			</>
+		)
+		popupOpen.value = true;
 	}
 
 	return (
@@ -125,7 +155,10 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 					>
 						{ advancedModeText }
 					</button>
-					<button className="button">Help</button>
+					<button
+						className="button"
+						onClick={ onHelpClick }
+					>Help</button>
 				</div>
 
 			</div>
