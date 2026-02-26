@@ -90,7 +90,13 @@ export const renameZipHandler = renameHandler("renamezip", [
     from: true,
     to: false,
     internal: "apk"
-  }
+  },
+  CommonFormats.ZIP.builder("sb3").allowFrom()
+    .withFormat("sb3").withExt("sb3").named("Scratch 3 Project"),
+  CommonFormats.ZIP.builder("ipa").allowFrom()
+    .withFormat("ipa").withExt("ipa").named("iOS Application"),
+  CommonFormats.ZIP.builder("app").allowFrom()
+    .withFormat("app").withExt("app").named("macOS Application Bundle")
 ]);
 /// handler for renaming text-based formats
 export const renameTxtHandler = renameHandler("renametxt", [
