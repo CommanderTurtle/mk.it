@@ -1,19 +1,27 @@
 import { Icon } from "../Icon";
-import { fromJsonHandler } from "../../../handlers/json.ts";
 
 import "./SideNav.css"
+import {useState} from "preact/hooks";
 
 export type FormatCategory = {
+    id: string
     category: string
     icon: string
-    active?: boolean
 }
 
 interface SideNavProps {
     items: FormatCategory[]
+    onSelect?: (id: string) => void
 }
 
-export default function SideNav({ items }: SideNavProps) {
+export default function SideNav({ items, onSelect }: SideNavProps) {
+    const [selectedId, setSelectedId] = useState<string | null>(items[0]?.id || null);
+
+    const handleItemClick = (id: string) => {
+        setSelectedId(id);
+        onSelect?.(id);
+    };
+
     return (
         <aside className="side-nav">
             <div className="nav-header">
@@ -22,12 +30,22 @@ export default function SideNav({ items }: SideNavProps) {
             <div className="nav-list scroller">
                 <ul>
                     {
-                        items.map((category, index) => (
-                            <li key={ index }>
-                                <a href="#" className={ category.active ? "active" : undefined }>
-                                    <Icon src={ category.icon } size={ 16 } />{ " " }
-                                    { category.category }
-                                </a>
+                        items.map((category) => (
+                            <li
+                                key={ category.id }
+                                onClick={() => handleItemClick(category.id)}
+                                className={ selectedId === category.id ? "active" : undefined }
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        handleItemClick(category.id);
+                                    }
+                                }}
+                            >
+                                <Icon src={ category.icon } size={ 16 } />
+                                { " " }
+                                { category.category }
                             </li>
                         ))
                     }
