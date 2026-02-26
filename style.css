@@ -39,6 +39,8 @@
   --btn-text-secondary: var(--text-muted);
   --btn-bg-secondary: #FFFFFF;
   --btn-bg-secondary-hover: #F9FAFB;
+
+  scrollbar-color: var(--primary) var(--bg-page);
 }
 
 :root[data-theme="dark"] {
