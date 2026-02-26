@@ -2,9 +2,9 @@ import { signal } from '@preact/signals'
 
 export interface PopupDataContainer {
 	/** Title of the popup */
-	title: string
+	title?: string
 	/** The description text of the popup */
-	text: string
+	text?: string
 	/**
 	 * Is the popup soft-dismissible?
 	 *
@@ -17,6 +17,12 @@ export interface PopupDataContainer {
 	buttonText?: string
 	/** The event handler for the button. If this is just `true`, clicking the button will close the modal */
 	buttonOnClick?: preact.MouseEventHandler<HTMLButtonElement> | true
+	/**
+	 * Raw contents of the popup. Can be any arbitrary JSX data.
+	 *
+	 * If this is declared, properties `title` and `text` are ignored
+	 */
+	contents?: preact.JSX.Element
 }
 
 export const popupOpen = signal(false);
