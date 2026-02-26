@@ -34,7 +34,7 @@ const sidebarItems: FormatCategory[] = [
     { category: "E-Book", icon: faFileLinesRegular },
 ];
 
-export type FormatTypeCard = FormatType & { id: string }
+export type FormatTypeCard = FormatType & { id: string; handlerName: string }
 type SearchProps = Set<keyof FormatType>
 
 export default function Conversion(props: ConversionPageProps | undefined) {
@@ -52,7 +52,8 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                 fullName: oldFormat.format.name,
                 icon: faImageRegular, // placeholder
                 mime: oldFormat.format.mime,
-                id: `${oldFormat.format.name}-${oldFormat.format.mime}-${oldFormat.format.format}`
+                handlerName: oldFormat.handler.name,
+                id: `${oldFormat.format.name}-${oldFormat.format.mime}-${oldFormat.handler.name}`
             }))
         } else throw new Error("Can't build format list! Failed to get global format list");
     }
@@ -137,7 +138,7 @@ export default function Conversion(props: ConversionPageProps | undefined) {
 
                         <div className="format-list-container scroller">
                             <div className="list-header desktop-only">
-                                {/* <h2>Common Formats</h2> */}
+                                {/* <h2>Common Formats</h2> */ }
                                 <span>Showing { formatCards.length } formats</span>
                             </div>
 
@@ -145,11 +146,12 @@ export default function Conversion(props: ConversionPageProps | undefined) {
                                 {
                                     formatCards.map((card, i) => (
                                         <FormatCard
-                                            selected={ card.id.concat(`-${i}`) === selectedConversionFormat }
+                                            selected={ card.id === selectedConversionFormat }
                                             onSelect={ setSelectedConversionFormat }
                                             formatType={ card }
                                             key={ card.id.concat(`-${i}`) }
-                                            id={ card.id.concat(`-${i}`) }
+                                            id={ card.id }
+                                            handler={ card.handlerName }
                                         />
                                     ))
                                 }
