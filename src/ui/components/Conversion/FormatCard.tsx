@@ -1,4 +1,3 @@
-import type { FormatTypeCard } from "src/ui/pages/Conversion";
 import { Icon } from "../Icon";
 
 import "./FormatCard.css";
@@ -25,11 +24,11 @@ export default function FormatCard(props: FormatCardProps) {
         "formatType" in props ? props.formatType : props;
 
     return (
-        <div className={ `format-card ${props.selected ? "active" : ""}` } onClick={ () => props.onSelect(props.id) }>
+        <button className={ `format-card ${props.selected ? "active" : ""}` } onClick={ () => props.onSelect(props.id) }>
             {/* Mobile Card Layout */ }
             <div className="card-mobile-header mobile-only">
                 <div className="card-title-group">
-                    <span className={ formatData.active ? "badge" : "badge gray" }>
+                    <span className={ props.selected ? "badge" : "badge gray" }>
                         { formatData.format }
                     </span>
                     <h3>{ formatData.fullName }</h3>
@@ -58,6 +57,6 @@ export default function FormatCard(props: FormatCardProps) {
                 <h3>{ formatData.fullName }</h3>
                 <p className="mime-type">({ formatData.mime })</p>
             </div>
-        </div>
+        </button>
     );
 }
