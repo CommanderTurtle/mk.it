@@ -4,11 +4,12 @@ import handlers from "./handlers";
 import { TraversionGraph } from "./TraversionGraph.js";
 import { PopupData } from "./ui/index.js";
 import { closePopup, openPopup } from "./ui/PopupStore.js";
+import { signal } from "@preact/signals";
 
 /**
  * Files currently selected for conversion
  */
-export let SelectedFiles: File[] = [];
+export const SelectedFiles = signal<File[]>([]);
 
 /**
  * Whether to use "simple" mode
