@@ -59,7 +59,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 			|| files.length === 0
 		) return
 
-		SelectedFiles.push(...files);
+		SelectedFiles.value = Array.from(files);
 		CurrentPage.value = Pages.Conversion;
 	}
 
@@ -138,6 +138,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 						id="uploadFile"
 						onClick={ (ev) => ev.stopPropagation() }
 						tabIndex={ 0 }
+						multiple
 					/>
 					<div className="upload-card-dropzone-icon-container">
 						<Icon src={ uploadImage } size={ 40 } color="var(--primary)" />
