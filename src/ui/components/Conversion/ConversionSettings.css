@@ -1,6 +1,5 @@
 .conversion-settings {
     background: var(--bg-card);
-    /* border-left: 1px solid var(--border-light); */
     display: flex;
     flex-direction: column;
 
@@ -70,13 +69,17 @@
             input {
                 width: 100%;
                 font-size: 0.875rem;
-                border: 1px solid #d1d5db;
+                border: 1px solid var(--border-primary);
                 border-radius: 0.5rem;
                 padding: 0.5rem 3rem 0.5rem 0.75rem;
                 color: var(--text-tertiary);
                 outline: none;
                 transition: all 0.15s ease;
                 background-color: var(--bg-input);
+
+                &:hover {
+                    border-color: var(--border-secondary);
+                }
 
                 &:focus {
                     border-color: var(--primary);
@@ -100,7 +103,7 @@
     @media (max-width: 1024px) {
         width: 100%;
         border-left: none;
-        border-top: 1px solid var(--border-light);
+        border-top: 1px solid var(--border-primary);
         display: flex;
         flex-direction: column;
 
@@ -135,7 +138,6 @@
             position: relative;
             z-index: 10;
             background: var(--bg-card);
-            border-top: 1px solid var(--border-light);
         }
     }
 
@@ -150,7 +152,7 @@
 
     .settings-header {
         padding: 1.25rem;
-        border-bottom: 1px solid #f3f4f6;
+        border-bottom: 1px solid var(--border-primary);
 
         h3 {
             font-size: 0.9rem;
@@ -208,7 +210,7 @@
         .line {
             flex: 1;
             height: 1px;
-            background: var(--border-light);
+            background: var(--border-primary);
         }
 
         .divider-text {

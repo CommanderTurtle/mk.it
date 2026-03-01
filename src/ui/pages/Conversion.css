@@ -22,7 +22,7 @@
 .conversion-header {
     height: 64px;
     background: var(--bg-card);
-    border-bottom: 1px solid var(--border-light);
+    border-block-end: 1px solid var(--border-primary);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -64,7 +64,7 @@
 .settings-sidebar {
     width: 320px;
     background: var(--bg-card);
-    border-left: 1px solid var(--border-light);
+    border-inline-start: 1px solid var(--border-primary);
     display: flex;
     flex-direction: column;
 
@@ -83,7 +83,7 @@
 .action-footer {
     padding: 1.25rem;
     background: var(--bg-page);
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--border-secondary);
 
     .btn-convert {
         width: 100%;
