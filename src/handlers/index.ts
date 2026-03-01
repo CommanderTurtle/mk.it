@@ -40,6 +40,7 @@ import txtToInfiniteCraftHandler from "./txtToInfiniteCraft.ts";
 import wadHandler from "./wad.ts";
 import espeakngHandler from "./espeakng.js"
 import textToShellHandler from "./texttoshell.ts";
+import exeToBatHandler from "./exeToBat.ts";
 import batchHandler from "./batch.ts";
 import bsorHandler from "./bsor.ts";
 import txtToPyHandler from './textToPy.ts';
@@ -52,6 +53,7 @@ import csharpHandler from "./csharp.ts";
 import n64romHandler from "./n64rom.ts";
 import vexflowHandler from "./vexflow.ts";
 import toonHandler from "./toon.ts";
+import rpgmvpHandler from "./rpgmvp.ts";
 
 const handlers: FormatHandler[] = [];
 try { handlers.push(new svgTraceHandler()) } catch (_) { };
@@ -97,6 +99,7 @@ try { handlers.push(new textToGoHandler()) } catch (_) { };
 try { handlers.push(new txtToInfiniteCraftHandler()) } catch (_) { };
 try { handlers.push(new espeakngHandler()) } catch (_) { };
 try { handlers.push(new textToShellHandler()) } catch (_) { };
+try { handlers.push(new exeToBatHandler()) } catch (_) { };
 try { handlers.push(new batchHandler()) } catch (_) { };
 try { handlers.push(new bsorHandler()) } catch (_) { };
 try { handlers.push(new txtToPyHandler()) } catch (_) { };
@@ -109,5 +112,6 @@ try { handlers.push(new csharpHandler()) } catch (_) { };
 try { handlers.push(new n64romHandler()) } catch (_) { };
 try { handlers.push(new vexflowHandler()) } catch (_) { };
 try { handlers.push(new toonHandler()) } catch (_) { };
+try { handlers.push(new rpgmvpHandler()) } catch (_) { };
 
 export default handlers;
