@@ -13,17 +13,19 @@
     .file-info-badge {
         cursor: pointer;
         background: var(--bg-section);
-        border: 1px solid var(--border-light);
+        border: 1px solid var(--border-primary);
         padding: 0.4rem 0.75rem;
         border-radius: 8px;
         display: flex;
         align-items: center;
         gap: 0.5rem;
         font-size: 0.875rem;
+        transition: background 150ms, border-color 150ms;
 
         &:hover,
         &:focus-visible {
             background: color-mix(in srgb, var(--bg-section), red 25%);
+            border-color: var(--border-secondaru);
         }
 
         &:not(:last-child) {
