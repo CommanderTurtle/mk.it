@@ -137,7 +137,7 @@
 				border-radius: 8px;
 				padding: .75em;
 				color: var(--text-muted);
-				background: var(--btn-bg-secondary);
+				background: var(--btn-bg-card);
 				transition: color 150ms, background 150ms;
 
 				&:hover,
