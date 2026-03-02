@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { theme, toggleTheme } from "../theme";
+import { theme, toggleTheme } from "../ThemeStore";
 import { useEffect, useState } from "preact/hooks";
 
 import sunIcon from "../img/fa-sun-solid-full.svg";
