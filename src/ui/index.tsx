@@ -3,9 +3,10 @@ import { signal } from "@preact/signals";
 
 import UploadPage from "./pages/Upload";
 import ConversionPage from "./pages/Conversion";
-import { initTheme } from "./theme";
+import { initTheme } from "./ThemeStore";
 import { openPopup, type PopupDataContainer } from "./PopupStore";
 import Popup from "./components/Popup";
+import { initMode } from "./ModeStore";
 
 console.log("Rendering UI");
 
@@ -45,3 +46,4 @@ render(<App />, document.body);
 openPopup();
 
 initTheme();
+initMode();
