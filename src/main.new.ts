@@ -6,10 +6,12 @@ import { PopupData } from "./ui/index.js";
 import { closePopup, openPopup } from "./ui/PopupStore.js";
 import { signal } from "@preact/signals";
 
+type FileRecord = Record<`${string}-${string}`, File>
+
 /**
  * Files currently selected for conversion
  */
-export const SelectedFiles = signal<File[]>([]);
+export const SelectedFiles = signal<FileRecord>({});
 
 /**
  * Whether to use "simple" mode
