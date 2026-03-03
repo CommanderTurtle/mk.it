@@ -1,9 +1,7 @@
+import { Mode, ModeEnum } from "src/ui/ModeStore";
 import { Icon } from "../Icon";
 
 import "./FormatCard.css";
-import { SimpleMode } from "src/main.new";
-
-
 
 export type FormatType = {
     formatName: string
@@ -51,9 +49,11 @@ export default function FormatCard(props: FormatCardProps) {
                         { formatData.formatName }
                     </span>
                     {
-                        (!SimpleMode) && (<span className="badge gray">
-                            { props.handler }
-                        </span>)
+                        (
+                            Mode.value === ModeEnum.Advanced) && (<span className="badge gray">
+                                { props.handler }
+                            </span>
+                        )
                     }
                 </div>
                 <h3>{ formatData.fullName }</h3>
