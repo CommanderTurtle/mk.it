@@ -10,6 +10,9 @@ import { useState } from "preact/hooks";
 export type FormatTypeCard = FormatType & { id: string; handlerName: string }
 
 type SearchProps = Set<keyof FormatType>;
+/**
+ * Search within these properties of the format cards
+ */
 const searchProps: SearchProps = new Set(['fullName', 'format', 'mime']);
 
 interface FormatExplorerProps {
@@ -37,11 +40,6 @@ export default function FormatExplorer({ categories, conversionFormats, onSelect
         })
         return filteredFormats;
     }
-
-    /**
-     * Search within these properties of the format cards
-     */
-    const searchProps: SearchProps = new Set(['fullName', 'format', 'mime']);
 
     /**
      * Debounce handler for the search.
