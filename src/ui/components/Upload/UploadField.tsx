@@ -1,6 +1,6 @@
 import { useRef, useState } from 'preact/hooks';
 
-import { CurrentPage, Pages, PopupData } from '../../index';
+import { CurrentPage, Pages } from '../../index';
 import { SelectedFiles } from 'src/main.new';
 
 import uploadImage from '../../img/fa-upload-solid-full.svg';
@@ -8,6 +8,7 @@ import logoImage from '../../img/logo.svg';
 
 import DarkModeToggle from '../DarkModeToggle';
 import { Icon } from "../Icon";
+import StyledButton from "../StyledButton";
 
 import './UploadField.css'
 
@@ -110,7 +111,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 					<div className="upload-card-dropzone-icon-container">
 						<Icon src={ uploadImage } size={ 40 } color="var(--primary)" />
 					</div>
-					<button className="upload-card-dropzone-button" tabindex={ 1 }>Click to add your file</button>
+					<StyledButton variant="primary" tabIndex={ 1 }>Click to add your file</StyledButton>
 					<span className="upload-card-dropzone-subtext">or drag and drop here</span>
 				</div>
 

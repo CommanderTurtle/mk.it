@@ -1,10 +1,9 @@
 import { Mode, ModeEnum, ModeText, toggleMode } from "../ModeStore";
+import StyledButton from "./StyledButton";
 
 interface AdvancedModeToggleComponentProps {
 	compact: boolean
 }
-
-import "./AdvancedModeToggle.css";
 
 export default function AdvancedModeToggle({ compact }: AdvancedModeToggleComponentProps) {
 	const onAdvancedModeClick = (ev: preact.TargetedMouseEvent<HTMLButtonElement>) => {
@@ -12,8 +11,8 @@ export default function AdvancedModeToggle({ compact }: AdvancedModeToggleCompon
 	}
 
 	return (
-		<button
-			className={ compact ? 'compact' : '' }
+		<StyledButton
+			variant={ compact ? 'compact' : 'default' }
 			onClick={ onAdvancedModeClick }
 			title={ `Switch to ${Mode.value === ModeEnum.Advanced ? ModeText.Simple : ModeText.Advanced}` }
 		>
@@ -22,6 +21,6 @@ export default function AdvancedModeToggle({ compact }: AdvancedModeToggleCompon
 					? Mode.value === ModeEnum.Advanced ? "S" : "A"
 					: Mode.value === ModeEnum.Advanced ? ModeText.Simple : ModeText.Advanced
 			}
-		</button>
+		</StyledButton>
 	)
 }
