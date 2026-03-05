@@ -47,7 +47,7 @@
   /* Background */
   --bg-page: color-mix(in lch increasing hue, var(--primary), black 80%);
   /* --bg-page: #0F172A; */
-  --bg-section: #111827;
+  --bg-section: hsl(from var(--primary) h calc(s - 60) calc(l - 44.5));
   --bg-card: color-mix(in hsl, var(--primary), black 70%);
   /* --bg-card: #1E293B; */
   --bg-card-alt: hsl(from var(--primary) calc(h - 1.9) calc(s - 66) calc(l - 34.1));
@@ -68,18 +68,18 @@
 
   /* Border */
   --border-primary: hsl(from var(--primary) h calc(s - 75) calc(l - 28.5));
-  --border-secondary: #475569;
+  --border-secondary: hsl(from var(--primary) h calc(s - 80) calc(l - 21));
   --border-transparent: #00000000;
 
   /* Button */
-  --btn-border: #374151;
+  --btn-border: hsl(from var(--primary) h calc(s - 81) calc(l - 28.5));
 
   --btn-text-primary: #FFFFFF;
   --btn-bg-primary: var(--primary);
-  --btn-bg-primary-hover: hsl(from var(--primary) h calc(s - 24) calc(l - 7.5));
+  --btn-bg-primary-hover: hsl(from var(--primary) h calc(s - 40) calc(l - 10));
 
   --btn-text-secondary: var(--text-tertiary);
-  --btn-bg-secondary: #1E293B;
+  --btn-bg-secondary: hsl(from var(--primary) h calc(s - 67) calc(l - 38));
   --btn-bg-secondary-hover: hsl(from var(--primary) h calc(s - 64) calc(l - 34.5));
 }
 
