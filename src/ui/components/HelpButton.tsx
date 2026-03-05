@@ -1,5 +1,6 @@
 import { PopupData } from "..";
 import { popupOpen } from "../PopupStore";
+import StyledButton from "./StyledButton";
 
 export default function HelpButton() {
 	const onHelpClick = (ev: preact.TargetedMouseEvent<HTMLButtonElement>) => {
@@ -29,10 +30,10 @@ export default function HelpButton() {
 	}
 
 	return (
-		<button
-			className="button"
+		<StyledButton
+			variant="default"
 			onClick={ onHelpClick }
 			tabIndex={ 2 }
-		>Help</button>
+		>Help</StyledButton>
 	)
 }
