@@ -28,8 +28,8 @@
 				display: flex;
 				font-weight: 900;
 				align-items: center;
-				gap: .3em;
-				font-size: 1.25rem;
+				gap: .5em;
+				font-size: 2rem;
 				color: var(--text-primary);
 
 
