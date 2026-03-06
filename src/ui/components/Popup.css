@@ -1,6 +1,6 @@
 #popup {
 	max-width: 50rem;
-	padding: 1em;
+	padding: 1.5em 1.75em;
 
 	background-color: var(--bg-card-alt);
 	color: var(--text-primary);
@@ -23,6 +23,7 @@
 		border: .1rem solid var(--btn-border);
 		border-radius: 8px;
 		padding: .5em;
+		margin-top: .5em;
 		align-self: center;
 		min-width: 25%;
 		color: var(--text-on-primary);
