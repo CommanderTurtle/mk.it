@@ -11,7 +11,7 @@ import Footer from "../components/Footer";
 import ConversionSidebar from "../components/Conversion/ConversionSidebar";
 import SelectedFileInfo from "../components/Conversion/SelectedFileInfo";
 import ConversionHeader from "../components/Conversion/ConversionHeader";
-import { ConversionOptions, type ConversionOptionsMap } from 'src/main.new';
+import { ConversionOptions, type ConversionOption, type ConversionOptionsMap } from 'src/main.new';
 
 import FormatExplorer from "../components/Conversion/FormatExplorer.tsx";
 import { useState } from "preact/hooks";
@@ -41,7 +41,7 @@ function getConversionOptions() {
 
 export default function Conversion({ }: ConversionPageProps) {
     const AvailableConversionOptions: ConversionOptionsMap = getConversionOptions();
-    const [selectedOption, setSelectedOption] = useState<ConversionOptionsMap | null>(null);
+    const [selectedOption, setSelectedOption] = useState<ConversionOption | null>(null);
 
     return (
         <div className="conversion-body">
