@@ -1,3 +1,4 @@
+import type { TargetedMouseEvent } from "preact";
 import { useSignalEffect } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
 import { popupOpen } from "../PopupStore";
@@ -10,12 +11,7 @@ export default function Popup() {
 
 	// Use vanilla JS APIs to control popup state
 	useSignalEffect(() => {
-		const elem = ref.current;
-
-		if (!elem) {
-			console.warn("Popup not present");
-			return;
-		}
+		const elem = ref.current!;
 
 		if (popupOpen.value) {
 			if (!elem.open) elem.showModal();
@@ -27,13 +23,30 @@ export default function Popup() {
 	// Listen to soft-dismiss events
 	useEffect(() => {
 		window.addEventListener("keydown", (ev: KeyboardEvent) => {
-			if (ev.key == "Escape") ev.preventDefault();
+			if (ev.key === "Escape") ev.preventDefault();
 			if (
-				ev.key == "Escape"
+				ev.key === "Escape"
 				&& (typeof PopupData.value.dismissible === "undefined" || PopupData.value.dismissible)
 			) popupOpen.value = false;
 		})
-	}, [])
+	}, []);
+
+	/** Handle clicks to the backdrop/outisde of the dialog */
+	const clickHandler = (ev: TargetedMouseEvent<HTMLDialogElement>) => {
+		const elem = ref.current!;
+		const rect = elem.getBoundingClientRect();
+
+		const isInside =
+			rect.top <= ev.clientY
+			&& ev.clientY <= rect.top + rect.height
+			&& rect.left <= ev.clientX
+			&& ev.clientX <= rect.left + rect.width;
+
+		if (
+			!isInside
+			&& PopupData.value.dismissible
+		) popupOpen.value = false;
+	};
 
 	const getPopupContents = () => {
 		return (PopupData.value.contents) ? PopupData.value.contents : (
@@ -48,6 +61,7 @@ export default function Popup() {
 		<dialog
 			id="popup"
 			ref={ ref }
+			onClick={ clickHandler }
 		>
 			{ getPopupContents() }
 			{
