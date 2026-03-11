@@ -125,6 +125,7 @@ export default function FormatExplorer({
                                     selected={ key === selectedOptionId }
                                     onSelect={ (key) => handleOptionSelection(key, option) }
                                     conversionOption={ option }
+                                    id={ key }
                                     key={ key }
                                 />
                             ))
