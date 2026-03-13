@@ -1,10 +1,10 @@
-import logoImage from '../../img/logo.svg';
-import { Icon } from "../Icon";
-import DarkModeToggle from '../DarkModeToggle';
-import SelectedFileInfo from './SelectedFileInfo';
+import logoImage from 'src/ui/img/logo.svg';
+import { Icon } from "src/ui/components/Icon";
+import DarkModeToggle from 'src/ui/components/DarkModeToggle';
+import SelectedFileInfo from 'src/ui/components/Conversion/SelectedFileInfo';
+import AdvancedModeToggle from 'src/ui/components/AdvancedModeToggle';
 
-import "./ConversionHeader.css";
-import AdvancedModeToggle from '../AdvancedModeToggle';
+import "./index.css";
 
 export default function ConversionHeader() {
     return (

@@ -1,14 +1,13 @@
 import { useState } from "preact/hooks";
 
-import faWrenchSolid from '../../img/fa-wrench-solid-full.svg';
-import faChevronDownSolid from '../../img/fa-chevron-down-solid-full.svg';
-import faSlidersSolid from '../../img/fa-sliders-solid-full.svg';
-import faLinkSolid from '../../img/fa-link-solid-full.svg';
+import { Icon } from "src/ui/components/Icon";
+import faWrenchSolid from 'src/ui/img/fa-wrench-solid-full.svg';
+import faChevronDownSolid from 'src/ui/img/fa-chevron-down-solid-full.svg';
+import faSlidersSolid from 'src/ui/img/fa-sliders-solid-full.svg';
+import faLinkSolid from 'src/ui/img/fa-link-solid-full.svg';
 
-import type { FormatCategory } from "./SideNav";
-import { Icon } from "../Icon";
 
-import "./ConversionSettings.css"
+import "./index.css"
 
 interface ConversionSettingsProps {
 

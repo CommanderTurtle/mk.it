@@ -1,51 +1,51 @@
-import { useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks'
 
-import { CurrentPage, Pages } from '../../index';
-import { SelectedFiles } from 'src/main.new';
+import { CurrentPage, Pages } from 'src/ui/index'
+import { SelectedFiles } from 'src/main.new'
 
-import uploadImage from '../../img/fa-upload-solid-full.svg';
-import logoImage from '../../img/logo.svg';
+import uploadImage from 'src/ui/img/fa-upload-solid-full.svg'
+import logoImage from 'src/ui/img/logo.svg'
 
-import DarkModeToggle from '../DarkModeToggle';
-import { Icon } from "../Icon";
-import StyledButton from "../StyledButton";
+import DarkModeToggle from 'src/ui/components/DarkModeToggle'
+import { Icon } from "src/ui/components/Icon"
+import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton"
 
-import './UploadField.css'
+import './index.css'
 
-import AdvancedModeToggle from '../AdvancedModeToggle';
-import HelpButton from '../HelpButton';
+import AdvancedModeToggle from 'src/ui/components/AdvancedModeToggle'
+import HelpButton from 'src/ui/components/HelpButton'
 
 interface UploadFieldComponentProps {
 	disabled?: boolean
 }
 
 export default function UploadField({ disabled = false }: UploadFieldComponentProps) {
-	const [isDisabled, setIsDisabled] = useState(disabled);
-	const [isDragging, setIsDragging] = useState(false);
+	const [isDisabled, setIsDisabled] = useState(disabled)
+	const [isDragging, setIsDragging] = useState(false)
 
-	const dragCounter = useRef<number>(0);
-	const fileRef = useRef<HTMLInputElement>(null);
+	const dragCounter = useRef<number>(0)
+	const fileRef = useRef<HTMLInputElement>(null)
 
 	const handleClick = (ev: MouseEvent) => {
-		ev.preventDefault();
-		fileRef.current?.click();
+		ev.preventDefault()
+		fileRef.current?.click()
 	}
 
 	const handleDrop = (ev: DragEvent) => {
-		ev.preventDefault();
-		console.debug(ev.dataTransfer?.files);
+		ev.preventDefault()
+		console.debug(ev.dataTransfer?.files)
 	}
 
 	const handleDragEnter = (ev: DragEvent) => {
-		ev.preventDefault();
-		dragCounter.current++;
-		if (ev.dataTransfer?.types.includes('Files')) setIsDragging(true);
+		ev.preventDefault()
+		dragCounter.current++
+		if (ev.dataTransfer?.types.includes('Files')) setIsDragging(true)
 	}
 
 	const handleDragLeave = (ev: DragEvent) => {
-		ev.preventDefault();
-		dragCounter.current--;
-		if (dragCounter.current == 0) setIsDragging(false);
+		ev.preventDefault()
+		dragCounter.current--
+		if (dragCounter.current == 0) setIsDragging(false)
 	}
 
 	const handleDragOver = (ev: DragEvent) => {
@@ -54,8 +54,8 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 	}
 
 	const handleChange = (_ev: preact.TargetedEvent<HTMLInputElement, Event>) => {
-		setIsDisabled(true);
-		const files = fileRef.current?.files;
+		setIsDisabled(true)
+		const files = fileRef.current?.files
 
 		// Check if files uploaded were empty
 		if (
@@ -68,7 +68,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 			SelectedFiles.value[`${file.name}-${file.lastModified}`] = file
 		}
 
-		CurrentPage.value = Pages.Conversion;
+		CurrentPage.value = Pages.Conversion
 	}
 
 	return (
@@ -111,7 +111,7 @@ export default function UploadField({ disabled = false }: UploadFieldComponentPr
 					<div className="upload-card-dropzone-icon-container">
 						<Icon src={ uploadImage } size={ 40 } color="var(--primary)" />
 					</div>
-					<StyledButton variant="primary" tabIndex={ 1 }>Click to add your file</StyledButton>
+					<StyledButton variant={ ButtonVariant.Primary } tabIndex={ 1 }>Click to add your file</StyledButton>
 					<span className="upload-card-dropzone-subtext">or drag and drop here</span>
 				</div>
 

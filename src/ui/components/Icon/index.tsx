@@ -1,5 +1,5 @@
 import type { CSSProperties } from "preact";
-import './Icon.css'
+import './index.css'
 
 type IconProps = {
     src: string

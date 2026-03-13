@@ -1,10 +1,10 @@
 import type { TargetedMouseEvent } from "preact";
 import { useSignalEffect } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
-import { popupOpen } from "../PopupStore";
+import { popupOpen } from "src/ui/PopupStore";
 
-import "./Popup.css";
-import { PopupData } from "..";
+import "./index.css";
+import { PopupData } from "src/ui";
 
 export default function Popup() {
 	const ref = useRef<HTMLDialogElement>(null);

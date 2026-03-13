@@ -1,6 +1,6 @@
-import { PopupData } from "..";
-import { popupOpen } from "../PopupStore";
-import StyledButton from "./StyledButton";
+import { PopupData } from "src/ui"
+import { popupOpen } from "src/ui/PopupStore"
+import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton"
 
 export default function HelpButton() {
 	const onHelpClick = (ev: preact.TargetedMouseEvent<HTMLButtonElement>) => {
@@ -26,12 +26,12 @@ export default function HelpButton() {
 				<p>Advanced mode exposes additional conversion methods for some file types. If you do not intend on using a specific conversion method, it's better to leave it in Simple mode.</p>
 			</>
 		)
-		popupOpen.value = true;
+		popupOpen.value = true
 	}
 
 	return (
 		<StyledButton
-			variant="default"
+			variant={ ButtonVariant.Default }
 			onClick={ onHelpClick }
 			tabIndex={ 2 }
 		>Help</StyledButton>

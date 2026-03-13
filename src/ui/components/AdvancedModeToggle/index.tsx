@@ -1,5 +1,5 @@
-import { Mode, ModeEnum, ModeText, toggleMode } from "../ModeStore";
-import StyledButton from "./StyledButton";
+import { Mode, ModeEnum, ModeText, toggleMode } from "src/ui/ModeStore";
+import StyledButton from "src/ui/components/StyledButton";
 
 interface AdvancedModeToggleComponentProps {
 	compact: boolean

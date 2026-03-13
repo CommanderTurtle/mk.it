@@ -1,20 +1,20 @@
-import faImageRegular from '../img/fa-image-regular-full.svg'
-import faBoxArchiveSolid from '../img/fa-box-archive-solid-full.svg'
-import faFileLinesRegular from '../img/fa-file-lines-regular-full.svg'
-import faVideoSolid from '../img/fa-video-solid-full.svg'
-import faMusicSolid from '../img/fa-music-solid-full.svg'
-import faInfinitySolid from '../img/fa-infinity-solid-full.svg'
+import faImageRegular from 'src/ui/img/fa-image-regular-full.svg'
+import faBoxArchiveSolid from 'src/ui/img/fa-box-archive-solid-full.svg'
+import faFileLinesRegular from 'src/ui/img/fa-file-lines-regular-full.svg'
+import faVideoSolid from 'src/ui/img/fa-video-solid-full.svg'
+import faMusicSolid from 'src/ui/img/fa-music-solid-full.svg'
+import faInfinitySolid from 'src/ui/img/fa-infinity-solid-full.svg'
 
-import './Conversion.css'
+import './index.css'
 
-import Footer from "../components/Footer"
-import type { FormatCategory } from '../FormatCategories.ts'
-import ConversionSidebar from "../components/Conversion/ConversionSidebar"
-import SelectedFileInfo from "../components/Conversion/SelectedFileInfo"
-import ConversionHeader from "../components/Conversion/ConversionHeader"
+import Footer from "src/ui/components/Footer"
+import type { FormatCategory } from 'src/ui/FormatCategories.ts'
+import ConversionSidebar from "src/ui/components/Conversion/ConversionSidebar"
+import SelectedFileInfo from "src/ui/components/Conversion/SelectedFileInfo"
+import ConversionHeader from "src/ui/components/Conversion/ConversionHeader"
 import { ConversionOptions, type ConversionOption, type ConversionOptionsMap } from 'src/main.new'
 
-import FormatExplorer from "../components/Conversion/FormatExplorer.tsx"
+import FormatExplorer from "src/ui/components/Conversion/FormatExplorer"
 import { useState } from "preact/hooks"
 
 interface ConversionPageProps {

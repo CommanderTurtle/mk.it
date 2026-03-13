@@ -1,10 +1,10 @@
-import { Icon } from "../Icon"
-import FormatCard from "./FormatCard"
-import SideNav from "./SideNav"
-import faMagnifyingGlassSolid from '../../img/fa-magnifying-glass-solid-full.svg'
+import { Icon } from "src/ui/components/Icon"
+import FormatCard from "src/ui/components/Conversion/FormatCard"
+import SideNav from "src/ui/components/Conversion/SideNav"
+import faMagnifyingGlassSolid from 'src/ui/img/fa-magnifying-glass-solid-full.svg'
 import { useDebouncedCallback } from 'use-debounce'
 
-import './FormatExplorer.css'
+import './index.css'
 import { useMemo, useState } from "preact/hooks"
 import type { ConversionOption, ConversionOptionsMap } from "src/main.new"
 import { Mode, ModeEnum } from "src/ui/ModeStore"
