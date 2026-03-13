@@ -1,19 +1,23 @@
-import { Icon } from "../Icon";
-import FormatCard from "./FormatCard";
-import SideNav, { type FormatCategory } from "./SideNav";
-import faMagnifyingGlassSolid from '../../img/fa-magnifying-glass-solid-full.svg';
-import { useDebouncedCallback } from 'use-debounce';
+import { Icon } from "../Icon"
+import FormatCard from "./FormatCard"
+import SideNav from "./SideNav"
+import faMagnifyingGlassSolid from '../../img/fa-magnifying-glass-solid-full.svg'
+import { useDebouncedCallback } from 'use-debounce'
 
-import './FormatExplorer.css';
-import { useMemo, useState } from "preact/hooks";
-import type { ConversionOption, ConversionOptionsMap } from "src/main.new";
-import { Mode, ModeEnum } from "src/ui/ModeStore";
+import './FormatExplorer.css'
+import { useMemo, useState } from "preact/hooks"
+import type { ConversionOption, ConversionOptionsMap } from "src/main.new"
+import { Mode, ModeEnum } from "src/ui/ModeStore"
+import {
+    SelectedCategory,
+    type FormatCategory, type CategoryEnum
+} from "src/ui/FormatCategories"
 
 interface FormatExplorerProps {
-    categories: FormatCategory[];
+    categories: FormatCategory[]
     conversionOptions: ConversionOptionsMap
-    onSelect?: (format: ConversionOption) => void;
-    debounceWaitMs?: number;
+    onSelect?: (format: ConversionOption) => void
+    debounceWaitMs?: number
 }
 
 type SearchIndex = Map<string, ConversionOption>
@@ -25,14 +29,81 @@ type SearchIndex = Map<string, ConversionOption>
  * @param advancedModeEnabled If Advanced Mode is disabled, omit extra conversion options
  */
 function generateSearchIndex(optionsMap: ConversionOptionsMap, advancedModeEnabled: boolean): SearchIndex {
-    const index: SearchIndex = new Map();
+    const index: SearchIndex = new Map()
     for (const [file, handler] of optionsMap) {
-        const keyStr = `${file.name}${file.format}${file.extension}${file.mime}${handler.name}`.toLowerCase();
-        if (advancedModeEnabled || !index.has(keyStr)) {
-            index.set(keyStr, [file, handler]);
+        const keyStr = `${file.name}${file.format}${file.extension}${file.mime}${handler.name}`.toLowerCase()
+        if (advancedModeEnabled) {
+            index.set(keyStr, [file, handler])
+        } else if (!index.has(keyStr)) {
+            index.set(keyStr, [file, handler])
         }
     }
-    return index;
+    return index
+}
+
+/**
+     * Filters the given `SearchIndex` using `CategoryEnum`
+     *
+     * @param {SearchIndex} options The conversion options
+     * @param {CategoryEnum} category The category to find
+     * @returns The filtered search index
+     */
+function _filterByCategory(options: SearchIndex, category: CategoryEnum): SearchIndex {
+    console.debug("Category filter:", category)
+    if (category === 'all') return options
+
+    const filteredFormats: SearchIndex = new Map()
+
+    for (const [key, pair] of options) {
+        if (
+            typeof pair[0].category === "string"
+            && pair[0].category === category
+        ) filteredFormats.set(key, pair)
+        if (typeof pair[0].category === "object") {
+            for (const fileCat of pair[0].category) {
+                if (fileCat === category) filteredFormats.set(key, pair)
+            }
+        }
+    }
+
+    console.debug("Category filter result:\n", filteredFormats)
+
+    return filteredFormats
+}
+
+/**
+ * Filters the given `SearchIndex` using the given search term by the `SearchIndex`'s search hash
+ *
+ * @param {SearchIndex} options The conversion options
+ * @param {string} term The term to search for
+ * @returns The filtered search index. If the term is an empty string, just sends back the `options` input
+ */
+function _filterByTerm(options: SearchIndex, term: string): SearchIndex {
+    console.debug("Term filter:", term)
+    if (term === "") return options
+
+    const filteredFormats: SearchIndex = new Map()
+
+    for (const [key, optionPair] of options) {
+        if (key.includes(term))
+            filteredFormats.set(key, optionPair)
+    }
+
+    console.debug("Term filter result:", filteredFormats)
+    return filteredFormats
+}
+
+/**
+ * Filter available cards according to the search term and where to search for it.
+ *
+ * Internally, it uses {@linkcode _filterByCategory} and {@linkcode _filterByTerm}
+ * @param options The options to filter from
+ * @param term The text to search for. Internally, it's lowercased
+ */
+function filterFormats(options: SearchIndex, term: string, category: CategoryEnum): SearchIndex {
+    term = term.toLowerCase()
+    return _filterByTerm(_filterByCategory(options, category), term)
+    // return _filterByTerm(options, term)
 }
 
 export default function FormatExplorer({
@@ -49,37 +120,22 @@ export default function FormatExplorer({
     const originalIndex = useMemo(
         () => generateSearchIndex(conversionOptions, Mode.value === ModeEnum.Advanced),
         [conversionOptions, Mode.value]
-    );
+    )
 
     /** The search term */
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("")
 
     /** The index of search results */
     const searchResultsIndex = useMemo(
-        () => !searchTerm
-            ? originalIndex
-            : filterFormats(originalIndex, searchTerm),
-        [originalIndex, searchTerm]
-    );
+        () => filterFormats(originalIndex, searchTerm, SelectedCategory.value),
+        [searchTerm, SelectedCategory.value]
+    )
 
     /**
      * Note the format ID here must correspond to the keys generated by {@linkcode generateSearchIndex}
      */
     const [selectedOptionId, setSelectedOptionId] =
-        useState<string | null>(null);
-
-    /**
-     * Filter available cards according to the search term and where to search for it
-     * @param term The text to search for. Internally, it's lowercased
-     */
-    function filterFormats(options: SearchIndex, term: string): SearchIndex {
-        const filteredFormats: SearchIndex = new Map();
-        for (const [key, optionPair] of options) {
-            if (key.includes(term.toLowerCase()))
-                filteredFormats.set(key, optionPair);
-        }
-        return filteredFormats;
-    }
+        useState<string | null>(null)
 
     /**
      * Debounce handler for the search.
@@ -87,14 +143,14 @@ export default function FormatExplorer({
      * If the input is empty, return all formats
      */
     const handleDebounceSearch = useDebouncedCallback((term) => {
-        setSearchTerm(term);
-    }, debounceWaitMs);
+        setSearchTerm(term)
+    }, debounceWaitMs)
 
     /** Handles option selection by setting state and bubbling it up to the `onSelect` handler */
     const handleOptionSelection = (id: string, option: ConversionOption) => {
-        setSelectedOptionId(id);
-        onSelect?.(option);
-    };
+        setSelectedOptionId(id)
+        onSelect?.(option)
+    }
 
     return (
         <div className="format-explorer content-wrapper">

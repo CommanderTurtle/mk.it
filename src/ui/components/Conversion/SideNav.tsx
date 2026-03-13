@@ -1,13 +1,9 @@
-import { Icon } from "../Icon";
+import { SelectedCategory, type CategoryEnum, type FormatCategory } from "src/ui/FormatCategories"
+import { Icon } from "../Icon"
 
 import "./SideNav.css"
-import {useState} from "preact/hooks";
-
-export type FormatCategory = {
-    id: string
-    category: string
-    icon: string
-}
+import { useState } from "preact/hooks"
+import { useSignalEffect } from "@preact/signals"
 
 interface SideNavProps {
     items: FormatCategory[]
@@ -15,12 +11,16 @@ interface SideNavProps {
 }
 
 export default function SideNav({ items, onSelect }: SideNavProps) {
-    const [selectedId, setSelectedId] = useState<string | null>(items[0]?.id || null);
+    const [selectedId, setSelectedId] = useState<CategoryEnum>(SelectedCategory.value)
 
-    const handleItemClick = (id: string) => {
-        setSelectedId(id);
-        onSelect?.(id);
-    };
+    const handleItemClick = (id: CategoryEnum) => {
+        SelectedCategory.value = id
+    }
+
+    // Listen to `SelectedCategory` changes
+    useSignalEffect(() => {
+        if (SelectedCategory.value) setSelectedId(SelectedCategory.value)
+    })
 
     return (
         <aside className="side-nav">
@@ -33,24 +33,24 @@ export default function SideNav({ items, onSelect }: SideNavProps) {
                         items.map((category) => (
                             <li
                                 key={ category.id }
-                                onClick={() => handleItemClick(category.id)}
+                                onClick={ () => handleItemClick(category.id) }
                                 className={ selectedId === category.id ? "active" : undefined }
                                 role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
+                                tabIndex={ 0 }
+                                onKeyDown={ (e) => {
                                     if (e.key === 'Enter' || e.key === ' ') {
-                                        handleItemClick(category.id);
+                                        handleItemClick(category.id)
                                     }
-                                }}
+                                } }
                             >
                                 <Icon src={ category.icon } size={ 16 } />
                                 { " " }
-                                { category.category }
+                                { category.categoryText }
                             </li>
                         ))
                     }
                 </ul>
             </div>
         </aside>
-    );
+    )
 }
