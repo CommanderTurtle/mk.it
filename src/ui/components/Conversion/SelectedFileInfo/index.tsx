@@ -1,11 +1,11 @@
 import type { CSSProperties } from "preact";
 
-import faImageRegular from "../../img/fa-image-regular-full.svg";
-import faXRegular from "../../img/fa-x-solid-full.svg";
+import faImageRegular from "src/ui/img/fa-image-regular-full.svg";
+import faXRegular from "src/ui/img/fa-x-solid-full.svg";
 
-import { Icon } from "../Icon";
+import { Icon } from "src/ui/components/Icon";
 
-import "./SelectedFileInfo.css"
+import "./index.css"
 import { SelectedFiles } from "src/main.new";
 import { useState } from "preact/hooks";
 import { CurrentPage, Pages } from "src/ui";

@@ -1,7 +1,8 @@
-import githubImg from '../img/fa-github-brands-solid-full.svg'
-import discordImg from '../img/fa-discord-brands-solid-full.svg'
+import githubImg from 'src/ui/img/fa-github-brands-solid-full.svg'
+import discordImg from 'src/ui/img/fa-discord-brands-solid-full.svg'
 
-import './Footer.css'
+import 'src/ui/components/Footer'
+import './index.css'
 
 interface FooterComponentProps {
 	visible?: boolean

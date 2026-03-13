@@ -1,7 +1,7 @@
-import Footer from "../components/Footer"
-import UploadField from "../components/Upload/UploadField"
+import Footer from "src/ui/components/Footer"
+import UploadField from "src/ui/components/Upload/UploadField"
 
-import './Upload.css'
+import './index.css'
 
 interface UploadPageProps {
 

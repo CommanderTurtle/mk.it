@@ -1,7 +1,7 @@
 import { SelectedCategory, type CategoryEnum, type FormatCategory } from "src/ui/FormatCategories"
-import { Icon } from "../Icon"
+import { Icon } from "src/ui/components/Icon"
 
-import "./SideNav.css"
+import "./index.css"
 import { useState } from "preact/hooks"
 import { useSignalEffect } from "@preact/signals"
 

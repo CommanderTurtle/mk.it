@@ -1,5 +1,5 @@
 import type { ConvertPathNode, FileData } from "src/FormatHandler";
-import ConversionSettings from "./ConversionSettings";
+import ConversionSettings from "src/ui/components/Conversion/ConversionSettings";
 
 interface ConversionSidebarComponentProps {
 	conversionData: {

@@ -1,9 +1,9 @@
-import type { ConversionOption } from "../../../main.new";
-import { Mode, ModeEnum } from "../../ModeStore";
-import { Icon } from "../Icon";
-import faImageRegularFull from "../../img/fa-image-regular-full.svg";
+import type { ConversionOption } from "src/main.new";
+import { Mode, ModeEnum } from "src/ui/ModeStore";
+import { Icon } from "src/ui/components/Icon";
+import faImageRegularFull from "src/ui/img/fa-image-regular-full.svg";
 
-import "./FormatCard.css";
+import "./index.css";
 
 interface FormatCardProps {
     conversionOption: ConversionOption

@@ -1,6 +1,9 @@
-import { h } from "preact";
-
-type ButtonVariant = 'default' | 'primary' | 'compact' | 'icon';
+export const enum ButtonVariant {
+	Default = 'default',
+	Primary = 'primary',
+	Compact = 'compact',
+	Icon = 'icon',
+}
 
 interface StyledButtonProps {
 	className?: string;
@@ -12,20 +15,20 @@ interface StyledButtonProps {
 	children: preact.ComponentChildren;
 }
 
-import "./StyledButton.css";
+import "./index.css";
 
-export default function StyledButton({ 
-	className, 
-	variant = 'default',
-	onClick, 
-	title, 
-	tabIndex, 
-	disabled = false, 
-	children 
+export default function StyledButton({
+	className,
+	variant = ButtonVariant.Default,
+	onClick,
+	title,
+	tabIndex,
+	disabled = false,
+	children
 }: StyledButtonProps) {
 	// Combine base class with variant and any additional classes
-	const variantClass = variant === 'default' ? '' : variant;
-	const combinedClassName = className 
+	const variantClass = variant === ButtonVariant.Default ? '' : variant;
+	const combinedClassName = className
 		? `styled-button ${variantClass} ${className}`
 		: `styled-button ${variantClass}`.trim();
 
