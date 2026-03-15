@@ -52,6 +52,7 @@ class comicsHandler implements FormatHandler {
                 to: true,
                 internal: "cbz",
                 category: ["archive"],
+                lossless: true,
             },
             {
                 name: "Comic Book Archive (TAR)",
@@ -62,6 +63,7 @@ class comicsHandler implements FormatHandler {
                 to: true,
                 internal: "cbt",
                 category: ["archive"],
+                lossless: true,
             },
         ];
 
