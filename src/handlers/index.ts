@@ -61,6 +61,7 @@ import tarHandler from "./tar.ts";
 import otaHandler from "./ota.ts";
 import comicsHandler from "./comics.ts";
 import terrariaWldHandler from "./terrariawld.ts";
+import pdfparseHandler from "./pdfparse.ts";
 import { tarGzHandler, tarZstdHandler, tarXzHandler } from "./tarCompressed.ts";
 import mclangHandler from "./minecraftLangfileHandler.ts";
 
@@ -130,6 +131,7 @@ try { handlers.push(new tarHandler()) } catch (_) { };
 try { handlers.push(new otaHandler()) } catch (_) { };
 try { handlers.push(new comicsHandler()) } catch (_) { };
 try { handlers.push(new terrariaWldHandler()) } catch (_) { };
+try { handlers.push(new pdfparseHandler()) } catch (_) { };
 try { handlers.push(tarGzHandler) } catch (_) { };
 try { handlers.push(tarZstdHandler) } catch (_) { };
 try { handlers.push(tarXzHandler) } catch (_) { };
