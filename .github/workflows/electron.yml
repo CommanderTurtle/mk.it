@@ -1,8 +1,11 @@
-name: Build Electron Distributions
+name: Build Electron Releases
 
 on:
   push:
     branches: ["master"]
+
+permissions:
+  contents: write
 
 jobs:
   build-electron:
