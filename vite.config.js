@@ -66,6 +66,10 @@ export default defineConfig({
           src: "src/handlers/tarCompressed/liblzma.wasm",
           dest: "wasm"
         },
+        {
+          src: "node_modules/7z-wasm/7zz.wasm",
+          dest: "wasm"
+        }
       ]
     }),
     tsconfigPaths()
