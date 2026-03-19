@@ -99,7 +99,7 @@ class xcursorHandler implements FormatHandler {
             blob.arrayBuffer().then(buf => resolve(new Uint8Array(buf)));
           }, outputFormat.mime);
         });
-        const name = inputFile.name.split(".").slice(0, -1).join(".") + "_" + i + "." + outputFormat.extension;
+        const name = `${inputFile.name}_${i}.${outputFormat.extension}`;
         outputFiles.push({ bytes, name });
 
       }
