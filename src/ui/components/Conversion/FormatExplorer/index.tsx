@@ -8,9 +8,10 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 
 import "./index.css";
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { ConversionOption, ConversionOptionsMap } from "src/main.new";
 import { Mode, ModeEnum } from "src/ui/ModeStore";
+import FromTo from "src/ui/components/Conversion/FromTo";
 import {
 	SelectedCategories,
 	toggleCategory,
@@ -23,9 +24,15 @@ import { Category } from "src/CommonFormats";
 
 interface FormatExplorerProps {
 	conversionOptions: ConversionOptionsMap;
-	onSelect?: (format: ConversionOption) => void;
+	onSelect?: (format: ConversionOption | null) => void;
 	debounceWaitMs?: number;
 	filterDirection?: "from" | "to";
+	fromOption?: ConversionOption | null;
+	toOption?: ConversionOption | null;
+	fromCount?: number;
+	toCount?: number;
+	onClickFrom?: () => void;
+	onClickTo?: () => void;
 }
 
 type SearchIndex = Map<string, ConversionOption>;
@@ -100,7 +107,13 @@ export default function FormatExplorer({
 	conversionOptions,
 	onSelect,
 	debounceWaitMs = 200,
-	filterDirection = "to"
+	filterDirection = "to",
+	fromOption,
+	toOption,
+	fromCount,
+	toCount,
+	onClickFrom,
+	onClickTo,
 }: FormatExplorerProps) {
 	const isAdvanced = Mode.value === ModeEnum.Advanced;
 
@@ -111,6 +124,7 @@ export default function FormatExplorer({
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [searchInputValue, setSearchInputValue] = useState("");
+	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const activeCategories = SelectedCategories.value;
 
@@ -126,6 +140,11 @@ export default function FormatExplorer({
 	}, debounceWaitMs);
 
 	const handleOptionSelection = (id: string, option: ConversionOption) => {
+		if (id === selectedOptionId) {
+			setSelectedOptionId(null);
+			onSelect?.(null);
+			return;
+		}
 		setSelectedOptionId(id);
 		onSelect?.(option);
 	};
@@ -139,13 +158,29 @@ export default function FormatExplorer({
 	const noResults = searchResultsIndex.size === 0;
 	const filtersActive = hasActiveFilters() || searchTerm !== "";
 
+	useEffect(() => {
+		setSelectedOptionId(null);
+	}, [filterDirection]);
+
 	return (
 		<div className="format-explorer">
 			<div className="format-browser">
 				<div className="search-container">
+					<FromTo
+						fromOption={fromOption ?? null}
+						toOption={toOption ?? null}
+						fromCount={fromCount ?? 0}
+						toCount={toCount ?? 0}
+						onClickFrom={() => onClickFrom?.()}
+						onClickTo={() => {
+							onClickTo?.();
+							requestAnimationFrame(() => searchInputRef.current?.focus());
+						}}
+					/>
 					<div className="search-input-wrapper">
 						<Search size={16} className="search-icon" />
 						<input
+							ref={searchInputRef}
 							type="text"
 							placeholder="Search formats..."
 							value={searchInputValue}

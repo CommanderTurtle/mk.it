@@ -1,5 +1,6 @@
 import type { ConversionOption } from "src/main.new";
 import FileIcon from "src/ui/components/FileIcon";
+import { Check } from "lucide-preact";
 import "./index.css";
 
 interface FormatCardProps {
@@ -32,6 +33,11 @@ export default function FormatCard({ conversionOption, id, selected, onSelect, a
 				<div className="format-card-text">
 					<span className="format-card-ext">.{format.extension.toUpperCase()}</span>
 					<span className="format-card-name">{cleanName}</span>
+				</div>
+				<div className="format-card-check" aria-hidden="true">
+					<span className={`format-card-check-inner ${selected ? "is-on" : ""}`}>
+						<Check size={14} />
+					</span>
 				</div>
 			</div>
 			{advanced && (

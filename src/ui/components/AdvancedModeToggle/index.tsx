@@ -3,6 +3,7 @@ import { Wrench } from "lucide-preact";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import { useEffect, useRef } from "preact/hooks";
+import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 
 interface AdvancedModeToggleProps {
 	compact?: boolean;
@@ -28,9 +29,9 @@ export default function AdvancedModeToggle({ compact = true }: AdvancedModeToggl
 	const isAdvanced = Mode.value === ModeEnum.Advanced;
 
 	return (
-		<button
-			ref={btnRef}
-			className={`styled-button ${compact ? "compact" : ""}`}
+		<StyledButton
+			buttonRef={btnRef}
+			variant={compact ? ButtonVariant.Compact : ButtonVariant.Default}
 			onClick={handleClick}
 		>
 			{compact ? (
@@ -41,6 +42,6 @@ export default function AdvancedModeToggle({ compact = true }: AdvancedModeToggl
 					{isAdvanced ? " Simple mode" : " Advanced mode"}
 				</>
 			)}
-		</button>
+		</StyledButton>
 	);
 }

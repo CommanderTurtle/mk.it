@@ -16,7 +16,7 @@
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		flex-shrink: 0;
+		min-width: 0;
 
 		.header-step-label {
 			font-size: 0.7rem;
@@ -27,19 +27,6 @@
 			background: color-mix(in srgb, var(--primary) 10%, transparent);
 			padding: 0.2rem 0.55rem;
 			border-radius: 4px;
-		}
-	}
-
-	.header-center {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		flex: 1;
-		justify-content: center;
-		overflow: hidden;
-
-		@media (max-width: 640px) {
-			display: none;
 		}
 	}
 

@@ -1,7 +1,7 @@
 .conversion-body {
 	background-color: var(--bg-page);
 	color: var(--text-secondary);
-	min-height: 100vh;
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -22,48 +22,18 @@
 	background: var(--bg-card);
 	border-top: 1px solid var(--border-primary);
 	flex-shrink: 0;
+	min-height: 64px;
 }
 
-.action-btn {
-	appearance: none;
-	border: 1px solid var(--border-primary);
-	border-radius: 10px;
-	padding: 0.55rem 1.2rem;
-	font-size: 0.875rem;
-	font-weight: 700;
-	cursor: pointer;
-	display: inline-flex;
+.conversion-action-files {
+	display: flex;
 	align-items: center;
-	gap: 0.4rem;
-	transition: all 150ms;
-	user-select: none;
+	gap: 0.5rem;
+	min-width: 0;
+	margin-inline-end: auto;
+	overflow-x: auto;
+}
 
-	&.action-btn-back {
-		background: var(--bg-card);
-		color: var(--text-secondary);
-
-		&:hover {
-			background: var(--bg-section);
-			color: var(--text-primary);
-		}
-	}
-
-	&.action-btn-primary {
-		background: var(--primary);
-		color: var(--text-on-primary);
-		border-color: var(--primary);
-		box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 25%, transparent);
-
-		&:hover:not(.disabled) {
-			transform: translateY(-1px);
-			box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 30%, transparent);
-		}
-
-		&.disabled {
-			opacity: 0.45;
-			cursor: not-allowed;
-			transform: none;
-			box-shadow: none;
-		}
-	}
+.conversion-action-files .file-info-badge {
+	flex-shrink: 0;
 }

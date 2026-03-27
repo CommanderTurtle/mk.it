@@ -3,7 +3,6 @@ footer {
 	width: 100%;
 	gap: 1rem;
 	justify-content: flex-end;
-	margin-block: auto 0;
 	color: var(--text-muted);
 	padding: 0.4rem 1rem;
 	background-color: var(--bg-section);
