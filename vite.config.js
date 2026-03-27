@@ -87,7 +87,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
     preact({
-      // prefreshEnabled: true,
+      prefreshEnabled: false,
       reactAliasesEnabled: true
     })
   ]

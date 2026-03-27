@@ -12,8 +12,33 @@ import Footer from "src/ui/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-preact";
 import { PopupData } from "src/ui";
 import { closePopup, openPopup } from "src/ui/PopupStore";
+import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
+import FileInfoBadge from "src/ui/components/FileInfo";
+import { CurrentPage, Pages } from "src/ui/AppState";
 
 type ConversionStep = "select-from" | "select-to" | "converting";
+
+function countAvailableFormats(options: ConversionOptionsMap, direction: "from" | "to", advancedMode: boolean): number {
+	const seen = new Set<string>();
+	let count = 0;
+
+	for (const [format] of options) {
+		if (direction === "from" && !format.from) continue;
+		if (direction === "to" && !format.to) continue;
+
+		if (advancedMode) {
+			count += 1;
+			continue;
+		}
+
+		const dedupeKey = `${format.mime}|${format.format}`;
+		if (seen.has(dedupeKey)) continue;
+		seen.add(dedupeKey);
+		count += 1;
+	}
+
+	return count;
+}
 
 function getConversionOptions(): ConversionOptionsMap {
 	if (ConversionOptions.size) return ConversionOptions;
@@ -50,6 +75,7 @@ export default function Conversion() {
 	const allOptions = getConversionOptions();
 	const files = Object.values(SelectedFiles.value);
 	const firstFile = files[0];
+	const isAdvanced = Mode.value === ModeEnum.Advanced;
 
 	const matchingFrom = useMemo(
 		() => getMatchingFromFormats(allOptions, files),
@@ -83,11 +109,12 @@ export default function Conversion() {
 	const [toOption, setToOption] = useState<ConversionOption | null>(null);
 	const [isConverting, setIsConverting] = useState(false);
 
-	const handleFromSelect = useCallback((option: ConversionOption) => {
+	const handleFromSelect = useCallback((option: ConversionOption | null) => {
 		setFromOption(option);
+		if (!option) setToOption(null);
 	}, []);
 
-	const handleToSelect = useCallback((option: ConversionOption) => {
+	const handleToSelect = useCallback((option: ConversionOption | null) => {
 		setToOption(option);
 	}, []);
 
@@ -103,6 +130,24 @@ export default function Conversion() {
 			setStep("select-from");
 			setToOption(null);
 		}
+	};
+
+	const handleFromToClickFrom = () => {
+		setStep("select-from");
+		setFromOption(null);
+		setToOption(null);
+	};
+
+	const handleFromToClickTo = () => {
+		setStep("select-to");
+		setToOption(null);
+	};
+
+	const removeFile = (file: File) => {
+		const key = `${file.name}-${file.lastModified}` as const;
+		const { [key]: _, ...rest } = SelectedFiles.value;
+		SelectedFiles.value = rest;
+		if (Object.keys(rest).length === 0) CurrentPage.value = Pages.Upload;
 	};
 
 	const handleConvert = async () => {
@@ -174,17 +219,11 @@ export default function Conversion() {
 		}
 	};
 
-	const stepLabel = step === "select-from"
-		? "Step 1 · Select input format"
-		: step === "select-to"
-			? "Step 2 · Select output format"
-			: "Converting...";
-
 	const canProceed = step === "select-from" ? !!fromOption : !!toOption;
 
 	return (
 		<div className="conversion-body">
-			<ConversionHeader stepLabel={stepLabel} />
+			<ConversionHeader />
 
 			<main className="conversion-main">
 				{step === "converting" ? (
@@ -201,26 +240,44 @@ export default function Conversion() {
 						conversionOptions={step === "select-from" ? matchingFrom : allOptions}
 						onSelect={step === "select-from" ? handleFromSelect : handleToSelect}
 						filterDirection={step === "select-from" ? "from" : "to"}
+						fromOption={fromOption}
+						toOption={toOption}
+						fromCount={countAvailableFormats(matchingFrom, "from", isAdvanced)}
+						toCount={countAvailableFormats(allOptions, "to", isAdvanced)}
+						onClickFrom={handleFromToClickFrom}
+						onClickTo={handleFromToClickTo}
 					/>
 				)}
 			</main>
 
 			{step !== "converting" && (
 				<div className="conversion-action-bar">
+					<div className="conversion-action-files">
+						{files.map(file => (
+							<FileInfoBadge
+								key={`${file.name}-${file.lastModified}`}
+								fileName={file.name}
+								fileSize={file.size}
+								extension={file.name.split(".").pop()}
+								mimeType={file.type}
+								onRemove={() => removeFile(file)}
+							/>
+						))}
+					</div>
 					{step === "select-to" && (
-						<button className="action-btn action-btn-back" onClick={handleBack}>
+						<StyledButton onClick={handleBack}>
 							<ArrowLeft size={16} />
 							Back
-						</button>
+						</StyledButton>
 					)}
-					<button
-						className={`action-btn action-btn-primary ${!canProceed ? "disabled" : ""}`}
+					<StyledButton
+						variant={ButtonVariant.Primary}
 						disabled={!canProceed}
 						onClick={step === "select-from" ? handleNext : handleConvert}
 					>
 						{step === "select-from" ? "Next" : "Convert"}
 						{step === "select-from" && <ArrowRight size={16} />}
-					</button>
+					</StyledButton>
 				</div>
 			)}
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from "preact/hooks";
-import { CurrentPage, LoadingToolsText, Pages } from "src/ui/index";
+import { CurrentPage, Pages } from "src/ui/AppState";
 import { SelectedFiles } from "src/main.new";
 import { Upload } from "lucide-preact";
 

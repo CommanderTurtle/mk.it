@@ -1,13 +1,13 @@
 .upload-page {
 	display: flex;
 	flex-direction: column;
-	height: 100vh;
-	justify-content: center;
-	align-items: center;
+	min-height: 100vh;
+	align-items: stretch;
 }
 
 .upload-card {
 	width: clamp(380px, 70vw, 520px);
+	max-width: calc(100vw - 2rem);
 	border-radius: 16px;
 	display: flex;
 	flex-direction: column;
@@ -17,6 +17,7 @@
 		0 1px 3px rgba(0, 0, 0, 0.04),
 		0 8px 24px rgba(0, 0, 0, 0.06);
 	overflow: hidden;
+	margin: auto;
 
 	.upload-card-header {
 		display: flex;

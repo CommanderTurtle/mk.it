@@ -12,6 +12,7 @@ interface StyledButtonProps {
 	title?: string;
 	tabIndex?: number;
 	disabled?: boolean;
+	buttonRef?: preact.Ref<HTMLButtonElement>;
 	children: preact.ComponentChildren;
 }
 
@@ -24,6 +25,7 @@ export default function StyledButton({
 	title,
 	tabIndex,
 	disabled = false,
+	buttonRef,
 	children
 }: StyledButtonProps) {
 	// Combine base class with variant and any additional classes
@@ -34,6 +36,7 @@ export default function StyledButton({
 
 	return (
 		<button
+			ref={buttonRef}
 			className={combinedClassName}
 			onClick={onClick}
 			title={title}
