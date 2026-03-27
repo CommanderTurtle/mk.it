@@ -1,3 +1,9 @@
+@keyframes loading-screen-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 .loading-screen {
 	display: flex;
 	flex-direction: column;
@@ -9,15 +15,13 @@
 	min-height: 300px;
 
 	.loading-spinner-wrap {
+		display: inline-flex;
 		color: var(--primary);
-	}
-
-	@keyframes spin {
-		to { transform: rotate(360deg); }
+		animation: loading-screen-spin 1s linear infinite;
 	}
 
 	.loading-spinner {
-		animation: spin 1s linear infinite;
+		display: block;
 	}
 
 	.loading-title {

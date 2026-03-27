@@ -1,9 +1,11 @@
 import './index.css';
 
 import { useState, useMemo, useCallback } from "preact/hooks";
+import mime from "mime";
 import { ConversionOptions, SelectedFiles, type ConversionOption, type ConversionOptionsMap } from 'src/main.new';
 import { Mode, ModeEnum } from "src/ui/ModeStore";
 import normalizeMimeType from "src/normalizeMimeType";
+import type { FileFormat } from "src/FormatHandler";
 
 import ConversionHeader from "src/ui/components/Conversion/ConversionHeader";
 import FormatExplorer from "src/ui/components/Conversion/FormatExplorer";
@@ -45,17 +47,59 @@ function getConversionOptions(): ConversionOptionsMap {
 	throw new Error("Can't build format list!", { cause: "UI got empty global format list" });
 }
 
+function expandVideoContainerMimes(candidates: string[]): string[] {
+	const out = new Set(candidates);
+	for (const c of candidates) {
+		if (c === "video/mp4" || c === "video/quicktime") {
+			out.add("video/mp4");
+			out.add("video/quicktime");
+		}
+	}
+	return [...out];
+}
+
+function getMimeCandidatesForFile(file: File): string[] {
+	const set = new Set<string>();
+	const raw = file.type?.trim();
+	if (raw) set.add(normalizeMimeType(raw));
+	const fromPath = mime.getType(file.name);
+	if (fromPath) set.add(normalizeMimeType(fromPath));
+	const extOnly = file.name.split(".").pop()?.toLowerCase();
+	if (extOnly) {
+		const fromExt = mime.getType(extOnly);
+		if (fromExt) set.add(normalizeMimeType(fromExt));
+	}
+	return expandVideoContainerMimes([...set]);
+}
+
+function formatMatchesUploadedFile(format: FileFormat, ext: string, mimeCandidates: string[]): boolean {
+	if (mimeCandidates.some(m => m === format.mime)) return true;
+	if (!ext) return false;
+	const e = ext.toLowerCase();
+	const fex = format.extension.toLowerCase();
+	const fmt = format.format.toLowerCase();
+	const intr = format.internal.toLowerCase();
+	return (
+		fex === e
+		|| fex.includes(e)
+		|| fmt === e
+		|| fmt.includes(e)
+		|| intr === e
+		|| intr.includes(e)
+	);
+}
+
 function getMatchingFromFormats(options: ConversionOptionsMap, files: File[]): ConversionOptionsMap {
 	if (files.length === 0) return options;
 
 	const file = files[0];
-	const mimeType = normalizeMimeType(file.type);
+	const mimeCandidates = getMimeCandidatesForFile(file);
 	const ext = file.name.split(".").pop()?.toLowerCase() || "";
 	const matched: ConversionOptionsMap = new Map();
 
 	for (const [format, handler] of options) {
 		if (!format.from) continue;
-		if (format.mime === mimeType || format.extension.toLowerCase() === ext) {
+		if (formatMatchesUploadedFile(format, ext, mimeCandidates)) {
 			matched.set(format, handler);
 		}
 	}
