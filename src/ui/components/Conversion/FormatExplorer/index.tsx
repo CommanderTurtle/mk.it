@@ -2,13 +2,14 @@ import FormatCard from "src/ui/components/Conversion/FormatCard";
 import Chip from "src/ui/components/Chip";
 import { Search, X } from "lucide-preact";
 import {
-	Image, Video, Music, Archive, FileText, Infinity, Code,
+	Image, Video, Music, Archive, FileText, Code,
 	Type, BarChart3, Presentation, Database
 } from "lucide-preact";
 import { useDebouncedCallback } from "use-debounce";
 
 import "./index.css";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import type { FileFormat } from "src/FormatHandler";
 import type { ConversionOption, ConversionOptionsMap } from "src/main.new";
 import { Mode, ModeEnum } from "src/ui/ModeStore";
 import FromTo from "src/ui/components/Conversion/FromTo";
@@ -17,8 +18,7 @@ import {
 	toggleCategory,
 	clearCategories,
 	hasActiveFilters,
-	type CategoryEnum,
-	type FormatCategory
+	type CategoryEnum
 } from "src/ui/FormatCategories";
 import { Category } from "src/CommonFormats";
 
@@ -36,6 +36,32 @@ interface FormatExplorerProps {
 }
 
 type SearchIndex = Map<string, ConversionOption>;
+
+function formatExplorerRowKey(file: FileFormat, handlerName: string): string {
+	return [
+		handlerName,
+		file.internal,
+		file.mime,
+		file.format,
+		file.extension,
+		String(file.from),
+		String(file.to),
+		file.name,
+	].join("\0");
+}
+
+function matchesFormatSearch(option: ConversionOption, termLower: string): boolean {
+	if (termLower === "") return true;
+	const [file, handler] = option;
+	return (
+		file.name.toLowerCase().includes(termLower)
+		|| file.format.toLowerCase().includes(termLower)
+		|| file.extension.toLowerCase().includes(termLower)
+		|| file.mime.toLowerCase().includes(termLower)
+		|| file.internal.toLowerCase().includes(termLower)
+		|| handler.name.toLowerCase().includes(termLower)
+	);
+}
 
 const CATEGORY_CHIPS: Array<{ id: CategoryEnum; label: string; icon: preact.ComponentChildren }> = [
 	{ id: Category.IMAGE, label: "Image", icon: <Image size={14} /> },
@@ -60,14 +86,14 @@ function generateSearchIndex(optionsMap: ConversionOptionsMap, advancedMode: boo
 		if (direction === "to" && !file.to) continue;
 
 		const dedupeKey = `${file.mime}|${file.format}`;
-		const fullKey = `${file.name}${file.format}${file.extension}${file.mime}${handler.name}`.toLowerCase();
+		const id = formatExplorerRowKey(file, handler.name);
 
 		if (advancedMode) {
-			index.set(fullKey, [file, handler]);
+			index.set(id, [file, handler]);
 		} else {
 			if (!seen.has(dedupeKey)) {
 				seen.add(dedupeKey);
-				index.set(fullKey, [file, handler]);
+				index.set(id, [file, handler]);
 			}
 		}
 	}
@@ -97,8 +123,9 @@ function filterByCategories(options: SearchIndex, categories: Set<CategoryEnum>)
 function filterByTerm(options: SearchIndex, term: string): SearchIndex {
 	if (term === "") return options;
 	const filtered: SearchIndex = new Map();
+	const t = term.toLowerCase();
 	for (const [key, pair] of options) {
-		if (key.includes(term)) filtered.set(key, pair);
+		if (matchesFormatSearch(pair, t)) filtered.set(key, pair);
 	}
 	return filtered;
 }
