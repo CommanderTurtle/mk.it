@@ -17,3 +17,4 @@ export const PopupData = signal<PopupDataContainer>({
 });
 
 export const LoadingToolsText = signal<string | undefined>("Loading formats…");
+export const ConversionInProgress = signal(false);

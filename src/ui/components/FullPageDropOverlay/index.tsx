@@ -1,21 +1,46 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { Upload } from "lucide-preact";
 
-import { CurrentPage, LoadingToolsText, Pages } from "src/ui/AppState";
+import { ConversionInProgress, CurrentPage, LoadingToolsText, Pages } from "src/ui/AppState";
 import { SelectedFiles } from "src/main.new";
 
 import "./index.css";
 
-function getDraggedFileName(dataTransfer: DataTransfer | null): string | null {
+function getSingleDraggedFile(dataTransfer: DataTransfer | null): File | null {
 	if (!dataTransfer) return null;
 
-	for (const item of dataTransfer.items) {
-		if (item.kind !== "file") continue;
-		const file = item.getAsFile();
-		if (file?.name) return file.name;
+	if (dataTransfer.items && dataTransfer.items.length > 0) {
+		const fileItems = Array.from(dataTransfer.items).filter((item) => item.kind === "file");
+		if (fileItems.length !== 1) return null;
+
+		const entry = fileItems[0].webkitGetAsEntry();
+		if (entry?.isDirectory) return null;
+
+		return fileItems[0].getAsFile();
 	}
 
-	return dataTransfer.files[0]?.name ?? null;
+	if (dataTransfer.files.length !== 1) return null;
+	return dataTransfer.files[0];
+}
+
+function getDragPreviewState(dataTransfer: DataTransfer | null): { valid: boolean; name: string | null } {
+	if (!dataTransfer) return { valid: false, name: null };
+
+	if (dataTransfer.items && dataTransfer.items.length > 0) {
+		const fileItems = Array.from(dataTransfer.items).filter((item) => item.kind === "file");
+		if (fileItems.length !== 1) return { valid: false, name: null };
+		const entry = fileItems[0].webkitGetAsEntry();
+		if (entry?.isDirectory) return { valid: false, name: null };
+		const previewName = fileItems[0].getAsFile()?.name || fileItems[0].type || null;
+		return { valid: true, name: previewName };
+	}
+
+	if (dataTransfer.files.length === 1) {
+		return { valid: true, name: dataTransfer.files[0]?.name ?? null };
+	}
+
+	if (dataTransfer.files.length > 1) return { valid: false, name: null };
+	return { valid: true, name: null };
 }
 
 export default function FullPageDropOverlay() {
@@ -24,6 +49,7 @@ export default function FullPageDropOverlay() {
 	const dragCounter = useRef(0);
 
 	const formatsReady = LoadingToolsText.value === undefined;
+	const canAcceptDrop = formatsReady && !ConversionInProgress.value;
 
 	useEffect(() => {
 		const isFileDrag = (event: DragEvent) => event.dataTransfer?.types.includes("Files") ?? false;
@@ -33,17 +59,25 @@ export default function FullPageDropOverlay() {
 			event.preventDefault();
 
 			dragCounter.current += 1;
-			if (!formatsReady) return;
+			if (!canAcceptDrop) return;
 
-			setDraggedFileName(getDraggedFileName(event.dataTransfer));
+			const preview = getDragPreviewState(event.dataTransfer);
+			if (!preview.valid) return;
+			setDraggedFileName(preview.name);
 			setIsDragging(true);
 		};
 
 		const handleDragOver = (event: DragEvent) => {
 			if (!isFileDrag(event)) return;
 			event.preventDefault();
-			if (!formatsReady) return;
-			setDraggedFileName(getDraggedFileName(event.dataTransfer));
+			if (!canAcceptDrop) return;
+			const preview = getDragPreviewState(event.dataTransfer);
+			if (!preview.valid) {
+				setIsDragging(false);
+				setDraggedFileName(null);
+				return;
+			}
+			setDraggedFileName(preview.name);
 			setIsDragging(true);
 		};
 
@@ -65,12 +99,13 @@ export default function FullPageDropOverlay() {
 			dragCounter.current = 0;
 			setIsDragging(false);
 
-			if (!formatsReady) {
+			if (!canAcceptDrop) {
 				setDraggedFileName(null);
 				return;
 			}
 
-			const file = event.dataTransfer?.files[0];
+			const file = getSingleDraggedFile(event.dataTransfer);
+
 			if (!file) {
 				setDraggedFileName(null);
 				return;
@@ -94,19 +129,19 @@ export default function FullPageDropOverlay() {
 			window.removeEventListener("dragleave", handleDragLeave);
 			window.removeEventListener("drop", handleDrop);
 		};
-	}, [formatsReady]);
+	}, [canAcceptDrop]);
 
-	if (!isDragging || !formatsReady) return null;
+	if (!isDragging || !canAcceptDrop) return null;
 
 	return (
 		<div className="full-page-drop-overlay" aria-hidden="true">
 			<div className="full-page-drop-overlay-card">
 				<div className="full-page-drop-overlay-icon">
-					<Upload size={32} />
+					<Upload />
 				</div>
-				<p className="full-page-drop-overlay-title">Upload file</p>
+				<p className="full-page-drop-overlay-title">Drop to upload</p>
 				<p className="full-page-drop-overlay-subtitle">
-					Drop file here to convert this file (will replace the current file)
+					Release to convert your file
 				</p>
 				{draggedFileName && (
 					<div className="full-page-drop-overlay-chip" role="status">
