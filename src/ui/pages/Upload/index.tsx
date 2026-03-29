@@ -1,4 +1,4 @@
-import { useRef, useState } from "preact/hooks";
+import { useRef } from "preact/hooks";
 import { CurrentPage, LoadingToolsText, Pages } from "src/ui/AppState";
 import { goToUploadHome, SelectedFiles } from "src/main.new";
 import { Upload } from "lucide-preact";
@@ -10,8 +10,6 @@ import Footer from "src/ui/components/Footer";
 import "./index.css";
 
 export default function UploadPage() {
-	const [isDragging, setIsDragging] = useState(false);
-	const dragCounter = useRef<number>(0);
 	const fileRef = useRef<HTMLInputElement>(null);
 
 	const handleClick = (ev: MouseEvent) => {
@@ -26,38 +24,11 @@ export default function UploadPage() {
 		if (!fileList || fileList.length === 0) return;
 		if (!formatsReady) return;
 
-		for (const file of fileList) {
-			SelectedFiles.value = {
-				...SelectedFiles.value,
-				[`${file.name}-${file.lastModified}`]: file
-			};
-		}
+		const file = fileList[0];
+		SelectedFiles.value = {
+			[`${file.name}-${file.lastModified}`]: file
+		};
 		CurrentPage.value = Pages.Conversion;
-	};
-
-	const handleDrop = (ev: DragEvent) => {
-		ev.preventDefault();
-		setIsDragging(false);
-		dragCounter.current = 0;
-		if (!formatsReady) return;
-		processFiles(ev.dataTransfer?.files);
-	};
-
-	const handleDragEnter = (ev: DragEvent) => {
-		ev.preventDefault();
-		if (!formatsReady) return;
-		dragCounter.current++;
-		if (ev.dataTransfer?.types.includes("Files")) setIsDragging(true);
-	};
-
-	const handleDragLeave = (ev: DragEvent) => {
-		ev.preventDefault();
-		dragCounter.current--;
-		if (dragCounter.current === 0) setIsDragging(false);
-	};
-
-	const handleDragOver = (ev: DragEvent) => {
-		ev.preventDefault();
 	};
 
 	const handleChange = () => {
@@ -77,12 +48,8 @@ export default function UploadPage() {
 				</div>
 
 				<div
-					className={`upload-dropzone ${isDragging ? "active-drag" : ""} ${!formatsReady ? "upload-dropzone--pending" : ""}`}
+					className={`upload-dropzone ${!formatsReady ? "upload-dropzone--pending" : ""}`}
 					onClick={handleClick}
-					onDrop={handleDrop}
-					onDragOver={handleDragOver}
-					onDragEnter={handleDragEnter}
-					onDragLeave={handleDragLeave}
 					role="button"
 					tabIndex={0}
 					onKeyDown={(e) => {
