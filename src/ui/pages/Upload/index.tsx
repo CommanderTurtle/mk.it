@@ -67,15 +67,14 @@ export default function UploadPage() {
 						id="uploadFile"
 						onClick={(ev) => ev.stopPropagation()}
 						tabIndex={0}
-						multiple
 						disabled={!formatsReady}
 						onChange={handleChange}
 					/>
 					<div className="upload-icon-wrap">
-						<Upload size={32} />
+						<Upload />
 					</div>
-					<span className="upload-cta">Click to upload file</span>
-					<span className="upload-hint">or drag and drop here</span>
+					<span className="upload-cta">Click to upload a file</span>
+					<span className="upload-hint">or drag and drop</span>
 				</div>
 
 				<div className="upload-card-actions">

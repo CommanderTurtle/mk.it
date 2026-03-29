@@ -1,6 +1,6 @@
 import './index.css';
 
-import { useState, useMemo, useCallback } from "preact/hooks";
+import { useState, useMemo, useCallback, useEffect } from "preact/hooks";
 import mime from "mime";
 import { ConversionOptions, SelectedFiles, type ConversionOption, type ConversionOptionsMap } from 'src/main.new';
 import { Mode, ModeEnum } from "src/ui/ModeStore";
@@ -15,7 +15,7 @@ import { ArrowLeft, ArrowRight } from "lucide-preact";
 import { PopupData } from "src/ui";
 import { closePopup, openPopup } from "src/ui/PopupStore";
 import FileInfoBadge from "src/ui/components/FileInfo";
-import { CurrentPage, Pages } from "src/ui/AppState";
+import { ConversionInProgress, CurrentPage, Pages } from "src/ui/AppState";
 import { ProgressStore } from "src/ui/ProgressStore";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 
@@ -154,6 +154,21 @@ export default function Conversion() {
 	const [toOption, setToOption] = useState<ConversionOption | null>(null);
 	const [isConverting, setIsConverting] = useState(false);
 
+	useEffect(() => {
+		if (!firstFile || isConverting) return;
+
+		if (autoAdvance) {
+			const first = matchingFrom.entries().next().value;
+			setFromOption(first ? [first[0], first[1]] : null);
+			setStep("select-to");
+		} else {
+			setFromOption(null);
+			setStep("select-from");
+		}
+
+		setToOption(null);
+	}, [firstFile]);
+
 	const handleFromSelect = useCallback((option: ConversionOption | null) => {
 		setFromOption(option);
 		if (!option) setToOption(null);
@@ -188,9 +203,8 @@ export default function Conversion() {
 		setToOption(null);
 	};
 
-	const removeFile = (file: File) => {
-		const key = `${file.name}-${file.lastModified}` as const;
-		const { [key]: _, ...rest } = SelectedFiles.value;
+	const removeFile = (key: string) => {
+		const { [key as keyof typeof SelectedFiles.value]: _, ...rest } = SelectedFiles.value;
 		SelectedFiles.value = rest;
 		if (Object.keys(rest).length === 0) CurrentPage.value = Pages.Upload;
 	};
@@ -199,6 +213,7 @@ export default function Conversion() {
 		if (!fromOption || !toOption || !firstFile) return;
 
 		setIsConverting(true);
+		ConversionInProgress.value = true;
 		setStep("converting");
 		ProgressStore.reset();
 		const abortController = ProgressStore.controller;
@@ -266,6 +281,7 @@ export default function Conversion() {
 			}
 		} finally {
 			setIsConverting(false);
+			ConversionInProgress.value = false;
 			setStep("select-to");
 		}
 	};
@@ -302,14 +318,14 @@ export default function Conversion() {
 			{step !== "converting" && (
 				<div className="conversion-action-bar">
 					<div className="conversion-action-files">
-						{files.map(file => (
+						{Object.entries(SelectedFiles.value).map(([key, file]) => (
 							<FileInfoBadge
-								key={`${file.name}-${file.lastModified}`}
+								key={key}
 								fileName={file.name}
 								fileSize={file.size}
 								extension={file.name.split(".").pop()}
 								mimeType={file.type}
-								onRemove={() => removeFile(file)}
+								onRemove={() => removeFile(key)}
 							/>
 						))}
 					</div>
