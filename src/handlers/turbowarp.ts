@@ -3,7 +3,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { Packager, largeAssets, downloadProject } from "turbowarp-packager-browser";
-import unpackager from "@turbowarp/unpackager";
+import * as unpackager from "./turbowarp/unpackager/unpackager.js";
 
 // patching some assets
 largeAssets.scaffolding.src = "/convert/js/turbowarp-scaffolding/scaffolding-full.js";
