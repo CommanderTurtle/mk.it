@@ -57,7 +57,7 @@ class turbowarpHandler implements FormatHandler {
           bytes 
         });
       } else if (inputFormat.internal === "html") {
-        const data = (await unpackager(inputFile.bytes)).data;
+        const data = (await unpackager.default(inputFile.bytes)).data;
         const bytes = new Uint8Array(data);
         outputFiles.push({ 
           name: inputFile.name.replace(/\.html$/, ".sb3"), 
