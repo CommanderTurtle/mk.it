@@ -18,7 +18,7 @@ export default function ConversionHeader({ stepLabel, logoDisabled = false }: Co
 			</div>
 
 			<div className="header-right">
-				<AdvancedModeToggle compact={true} />
+				<AdvancedModeToggle compact={false} />
 			</div>
 		</header>
 	);
