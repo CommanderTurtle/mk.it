@@ -35,5 +35,6 @@
 }
 
 .conversion-action-files .file-info-badge {
-	flex-shrink: 0;
+	flex-shrink: 1;
+	min-width: 0;
 }
