@@ -74,7 +74,7 @@ export default function UploadPage() {
 						<Upload />
 					</div>
 					<span className="upload-cta">
-						{window.matchMedia("(pointer: coarse)").matches ? "Tap" : "Click"} to upload a file
+						{window.matchMedia("(pointer: coarse)").matches ? "Tap" : "Click"} to select a file
 					</span>
 					<span className="upload-hint">
 						{window.matchMedia("(pointer: coarse)").matches ? "" : "or drag and drop"}

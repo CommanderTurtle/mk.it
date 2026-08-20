@@ -139,7 +139,7 @@ export default function FullPageDropOverlay() {
 				<div className="full-page-drop-overlay-icon">
 					<Upload />
 				</div>
-				<p className="full-page-drop-overlay-title">Drop to upload</p>
+				<p className="full-page-drop-overlay-title">Drop to select</p>
 				<p className="full-page-drop-overlay-subtitle">
 					Release to convert your file
 				</p>
