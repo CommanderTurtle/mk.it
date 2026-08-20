@@ -19,7 +19,7 @@ class sqlite3Handler implements FormatHandler {
         from: true,
         to: true,
         internal: "sqlite3",
-        category: Category.DATA,
+        category: Category.DATABASE,
         lossless: false
       },
       {
@@ -30,7 +30,7 @@ class sqlite3Handler implements FormatHandler {
         from: true,
         to: false,
         internal: "sqlite3",
-        category: Category.DATA,
+        category: Category.DATABASE,
         lossless: false
       },
       // Lossy because extracts only tables  
