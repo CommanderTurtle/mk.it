@@ -9,7 +9,8 @@ export default defineConfig({
     exclude: [
       "@ffmpeg/ffmpeg",
       "@sqlite.org/sqlite-wasm",
-      "@bokuweb/zstd-wasm"
+      "@bokuweb/zstd-wasm",
+      "@yowasp/clang",
     ]
   },
   base: "/convert/",
@@ -63,10 +64,6 @@ export default defineConfig({
         {
           src: "node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs",
           dest: "js"
-        },
-        {
-          src: "src/handlers/tarCompressed/liblzma.wasm",
-          dest: "wasm"
         },
         {
           src: "node_modules/turbowarp-packager-browser/dist/scaffolding/*",

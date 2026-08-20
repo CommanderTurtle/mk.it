@@ -18,7 +18,7 @@ class threejsHandler implements FormatHandler {
       from: true,
       to: false,
       internal: "glb",
-      category: Category.DATA,
+      category: Category.MODEL,
       lossless: false
     },
     {
@@ -29,7 +29,7 @@ class threejsHandler implements FormatHandler {
       from: true,
       to: false,
       internal: "glb",
-      category: Category.DATA,
+      category: Category.MODEL,
       lossless: false
     },
     {
@@ -40,7 +40,7 @@ class threejsHandler implements FormatHandler {
       from: true,
       to: false,
       internal: "obj",
-      category: Category.DATA,
+      category: Category.MODEL,
       lossless: false,
     },
     CommonFormats.PNG.supported("png", false, true),
@@ -88,7 +88,7 @@ class threejsHandler implements FormatHandler {
           });
           break;
         default:
-          throw new Error("Invalid input format");
+          throw new TypeError(`Unsupported input format: ${inputFormat.internal}`);
       }
 
       const bbox = new THREE.Box3().setFromObject(object);

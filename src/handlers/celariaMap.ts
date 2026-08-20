@@ -25,7 +25,7 @@ class celariaMapHandler implements FormatHandler {
 				from: false,
 				to: true,
 				internal: "obj",
-				category: Category.DATA,
+				category: Category.MODEL,
 				lossless: false,
 			},
 			CommonFormats.JSON.builder("json").allowFrom(true).allowTo(true).markLossless(false),
@@ -37,7 +37,7 @@ class celariaMapHandler implements FormatHandler {
 				from: true,
 				to: true,
 				internal: "ecmap",
-				category: "data",
+				category: Category.DATA,
 				lossless: false,
 			},
 			{
@@ -48,7 +48,7 @@ class celariaMapHandler implements FormatHandler {
 				from: true,
 				to: false,
 				internal: "cmap",
-				category: "data",
+				category: Category.DATA,
 				lossless: false,
 			},
 		]
@@ -194,7 +194,7 @@ class celariaMapHandler implements FormatHandler {
 					bytes: Uint8Array.from(editableCelariaMap.serialize(suitableVersion)),
 				}
 			}
-			throw new Error("Unsupported input-output.")
+			throw new TypeError(`Unsupported conversion path: ${inputFormat.internal} -> ${outputFormat.internal}`);
 		})
 	}
 	/** Determines what a plain old JavaScript object is _likely_ to be. I don't do strict validation. */
@@ -216,7 +216,7 @@ class celariaMapHandler implements FormatHandler {
 				return 2
 			}
 		}
-		throw new Error("Unsupported format.")
+		throw new TypeError("Unsupported format.")
 	}
 }
 /** I help build a Wavefront OBJ of a map. */

@@ -6,7 +6,8 @@ import type { LogEvent } from "@ffmpeg/ffmpeg";
 
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import CommonFormats from "src/CommonFormats.ts";
+import CommonFormats, { Category } from "src/CommonFormats.ts";
+import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
 
 class FFmpegHandler implements FormatHandler {
 
@@ -73,7 +74,7 @@ class FFmpegHandler implements FormatHandler {
    * @param attempts Amount of times to attempt execution. Default is 1.
    */
   async execSafe (args: string[], timeout: number = -1, attempts: number = 1): Promise<void> {
-    if (!this.#ffmpeg) throw "Handler not initialized.";
+    if (!this.#ffmpeg) throw new InitializationError("Handler not initialized.");
     try {
       if (timeout === -1) {
         await this.#ffmpeg.exec(args);
@@ -222,7 +223,7 @@ class FFmpegHandler implements FormatHandler {
       from: true,
       to: true,
       internal: "mov",
-      category: "audio",
+      category: Category.AUDIO,
       lossless: false
     });
 
@@ -235,7 +236,7 @@ class FFmpegHandler implements FormatHandler {
       from: true,
       to: true,
       internal: "asf",
-      category: "video"
+      category: Category.VIDEO
     });
 
     // Normalize Bink metadata to ensure ".bik" files are detected by extension.
@@ -275,7 +276,7 @@ class FFmpegHandler implements FormatHandler {
   ): Promise<FileData[]> {
 
     if (!this.#ffmpeg) {
-      throw "Handler not initialized.";
+      throw new InitializationError("Handler not initialized.");
     }
 
     ctx?.throwIfAborted();

@@ -98,8 +98,12 @@ class sevenZipHandler implements FormatHandler {
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
+    if (inputFormat.internal === "brarchive") {
+        throw new Error(`sevenZipHandler cannot convert from ${inputFormat.mime}`);
+    }
+
     if (!this.supportedFormats.some(format => format.to && format.internal === outputFormat.internal)) {
-      throw new Error(`sevenZipHandler cannot convert to ${outputFormat.mime}`);
+      throw new TypeError(`sevenZipHandler cannot convert to ${outputFormat.mime}`);
     }
 
     let logBuffer = "";
@@ -155,7 +159,7 @@ class sevenZipHandler implements FormatHandler {
           i++;
         }
       } else {
-        throw new Error(`sevenZipHandler cannot convert from ${inputFormat.mime} to ${outputFormat.mime}`);
+        throw new TypeError(`sevenZipHandler cannot convert from ${inputFormat.mime} to ${outputFormat.mime}`);
       }
       
       ctx?.progress("Complete!", 1);
