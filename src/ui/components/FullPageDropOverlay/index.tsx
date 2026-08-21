@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { Upload } from "lucide-preact";
 
 import { ConversionInProgress, CurrentPage, LoadingToolsText, Pages } from "src/ui/AppState";
-import { SelectedFiles } from "src/main.new";
+import { SelectedFiles } from "src/main";
 import { PopupData } from "src/ui";
 import { openPopup } from "src/ui/PopupStore";
 

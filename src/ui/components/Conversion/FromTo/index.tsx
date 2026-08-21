@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-preact";
-import type { ConversionOption } from "src/main.new";
+import type { ConversionOption } from "src/main";
 import FileIcon from "src/ui/components/FileIcon";
 import "./index.css";
 

@@ -1,4 +1,4 @@
-import type { ConversionOption } from "src/main.new";
+import type { ConversionOption } from "src/main";
 import FileIcon from "src/ui/components/FileIcon";
 import { Check } from "lucide-preact";
 import "./index.css";
