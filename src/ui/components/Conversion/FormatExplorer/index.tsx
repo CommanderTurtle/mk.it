@@ -10,7 +10,7 @@ import { useDebouncedCallback } from "use-debounce";
 import "./index.css";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { FileFormat } from "src/FormatHandler";
-import type { ConversionOption, ConversionOptionsMap } from "src/main.new";
+import type { ConversionOption, ConversionOptionsMap } from "src/main";
 import { Mode, ModeEnum } from "src/ui/ModeStore";
 import FromTo from "src/ui/components/Conversion/FromTo";
 import {

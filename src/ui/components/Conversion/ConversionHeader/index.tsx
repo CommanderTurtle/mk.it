@@ -1,6 +1,6 @@
 import Logo from "src/ui/components/Logo";
 import AdvancedModeToggle from "src/ui/components/AdvancedModeToggle";
-import { goToUploadHome } from "src/main.new";
+import { goToUploadHome } from "src/main";
 
 import "./index.css";
 

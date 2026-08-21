@@ -2,7 +2,7 @@ import './index.css';
 
 import { useState, useMemo, useCallback, useEffect } from "preact/hooks";
 import mime from "mime";
-import { ConversionOptions, SelectedFiles, type ConversionOption, type ConversionOptionsMap } from 'src/main.new';
+import { ConversionOptions, SelectedFiles, type ConversionOption, type ConversionOptionsMap } from 'src/main';
 import { Mode, ModeEnum } from "src/ui/ModeStore";
 import normalizeMimeType from "src/normalizeMimeType";
 import type { FileFormat } from "src/FormatHandler";

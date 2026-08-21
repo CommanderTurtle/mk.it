@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "preact/hooks";
 import { CurrentPage, LoadingToolsText, Pages } from "src/ui/AppState";
-import { goToUploadHome, SelectedFiles } from "src/main.new";
+import { goToUploadHome, SelectedFiles } from "src/main";
 import { Upload } from "lucide-preact";
 import { PopupData } from "src/ui";
 import { openPopup } from "src/ui/PopupStore";
