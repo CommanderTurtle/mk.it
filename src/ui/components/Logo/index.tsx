@@ -14,7 +14,7 @@ export default function Logo({ showName = false, size = 28, onClick, disabled = 
 			<div className="logo-icon">
 				<RefreshCcw size={size} strokeWidth={2.5} />
 			</div>
-			{showName && <span className="logo-name">Convert to it!</span>}
+			{showName && <span className="logo-name">mk.it</span>}
 		</>
 	);
 

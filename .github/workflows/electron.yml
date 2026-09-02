@@ -57,4 +57,4 @@ jobs:
             release/*.zip
             release/*.snap
             release/*.deb
-          body: "This release contains offline Electron builds of convert.to.it, built from the latest commit on the `master` branch."
+          body: "This release contains offline Electron builds of mk.it, built from the latest commit on the `master` branch."

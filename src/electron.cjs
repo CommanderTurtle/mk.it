@@ -54,8 +54,8 @@ app.whenReady().then(() => {
       if (urlPath.startsWith('/')) {
         urlPath = urlPath.slice(1);
       }
-      if (urlPath.startsWith('convert/')) {
-        urlPath = urlPath.replace('convert/', '');
+      if (urlPath.startsWith('make/')) {
+        urlPath = urlPath.replace('make/', '');
       }
 
       // Decode URL until stable
