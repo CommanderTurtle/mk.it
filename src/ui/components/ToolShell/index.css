@@ -1,0 +1,110 @@
+.tool-page {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: var(--bg-page);
+	color: var(--text-primary);
+}
+
+.tool-header {
+	min-height: 56px;
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.6rem 1.25rem;
+	background: var(--bg-card);
+	border-bottom: 1px solid var(--border-primary);
+}
+
+.tool-header-left {
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	min-width: 0;
+}
+
+.tool-header-divider {
+	width: 1px;
+	height: 22px;
+	background: var(--border-primary);
+}
+
+.tool-header-label {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--primary);
+	white-space: nowrap;
+}
+
+.tool-main {
+	width: min(1120px, calc(100vw - 2rem));
+	margin: 0 auto;
+	padding: clamp(1.5rem, 4vw, 3rem) 0;
+	flex: 1;
+}
+
+.tool-intro {
+	margin-bottom: 1.25rem;
+
+	h1 {
+		font-size: clamp(1.35rem, 3vw, 1.8rem);
+		letter-spacing: -0.035em;
+	}
+
+	p {
+		max-width: 720px;
+		margin-top: 0.4rem;
+		color: var(--text-secondary);
+		font-size: 0.82rem;
+		line-height: 1.55;
+	}
+}
+
+.tool-surface {
+	background: var(--bg-card);
+	border: 1px solid var(--border-primary);
+	border-radius: 14px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.025), 0 8px 28px rgba(0, 0, 0, 0.035);
+	overflow: hidden;
+}
+
+.tool-upload-zone {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 230px;
+	padding: 2rem;
+	border: 2px dashed var(--border-primary);
+	border-radius: 11px;
+	background: var(--bg-card-alt);
+	color: var(--primary);
+	cursor: pointer;
+	text-align: center;
+	transition: border-color 150ms, background 150ms;
+
+	input { display: none; }
+	strong { font-size: 0.9rem; }
+	span { font-size: 0.75rem; color: var(--text-secondary); }
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--primary);
+		background: var(--bg-card-alt-hover);
+		outline: none;
+	}
+}
+
+@media (max-width: 620px) {
+	.tool-main { width: calc(100vw - 1rem); }
+	.tool-header { padding-inline: 0.75rem; }
+	.tool-header-divider,
+	.tool-header-label { display: none; }
+}

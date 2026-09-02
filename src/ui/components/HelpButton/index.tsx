@@ -46,6 +46,11 @@ export default function HelpButton() {
 				</div>
 
 				<div className="help-section">
+					<h2>More browser tools</h2>
+					<p>The home page can also decode base64 into any installed input format, recognize selectable text from images with local Tesseract WebAssembly, and combine ZIP or TAR source trees into auditable Markdown.</p>
+				</div>
+
+				<div className="help-section">
 					<h2>Advanced mode</h2>
 					<p>Advanced mode lets you select which handler to use for each format. Use it when you need fine-grained control over which tool handles the conversion.</p>
 				</div>

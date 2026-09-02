@@ -2,6 +2,8 @@ import { render } from "preact";
 
 import UploadPage from "./pages/Upload";
 import ConversionPage from "./pages/Conversion";
+import OcrPage from "./pages/Ocr";
+import CombinePage from "./pages/Combine";
 import { initTheme } from "./ThemeStore";
 import Popup from "./components/Popup";
 import FullPageDropOverlay from "./components/FullPageDropOverlay";
@@ -17,6 +19,8 @@ function App() {
 		<>
 			{CurrentPage.value === Pages.Conversion && <ConversionPage />}
 			{CurrentPage.value === Pages.Upload && <UploadPage />}
+			{CurrentPage.value === Pages.Ocr && <OcrPage />}
+			{CurrentPage.value === Pages.Combine && <CombinePage />}
 			<FullPageDropOverlay />
 			<Popup />
 		</>
