@@ -55,7 +55,7 @@ export default function FullPageDropOverlay() {
 	const dragCounter = useRef(0);
 
 	const formatsReady = LoadingToolsText.value === undefined;
-	const canAcceptDrop = formatsReady && !ConversionInProgress.value;
+	const canAcceptDrop = formatsReady && !ConversionInProgress.value && CurrentPage.value === Pages.Upload;
 
 	useEffect(() => {
 		const isFileDrag = (event: DragEvent) => event.dataTransfer?.types.includes("Files") ?? false;

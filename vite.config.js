@@ -66,6 +66,26 @@ export default defineConfig({
           dest: "js"
         },
         {
+          src: "node_modules/tesseract.js/dist/worker.min.js",
+          dest: "js/tesseract"
+        },
+        {
+          src: "node_modules/tesseract.js-core/tesseract-core-lstm.wasm.js",
+          dest: "js/tesseract-core"
+        },
+        {
+          src: "node_modules/tesseract.js-core/tesseract-core-simd-lstm.wasm.js",
+          dest: "js/tesseract-core"
+        },
+        {
+          src: "node_modules/tesseract.js-core/tesseract-core-relaxedsimd-lstm.wasm.js",
+          dest: "js/tesseract-core"
+        },
+        {
+          src: "node_modules/@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz",
+          dest: "tesseract-lang"
+        },
+        {
           src: "node_modules/turbowarp-packager-browser/dist/scaffolding/*",
           dest: "js/turbowarp-scaffolding"
         },

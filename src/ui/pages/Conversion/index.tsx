@@ -1,11 +1,10 @@
 import './index.css';
 
 import { useState, useMemo, useCallback, useEffect } from "preact/hooks";
-import mime from "mime";
 import { ConversionOptions, SelectedFiles, type ConversionOption, type ConversionOptionsMap } from 'src/main';
 import { Mode, ModeEnum } from "src/ui/ModeStore";
-import normalizeMimeType from "src/normalizeMimeType";
-import type { FileFormat } from "src/FormatHandler";
+import { getMatchingFromFormats } from "src/tools/fileFormats";
+import { downloadBytes } from "src/tools/download";
 
 import ConversionHeader from "src/ui/components/Conversion/ConversionHeader";
 import FormatExplorer from "src/ui/components/Conversion/FormatExplorer";
@@ -46,74 +45,6 @@ function countAvailableFormats(options: ConversionOptionsMap, direction: "from" 
 function getConversionOptions(): ConversionOptionsMap {
 	if (ConversionOptions.size) return ConversionOptions;
 	throw new Error("Can't build format list!", { cause: "UI got empty global format list" });
-}
-
-function expandVideoContainerMimes(candidates: string[]): string[] {
-	const out = new Set(candidates);
-	for (const c of candidates) {
-		if (c === "video/mp4" || c === "video/quicktime") {
-			out.add("video/mp4");
-			out.add("video/quicktime");
-		}
-	}
-	return [...out];
-}
-
-function getMimeCandidatesForFile(file: File): string[] {
-	const set = new Set<string>();
-	const raw = file.type?.trim();
-	if (raw) set.add(normalizeMimeType(raw));
-	const fromPath = mime.getType(file.name);
-	if (fromPath) set.add(normalizeMimeType(fromPath));
-	const extOnly = file.name.split(".").pop()?.toLowerCase();
-	if (extOnly) {
-		const fromExt = mime.getType(extOnly);
-		if (fromExt) set.add(normalizeMimeType(fromExt));
-	}
-	return expandVideoContainerMimes([...set]);
-}
-
-function formatMatchesUploadedFile(format: FileFormat, ext: string, mimeCandidates: string[]): boolean {
-	if (mimeCandidates.some(m => m === format.mime)) return true;
-	if (!ext) return false;
-	const e = ext.toLowerCase();
-	const fex = format.extension.toLowerCase();
-	const fmt = format.format.toLowerCase();
-	const intr = format.internal.toLowerCase();
-	return (
-		fex === e
-		|| fex.includes(e)
-		|| fmt === e
-		|| fmt.includes(e)
-		|| intr === e
-		|| intr.includes(e)
-	);
-}
-
-function getMatchingFromFormats(options: ConversionOptionsMap, files: File[]): ConversionOptionsMap {
-	if (files.length === 0) return options;
-
-	const file = files[0];
-	const mimeCandidates = getMimeCandidatesForFile(file);
-	const ext = file.name.split(".").pop()?.toLowerCase() || "";
-	const matched: ConversionOptionsMap = new Map();
-
-	for (const [format, handler] of options) {
-		if (!format.from) continue;
-		if (formatMatchesUploadedFile(format, ext, mimeCandidates)) {
-			matched.set(format, handler);
-		}
-	}
-
-	return matched.size > 0 ? matched : options;
-}
-
-function downloadFile(bytes: Uint8Array, name: string, mime: string) {
-	const blob = new Blob([bytes as BlobPart], { type: mime });
-	const link = document.createElement("a");
-	link.href = URL.createObjectURL(blob);
-	link.download = name;
-	link.click();
 }
 
 export default function Conversion() {
@@ -225,7 +156,7 @@ export default function Conversion() {
 				const bytes = new Uint8Array(buf);
 
 				if (fromOption[0].mime === toOption[0].mime && fromOption[0].format === toOption[0].format) {
-					downloadFile(bytes, f.name, toOption[0].mime);
+					downloadBytes(bytes, f.name, toOption[0].mime);
 					continue;
 				}
 				inputFileData.push({ name: f.name, bytes });
@@ -256,7 +187,7 @@ export default function Conversion() {
 			}
 
 			for (const file of output.files) {
-				downloadFile(file.bytes, file.name, toOption[0].mime);
+				downloadBytes(file.bytes, file.name, toOption[0].mime);
 			}
 
 			PopupData.value = {

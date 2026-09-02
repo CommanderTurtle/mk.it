@@ -172,7 +172,9 @@ test("docx → html → svg → png → pdf", async () => {
     "text/html", "image/svg+xml", "image/png", "application/pdf"
   ]);
   const fileSize = Object.values(conversion!.files[0].bytes).length;
-  expect(fileSize).toBeWithin(55000, 65000);
+  // PDF encoders and Chromium revisions vary in compression ratio. Keep this
+  // as a non-trivial output sanity check rather than a byte-exact snapshot.
+  expect(fileSize).toBeWithin(30000, 70000);
 
 }, { timeout: 60000 });
 

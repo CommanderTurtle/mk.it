@@ -4,7 +4,9 @@ import type { PopupDataContainer } from "./PopupStore";
 
 export const enum Pages {
 	Upload = "uploadPage",
-	Conversion = "conversionPage"
+	Conversion = "conversionPage",
+	Ocr = "ocrPage",
+	Combine = "combinePage"
 }
 
 export const CurrentPage = signal<Pages>(Pages.Upload);

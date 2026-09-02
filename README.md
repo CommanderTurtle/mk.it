@@ -9,6 +9,17 @@ This is not just terrible for privacy, it's also incredibly lame. What if you _r
 
 For a semi-technical overview of this tool, check out the video: https://youtu.be/btUbcsTbVA8
 
+## Added browser workflows
+
+This fork keeps the upstream conversion graph and its handlers intact, while expanding the home page to four entry points:
+
+- **Convert a file** is the original Convert to it workflow.
+- **Base64 file** accepts raw base64 or a base64 data URL, asks for a file name and any installed input format, then either downloads the decoded bytes or hands the file to the original converter.
+- **Image OCR** uses pinned Tesseract.js 7 worker, WebAssembly core, and English language assets copied into the static build. Browser-readable images are scanned directly; other installed image formats are first normalized to PNG through the existing conversion graph. The result includes an isolated image viewer with a selectable text layer and a plain-text view.
+- **Archive to Markdown** reads ZIP and TAR archives in memory, sorts paths, preserves text inside extension-aware code fences, and writes an explicit `(omitted)` entry for binary or oversized files. The result can be copied, viewed as raw or pretty Markdown, or downloaded as `combined.md`.
+
+The new paths do not upload user data or extract archives onto the filesystem. OCR runtime files are served from the same build rather than a CDN. Archive processing is bounded to 20,000 entries, 512 MiB expanded data, 8 MiB per text file, and 64 MiB of combined source text to avoid accidental archive bombs or an unresponsive tab.
+
 ## Usage
 
 1. Go to [convert.to.it](https://convert.to.it/)
@@ -156,6 +167,17 @@ This project currently uses two levels of tests:
 - Optional handler-specific unit tests live in `test/handlers/`, using the file name pattern `<handlerName>.test.ts`. These are a good fit for handlers with meaningful parsing, serialization, or file-naming logic that is hard to exercise reliably through traversal alone.
 
 Not every handler needs a dedicated unit test, but handlers with non-trivial custom internal logic may benefit from having one.
+
+The added workflows have focused unit and browser tests:
+
+```bash
+bun run test
+bun test test/tooling.test.ts
+bun test test/ui.test.ts
+RUN_OCR_E2E=1 bun test test/ui.test.ts
+```
+
+`bun run test` names the repository-owned suites explicitly so Bun does not accidentally discover framework-specific tests inside vendored handler submodules. The opt-in OCR test generates a local fixture and verifies the real worker, core, and trained-data path without contacting a Tesseract CDN.
 
 ### Adding dependencies
 
