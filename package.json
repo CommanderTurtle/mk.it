@@ -1,8 +1,8 @@
 {
-  "name": "p2r3-convert",
-  "productName": "Convert to it!",
+  "name": "mk.it",
+  "productName": "mk.it",
   "author": "PortalRunner",
-  "description": "Truly universal browser-based file converter",
+  "description": "Private browser-based conversion, OCR, base64, and archive toolkit",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -26,8 +26,8 @@
     "desktop:dist:linux": "bun run desktop:build && electron-builder --linux --publish never"
   },
   "build": {
-    "appId": "com.p2r3.convert",
-    "executableName": "ConvertToIt",
+    "appId": "sh.shel.mk",
+    "executableName": "mk-it",
     "directories": {
       "output": "release"
     },

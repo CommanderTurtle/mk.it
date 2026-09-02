@@ -8,7 +8,7 @@ let page: Page;
 const server = Bun.serve({
 	port: 0,
 	async fetch(request) {
-		let path = new URL(request.url).pathname.replace(/^\/convert\/?/, "") || "index.html";
+		let path = new URL(request.url).pathname.replace(/^\/make\/?/, "") || "index.html";
 		path = path.replaceAll("..", "");
 		const file = Bun.file(`${import.meta.dir}/../dist/${path}`);
 		if (!(await file.exists())) return new Response("Not Found", { status: 404 });
@@ -33,7 +33,7 @@ beforeAll(async () => {
 			if (message.text() === "Built initial format list.") resolve();
 		});
 	});
-	await page.goto(`http://localhost:${server.port}/convert/index.html`);
+	await page.goto(`http://localhost:${server.port}/make/index.html`);
 	await ready;
 }, 60_000);
 
@@ -43,8 +43,22 @@ afterAll(async () => {
 });
 
 describe("four-tool home", () => {
+	test("emits every runtime URL under the mk.it base", async () => {
+		const dist = `${import.meta.dir}/../dist`;
+		const index = await Bun.file(`${dist}/index.html`).text();
+		expect(index).toContain('href="/make/');
+		expect(index).toContain('src="/make/');
+		expect(index).toContain("https://app.shel.sh/make/");
+
+		const textAssets = new Bun.Glob("**/*.{html,js}");
+		for await (const path of textAssets.scan({ cwd: dist, absolute: true })) {
+			expect(await Bun.file(path).text()).not.toContain("/convert/");
+		}
+	});
+
 	test("keeps the original converter and exposes the three new tools", async () => {
 		const text = await page.$eval(".home-shell", element => element.textContent || "");
+		expect(text).toContain("mk.it");
 		expect(text).toContain("Convert a file");
 		expect(text).toContain("Base64 file");
 		expect(text).toContain("Image OCR");

@@ -1,11 +1,13 @@
-# [Convert to it!](https://convert.to.it/)
-**Truly universal online file converter.**
+# [mk.it](https://app.shel.sh/make/)
+**Private browser-based conversion, OCR, base64, and archive tools.**
+
+mk.it is the `app.shel.sh/make` fork of [p2r3/convert](https://github.com/p2r3/convert). It preserves the upstream conversion graph and handlers, then adds focused ways to decode, recognize, and combine files entirely in the browser.
 
 Many online file conversion tools are **boring** and **insecure**. They only allow conversion between two formats in the same medium (images to images, videos to videos, etc.), and they require that you _upload your files to some server_.
 
 This is not just terrible for privacy, it's also incredibly lame. What if you _really_ need to convert an AVI video to a PDF document? Try to find an online tool for that, I dare you.
 
-[Convert.to.it](https://convert.to.it/) aims to be a tool that "just works". You're almost _guaranteed_ to get an output - perhaps not always the one you expected, but it'll try its best to not leave you hanging.
+[mk.it](https://app.shel.sh/make/) aims to be a tool that "just works". You're almost _guaranteed_ to get an output - perhaps not always the one you expected, but it'll try its best to not leave you hanging.
 
 For a semi-technical overview of this tool, check out the video: https://youtu.be/btUbcsTbVA8
 
@@ -22,7 +24,7 @@ The new paths do not upload user data or extract archives onto the filesystem. O
 
 ## Usage
 
-1. Go to [convert.to.it](https://convert.to.it/)
+1. Go to [app.shel.sh/make](https://app.shel.sh/make/)
 2. Click the big blue box to add your file (or just drag it on to the window).
 3. An input format should have been automatically selected. If it wasn't, yikes! Try searching for it, or if it's really not there, see the "Issues" section below.
 4. Select an output format from the second list. If you're on desktop, that's the one on the right side. If you're on mobile, it'll be somewhere lower down.
@@ -76,7 +78,7 @@ docker compose -f docker/docker-compose.yml up -d
 
 Alternatively download the `docker-compose.yml` separately and start it by executing `docker compose up -d` in the same directory.
 
-This runs the container on `http://localhost:8080/convert/`.
+This runs the container on `http://localhost:8080/make/`.
 
 ### Docker (local build for development)
 
@@ -189,7 +191,7 @@ If your tool requires an external dependency (which it likely does), there are c
 
 **Please try to avoid CDNs (Content Delivery Networks).** They're really cool on paper, but they don't work well with TypeScript, and each one introduces a tiny bit of instability. For a project that leans heavily on external dependencies, those bits of instability can add up fast.
 
-- If you need to load a WebAssembly binary (or similar), add its path to [vite.config.js](vite.config.js) and target it under `/convert/wasm/`. **Do not link to node_modules**.
+- If you need to load a WebAssembly binary (or similar), add its path to [vite.config.js](vite.config.js) and target it under `/make/wasm/`. **Do not link to node_modules**.
 
 ### AI Usage Policy
 

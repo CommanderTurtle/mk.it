@@ -25,8 +25,8 @@ export default function HelpButton() {
 		}
 		PopupData.value.contents = (
 			<div className="help-content">
-				<h1>Convert to it!</h1>
-				<p className="help-subtitle">Truly universal on-device file converter.</p>
+				<h1>mk.it</h1>
+				<p className="help-subtitle">Private on-device tools at app.shel.sh/make.</p>
 
 				<div className="help-section">
 					<h2>Why use this?</h2>
@@ -48,6 +48,11 @@ export default function HelpButton() {
 				<div className="help-section">
 					<h2>More browser tools</h2>
 					<p>The home page can also decode base64 into any installed input format, recognize selectable text from images with local Tesseract WebAssembly, and combine ZIP or TAR source trees into auditable Markdown.</p>
+				</div>
+
+				<div className="help-section">
+					<h2>Upstream</h2>
+					<p>mk.it preserves the original <a href="https://github.com/p2r3/convert" target="_blank" rel="noopener" style="color: var(--primary)">p2r3/convert</a> graph and handlers.</p>
 				</div>
 
 				<div className="help-section">

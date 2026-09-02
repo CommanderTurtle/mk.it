@@ -13,10 +13,14 @@ export default defineConfig({
       "@yowasp/clang",
     ]
   },
-  base: "/convert/",
+  base: "/make/",
   plugins: [
     viteStaticCopy({
       targets: [
+        {
+          src: "favicon.ico",
+          dest: "."
+        },
         {
           src: "node_modules/@flo-audio/reflo/reflo_bg.wasm",
           dest: "wasm"
@@ -39,7 +43,13 @@ export default defineConfig({
         },
         {
           src: "src/handlers/libopenmpt/libopenmpt.js",
-          dest: "wasm"
+          dest: "wasm",
+          // Keep the generated upstream Emscripten source untouched while
+          // rebasing its otherwise-unused locateFile fallback for mk.it.
+          transform: {
+            encoding: "utf8",
+            handler: content => content.replaceAll("/convert/", "/make/")
+          }
         },
         {
           src: "node_modules/js-synthesizer/externals/libfluidsynth-2.4.6.js",

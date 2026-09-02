@@ -8,7 +8,7 @@ import normalizeMimeType from "src/normalizeMimeType.ts";
 import type { ConvertContext } from "src/ui/ProgressStore.js";
 
 const defaultSevenZipOptions = {
-  locateFile: () => "/convert/wasm/7zz.wasm"
+  locateFile: () => "/make/wasm/7zz.wasm"
 }
 
 class sevenZipHandler implements FormatHandler {

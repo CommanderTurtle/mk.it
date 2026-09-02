@@ -205,7 +205,7 @@ export default function OcrPage() {
 						/>
 						<ScanText size={38} />
 						<strong>Select an image</strong>
-						<span>Common images open directly; other installed image formats are normalized through Convert to it.</span>
+						<span>Common images open directly; other installed image formats are normalized through mk.it's upstream conversion graph.</span>
 					</div>
 				) : (
 					<>
