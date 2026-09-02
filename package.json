@@ -121,5 +121,9 @@
     "wavefile": "^11.0.0",
     "woff2-encoder": "^2.0.0",
     "yaml": "^2.8.2"
+  },
+  "overrides": {
+    "electron": "^44.1.1",
+    "extract-zip": "^2.0.1"
   }
 }
