@@ -119,6 +119,22 @@ describe("four-tool home", () => {
 		expect(checksums[2]).toMatch(/SHA-1[a-f0-9]{40}/);
 		expect(await page.$eval(".share-source", element => element.textContent || "")).toContain("View source code");
 		expect(await page.$eval(".share-source code", element => element.innerHTML)).toContain("hljs-tag");
+		await page.click('.share-preview button[title="Open interactive pan-and-zoom image viewer"]');
+		await page.waitForFunction(() => [...document.body.children].some(element => (element as HTMLElement).style.zIndex === "999999"));
+		const interactive = await page.evaluate(() => {
+			const overlay = [...document.body.children].find(element => (element as HTMLElement).style.zIndex === "999999") as HTMLElement | undefined;
+			if (!overlay) throw new Error("Interactive viewer did not open");
+			const buttons = [...overlay.querySelectorAll<HTMLButtonElement>("button")];
+			buttons.find(button => button.textContent === "+")?.click();
+			const image = overlay.querySelector<HTMLImageElement>("img");
+			const source = image?.src || "";
+			const transform = image?.style.transform || "";
+			buttons.find(button => button.textContent === "✕")?.click();
+			return { source, transform, stillConnected: overlay.isConnected };
+		});
+		expect(interactive.source).toStartWith("data:image/svg+xml;base64,");
+		expect(interactive.transform).toContain("scale(1.25)");
+		expect(interactive.stillConnected).toBe(false);
 		if (process.env.CAPTURE_SHARE_UI) {
 			await page.screenshot({ path: process.env.CAPTURE_SHARE_UI, fullPage: true });
 		}
