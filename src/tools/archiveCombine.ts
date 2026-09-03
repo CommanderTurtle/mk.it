@@ -181,12 +181,16 @@ async function readTarEntries(file: File): Promise<RawArchiveEntry[]> {
 		}));
 }
 
-function isZip(file: File): boolean {
+function isZip(file: Pick<File, "name" | "type">): boolean {
 	return file.name.toLowerCase().endsWith(".zip") || file.type === "application/zip";
 }
 
-function isTar(file: File): boolean {
+function isTar(file: Pick<File, "name" | "type">): boolean {
 	return /\.tar$/i.test(file.name) || file.type === "application/x-tar";
+}
+
+export function isSupportedArchive(file: Pick<File, "name" | "type">): boolean {
+	return isZip(file) || isTar(file);
 }
 
 export async function combineArchive(file: File): Promise<CombinedArchive> {

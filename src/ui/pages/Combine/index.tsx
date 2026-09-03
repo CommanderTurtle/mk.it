@@ -1,8 +1,9 @@
-import { useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { Check, Clipboard, Download, Eye, FileArchive, FileText, LoaderCircle, RotateCcw } from "lucide-preact";
 
 import { combineArchive, type CombinedArchive } from "src/tools/archiveCombine";
 import { downloadText } from "src/tools/download";
+import { PendingArchive } from "src/ui/AppState";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 import ToolShell from "src/ui/components/ToolShell";
 
@@ -53,6 +54,13 @@ export default function CombinePage() {
 		setBusy(false);
 		if (inputRef.current) inputRef.current.value = "";
 	};
+
+	useEffect(() => {
+		const pending = PendingArchive.value;
+		if (!pending) return;
+		PendingArchive.value = null;
+		void processArchive(pending);
+	}, []);
 
 	return (
 		<ToolShell

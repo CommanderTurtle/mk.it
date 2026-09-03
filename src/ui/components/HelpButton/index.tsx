@@ -47,7 +47,7 @@ export default function HelpButton() {
 
 				<div className="help-section">
 					<h2>More browser tools</h2>
-					<p>The home page can also decode and share base64 files, copy any selected file as a MIME-correct data URL, recognize selectable text from images with local Tesseract WebAssembly, and combine ZIP or TAR source trees into auditable Markdown.</p>
+					<p>The home page can also encode or decode and share Base64 files, copy any selected file as a MIME-correct data URL, recognize selectable text from images with local Tesseract WebAssembly, and combine ZIP or TAR source trees into auditable Markdown.</p>
 				</div>
 
 				<div className="help-section">

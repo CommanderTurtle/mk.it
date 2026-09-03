@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { Check, Copy, Download, Expand, FileWarning, Link2, X } from "lucide-preact";
+import { Check, Copy, Download, Expand, ExternalLink, FileWarning, Link2, X } from "lucide-preact";
 
 import { copyText } from "src/tools/clipboard";
+import { documentPreview, type DocumentPreviewKind } from "src/tools/documentPreview";
 import { downloadBytes } from "src/tools/download";
 import { hashBytes } from "src/tools/hashes";
 import type { FileHashes } from "src/tools/hashes";
-import { mediaEmbedHtml, previewKind, sharePayloadFromHash, shareUrl } from "src/tools/share";
+import { isSharePreviewHash, mediaEmbedHtml, previewKind, sharePayloadFromHash, sharePreviewUrl, shareUrl, type MediaPreviewKind } from "src/tools/share";
 import { sourcePreview } from "src/tools/sourcePreview";
 import { ShareError, SharedFile } from "src/ui/AppState";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
@@ -21,11 +22,13 @@ const HASH_LABELS: { key: keyof FileHashes; label: string }[] = [
 	{ key: "sha1", label: "SHA-1" }
 ];
 
-function Media({ kind, url, name }: { kind: NonNullable<ReturnType<typeof previewKind>>; url: string; name: string }) {
+type PreviewKind = MediaPreviewKind | DocumentPreviewKind;
+
+function Media({ kind, url, name }: { kind: PreviewKind; url: string; name: string }) {
 	if (kind === "image") return <img src={url} alt={name} />;
 	if (kind === "video") return <video src={url} controls preload="metadata" />;
 	if (kind === "audio") return <audio src={url} controls preload="metadata" />;
-	return <iframe src={url} title={name} />;
+	return <iframe src={url} title={name} sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts" />;
 }
 
 export default function SharePage() {
@@ -40,26 +43,37 @@ export default function SharePage() {
 	const [hashError, setHashError] = useState("");
 	const source = useMemo(() => file ? sourcePreview(file) : null, [file]);
 	const kind = file ? previewKind(file.mime) : null;
+	const previewDocument = useMemo(() => file && source ? documentPreview(file, source.text) : null, [file, source]);
+	const displayKind: PreviewKind | null = kind || previewDocument?.kind || null;
+	const directPreview = isSharePreviewHash(location.hash);
+	const base = new URL(import.meta.env.BASE_URL, location.origin).href;
 	const link = useMemo(() => {
 		if (!file) return "";
-		return sharePayloadFromHash(location.hash) === null
+		return sharePayloadFromHash(location.hash) === null || isSharePreviewHash(location.hash)
 			? shareUrl(file, new URL(import.meta.env.BASE_URL, location.origin).href)
 			: location.href;
 	}, [file]);
+	const previewLink = useMemo(() => file && previewDocument ? sharePreviewUrl(file, base) : "", [file, previewDocument, base]);
 
 	useEffect(() => {
 		if (!file) return;
-		const url = URL.createObjectURL(new Blob([file.bytes as BlobPart], { type: file.mime }));
+		const url = previewDocument
+			? URL.createObjectURL(new Blob([previewDocument.html], { type: "text/html;charset=utf-8" }))
+			: URL.createObjectURL(new Blob([file.bytes as BlobPart], { type: file.mime }));
 		setObjectUrl(url);
 		return () => URL.revokeObjectURL(url);
-	}, [file]);
+	}, [file, previewDocument]);
+
+	useEffect(() => {
+		if (directPreview && displayKind && objectUrl) setExpanded(true);
+	}, [directPreview, displayKind, objectUrl]);
 
 	useEffect(() => {
 		const dialog = dialogRef.current;
 		if (!dialog) return;
 		if (expanded && !dialog.open) dialog.showModal();
 		if (!expanded && dialog.open) dialog.close();
-	}, [expanded]);
+	}, [expanded, objectUrl]);
 
 	useEffect(() => {
 		if (!file) return;
@@ -105,8 +119,13 @@ export default function SharePage() {
 	}
 
 	const copyHtml = async () => {
-		const html = mediaEmbedHtml(file);
+		const html = previewDocument?.html || mediaEmbedHtml(file);
 		if (html) await copy("html", html);
+	};
+
+	const closePreview = () => {
+		if (directPreview && link) history.replaceState(null, "", link);
+		setExpanded(false);
 	};
 
 	return (
@@ -121,6 +140,11 @@ export default function SharePage() {
 				</div>
 				<div className="share-head-tools">
 					<div className="share-actions">
+						{previewDocument && (
+							<StyledButton title="Open the direct #p preview" onClick={() => { location.href = previewLink; }}>
+								<ExternalLink size={15} /> Open preview
+							</StyledButton>
+						)}
 						<StyledButton onClick={() => copy("link", link)}>
 							{copied === "link" ? <Check size={15} /> : <Link2 size={15} />}
 							{copied === "link" ? "Copied" : "Copy share link"}
@@ -142,7 +166,7 @@ export default function SharePage() {
 			</section>
 			{copyError && <p className="share-copy-error" role="alert">{copyError}</p>}
 
-			<div className={`share-layout ${!kind || !source ? "share-layout--single" : ""}`}>
+			<div className={`share-layout ${!displayKind || !source ? "share-layout--single" : ""}`}>
 				{source && (
 					<details className="tool-surface share-source" open={!kind}>
 						<summary>
@@ -163,10 +187,10 @@ export default function SharePage() {
 					</details>
 				)}
 
-				{kind && objectUrl && (
+				{displayKind && objectUrl && (
 					<section className="tool-surface share-preview">
 						<header>
-							<div><strong>Preview</strong><small>{kind}</small></div>
+							<div><strong>Preview</strong><small>{displayKind}</small></div>
 							<div>
 								<StyledButton title="Copy self-contained HTML" onClick={copyHtml}>
 									{copied === "html" ? <Check size={14} /> : <Copy size={14} />}
@@ -177,11 +201,11 @@ export default function SharePage() {
 								</StyledButton>
 							</div>
 						</header>
-						<div className={`share-media share-media--${kind}`}><Media kind={kind} url={objectUrl} name={file.name} /></div>
+						<div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>
 					</section>
 				)}
 
-				{!kind && !source && (
+				{!displayKind && !source && (
 					<section className="tool-surface share-binary">
 						<FileWarning size={30} />
 						<strong>Binary file</strong>
@@ -190,15 +214,15 @@ export default function SharePage() {
 				)}
 			</div>
 
-			{kind && objectUrl && (
+			{displayKind && objectUrl && (
 				<dialog
 					ref={dialogRef}
 					className="share-preview-dialog"
-					onClose={() => setExpanded(false)}
-					onClick={event => { if (event.target === event.currentTarget) setExpanded(false); }}
+					onClose={closePreview}
+					onClick={event => { if (event.target === event.currentTarget) closePreview(); }}
 				>
-					<header><strong>{file.name}</strong><button type="button" onClick={() => setExpanded(false)} aria-label="Close preview"><X size={20} /></button></header>
-					<div className={`share-media share-media--${kind}`}><Media kind={kind} url={objectUrl} name={file.name} /></div>
+					<header><strong>{file.name}</strong><button type="button" onClick={closePreview} aria-label="Close preview"><X size={20} /></button></header>
+					<div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>
 				</dialog>
 			)}
 		</ToolShell>
