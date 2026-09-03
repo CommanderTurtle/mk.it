@@ -3,6 +3,8 @@ import { Check, Copy, Download, Expand, FileWarning, Link2, X } from "lucide-pre
 
 import { copyText } from "src/tools/clipboard";
 import { downloadBytes } from "src/tools/download";
+import { hashBytes } from "src/tools/hashes";
+import type { FileHashes } from "src/tools/hashes";
 import { mediaEmbedHtml, previewKind, sharePayloadFromHash, shareUrl } from "src/tools/share";
 import { sourcePreview } from "src/tools/sourcePreview";
 import { ShareError, SharedFile } from "src/ui/AppState";
@@ -11,7 +13,13 @@ import ToolShell from "src/ui/components/ToolShell";
 
 import "./index.css";
 
-type CopyTarget = "link" | "source" | "html" | null;
+type CopyTarget = "link" | "source" | "html" | keyof FileHashes | null;
+
+const HASH_LABELS: { key: keyof FileHashes; label: string }[] = [
+	{ key: "sha256", label: "SHA-256" },
+	{ key: "md5", label: "MD5" },
+	{ key: "sha1", label: "SHA-1" }
+];
 
 function Media({ kind, url, name }: { kind: NonNullable<ReturnType<typeof previewKind>>; url: string; name: string }) {
 	if (kind === "image") return <img src={url} alt={name} />;
@@ -28,6 +36,8 @@ export default function SharePage() {
 	const [expanded, setExpanded] = useState(false);
 	const [copied, setCopied] = useState<CopyTarget>(null);
 	const [copyError, setCopyError] = useState("");
+	const [hashes, setHashes] = useState<FileHashes | null>(null);
+	const [hashError, setHashError] = useState("");
 	const source = useMemo(() => file ? sourcePreview(file) : null, [file]);
 	const kind = file ? previewKind(file.mime) : null;
 	const link = useMemo(() => {
@@ -56,6 +66,19 @@ export default function SharePage() {
 		const previous = document.title;
 		document.title = `${file.name} · mk.it`;
 		return () => { document.title = previous; };
+	}, [file]);
+
+	useEffect(() => {
+		if (!file) return;
+		let cancelled = false;
+		setHashes(null);
+		setHashError("");
+		void hashBytes(file.bytes).then(result => {
+			if (!cancelled) setHashes(result);
+		}).catch(caught => {
+			if (!cancelled) setHashError(caught instanceof Error ? caught.message : String(caught));
+		});
+		return () => { cancelled = true; };
 	}, [file]);
 
 	const copy = async (target: Exclude<CopyTarget, null>, value: string) => {
@@ -96,14 +119,25 @@ export default function SharePage() {
 					<h2>{file.name}</h2>
 					<p>{file.mime} · {file.bytes.length.toLocaleString()} bytes</p>
 				</div>
-				<div className="share-actions">
-					<StyledButton onClick={() => copy("link", link)}>
-						{copied === "link" ? <Check size={15} /> : <Link2 size={15} />}
-						{copied === "link" ? "Copied" : "Copy share link"}
-					</StyledButton>
-					<StyledButton variant={ButtonVariant.Primary} onClick={() => downloadBytes(file.bytes, file.name, file.mime)}>
-						<Download size={15} /> Download
-					</StyledButton>
+				<div className="share-head-tools">
+					<div className="share-actions">
+						<StyledButton onClick={() => copy("link", link)}>
+							{copied === "link" ? <Check size={15} /> : <Link2 size={15} />}
+							{copied === "link" ? "Copied" : "Copy share link"}
+						</StyledButton>
+						<StyledButton variant={ButtonVariant.Primary} onClick={() => downloadBytes(file.bytes, file.name, file.mime)}>
+							<Download size={15} /> Download
+						</StyledButton>
+					</div>
+					<div className="share-hashes" aria-live="polite">
+						{hashes ? HASH_LABELS.map(({ key, label }) => (
+							<button type="button" key={key} title={`Copy ${label}`} onClick={() => copy(key, hashes[key])}>
+								<strong>{label}</strong>
+								<code>{hashes[key]}</code>
+								{copied === key ? <Check size={12} /> : <Copy size={12} />}
+							</button>
+						)) : <span>{hashError || "Calculating checksums…"}</span>}
+					</div>
 				</div>
 			</section>
 			{copyError && <p className="share-copy-error" role="alert">{copyError}</p>}
