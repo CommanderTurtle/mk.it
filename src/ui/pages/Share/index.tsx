@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { Check, Copy, Download, Expand, ExternalLink, FileWarning, Link2, X } from "lucide-preact";
+import { Check, Copy, Download, Expand, ExternalLink, FileWarning, Link2, X, ZoomIn } from "lucide-preact";
 
 import { copyText } from "src/tools/clipboard";
 import { documentPreview, type DocumentPreviewKind } from "src/tools/documentPreview";
 import { downloadBytes } from "src/tools/download";
 import { hashBytes } from "src/tools/hashes";
 import type { FileHashes } from "src/tools/hashes";
+import { imageViewerEval } from "src/tools/imageViewer";
 import { isSharePreviewHash, mediaEmbedHtml, previewKind, sharePayloadFromHash, sharePreviewUrl, shareUrl, type MediaPreviewKind } from "src/tools/share";
 import { sourcePreview } from "src/tools/sourcePreview";
 import { ShareError, SharedFile } from "src/ui/AppState";
@@ -123,6 +124,17 @@ export default function SharePage() {
 		if (html) await copy("html", html);
 	};
 
+	const openImageViewer = () => {
+		const source = imageViewerEval(file);
+		if (!source) return;
+		try {
+			globalThis.eval(source);
+			setCopyError("");
+		} catch (caught) {
+			setCopyError(caught instanceof Error ? caught.message : String(caught));
+		}
+	};
+
 	const closePreview = () => {
 		if (directPreview && link) history.replaceState(null, "", link);
 		setExpanded(false);
@@ -192,6 +204,11 @@ export default function SharePage() {
 						<header>
 							<div><strong>Preview</strong><small>{displayKind}</small></div>
 							<div>
+								{kind === "image" && (
+									<StyledButton title="Open interactive pan-and-zoom image viewer" onClick={openImageViewer}>
+										<ZoomIn size={14} /> Pan &amp; zoom
+									</StyledButton>
+								)}
 								<StyledButton title="Copy self-contained HTML" onClick={copyHtml}>
 									{copied === "html" ? <Check size={14} /> : <Copy size={14} />}
 									{copied === "html" ? "Copied" : "Copy HTML"}

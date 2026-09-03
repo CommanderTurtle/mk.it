@@ -7,6 +7,7 @@ import { base64DataUrl, decodeBase64, encodeBase64, filenameForFormat } from "..
 import { buildMarkdownPreviewDocument, documentPreviewKind } from "../src/tools/documentPreview";
 import { buildOcrViewerDocument, flattenOcrWords } from "../src/tools/ocr";
 import { hashBytes, md5Hex } from "../src/tools/hashes";
+import { imageViewerEval, imageViewerSource } from "../src/tools/imageViewer";
 import {
 	decodeSharedFile,
 	encodeSharedFile,
@@ -97,6 +98,35 @@ describe("fragment file sharing", () => {
 		expect(source?.language).toBe("xml");
 		expect(source?.html).toContain("hljs-tag");
 		expect(sourcePreview({ name: "tool.bin", mime: "application/octet-stream", bytes: Uint8Array.of(0, 1, 2) })).toBeNull();
+	});
+
+	test("covers browser image, video, audio, and PDF preview elements", () => {
+		const bytes = Uint8Array.of(0, 1, 2);
+		for (const mime of ["image/png", "image/jpeg", "image/avif", "image/webp", "image/gif"]) {
+			const file = { name: `fixture.${mime.split("/")[1]}`, mime, bytes };
+			expect(previewKind(mime)).toBe("image");
+			expect(mediaEmbedHtml(file)).toStartWith(`<img src="data:${mime};base64,`);
+			expect(imageViewerEval(file)).toContain(`data:${mime};base64,AAEC`);
+		}
+		for (const mime of ["video/mp4", "video/webm", "video/ogg"]) {
+			expect(previewKind(mime)).toBe("video");
+			expect(mediaEmbedHtml({ name: "clip", mime, bytes })).toStartWith(`<video controls src="data:${mime};base64,`);
+		}
+		for (const mime of ["audio/mpeg", "audio/wav", "audio/ogg", "audio/flac"]) {
+			expect(previewKind(mime)).toBe("audio");
+			expect(mediaEmbedHtml({ name: "sound", mime, bytes })).toStartWith(`<audio controls src="data:${mime};base64,`);
+		}
+		expect(previewKind("application/pdf")).toBe("pdf");
+		expect(mediaEmbedHtml({ name: "paper.pdf", mime: "application/pdf", bytes })).toStartWith('<iframe src="data:application/pdf;base64,');
+	});
+
+	test("reuses ln.kr's self-contained pan-and-zoom image evaluation", () => {
+		const source = imageViewerSource("data:image/png;base64,AAEC");
+		expect(source).toContain("scale = Math.min(10, scale * 1.25)");
+		expect(source).toContain("box.addEventListener('wheel'");
+		expect(source).toContain("img.referrerPolicy = 'no-referrer'");
+		expect(source).toEndWith(')("data:image/png;base64,AAEC");');
+		expect(imageViewerEval({ name: "not-image.mp4", mime: "video/mp4", bytes: Uint8Array.of() })).toBeNull();
 	});
 
 	test("rejects damaged share records", () => {
