@@ -86,6 +86,7 @@
     "celaria-formats": "^1.0.2",
     "chess.js": "^1.4.0",
     "confbox": "^0.2.4",
+    "highlight.js": "^11.11.1",
     "imagetracer": "^0.2.2",
     "js-synthesizer": "^1.11.0",
     "json5": "^2.2.3",

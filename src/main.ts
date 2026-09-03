@@ -1,10 +1,16 @@
 import type { FileFormat, FileData, FormatHandler, ConvertPathNode } from "./FormatHandler.js";
 import handlers from "./handlers/index.js";
 import { TraversionGraph } from "./TraversionGraph.js";
-import { CurrentPage, LoadingToolsText, Pages, PopupData } from "./ui/AppState.js";
+import { CurrentPage, LoadingToolsText, Pages, PopupData, SharedFile, ShareError } from "./ui/AppState.js";
 import { signal } from "@preact/signals";
 import { Mode, ModeEnum } from "./ui/ModeStore.js";
 import { ProgressStore } from "./ui/ProgressStore.js";
+import {
+	decodeSharedFile,
+	sharePayloadFromHash,
+	shareUrl,
+	type SharedFileData
+} from "./tools/share.js";
 
 type FileRecord = Record<`${string}-${string}`, File>;
 
@@ -18,6 +24,37 @@ export const SelectedFiles = signal<FileRecord>({});
 export function goToUploadHome(): void {
 	CurrentPage.value = Pages.Upload;
 	SelectedFiles.value = {};
+	SharedFile.value = null;
+	ShareError.value = null;
+	if (sharePayloadFromHash(location.hash) !== null) {
+		history.pushState(null, "", `${location.pathname}${location.search}`);
+	}
+}
+
+export function openSharedFile(file: SharedFileData): void {
+	const base = new URL(import.meta.env.BASE_URL, location.origin).href;
+	SharedFile.value = file;
+	ShareError.value = null;
+	history.pushState(null, "", shareUrl(file, base));
+	CurrentPage.value = Pages.Share;
+}
+
+export function syncSharedFileFromLocation(): boolean {
+	const payload = sharePayloadFromHash(location.hash);
+	if (payload === null) {
+		if (CurrentPage.value === Pages.Share) goToUploadHome();
+		return false;
+	}
+
+	try {
+		SharedFile.value = decodeSharedFile(payload);
+		ShareError.value = null;
+	} catch (error) {
+		SharedFile.value = null;
+		ShareError.value = error instanceof Error ? error.message : String(error);
+	}
+	CurrentPage.value = Pages.Share;
+	return true;
 }
 
 export const ConversionsFromAnyInput: ConvertPathNode[] =
