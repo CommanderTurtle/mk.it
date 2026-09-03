@@ -3,6 +3,17 @@
 
 mk.it is the `app.shel.sh/make` fork of [p2r3/convert](https://github.com/p2r3/convert). It preserves the upstream conversion graph and handlers, then adds focused ways to decode, recognize, and combine files entirely in the browser.
 
+Bun guidance:
+
+```powershell
+git clone https://github.com/CommanderTurtle/mk.it && cd mk.it
+bun install && `
+bun pm trust tesseract.js && `
+bun pm trust @parcel/watcher && `
+bun pm trust puppeteer esbuild canvas electron-winstaller && `
+bun install && bun run build
+```
+
 Many online file conversion tools are **boring** and **insecure**. They only allow conversion between two formats in the same medium (images to images, videos to videos, etc.), and they require that you _upload your files to some server_.
 
 This is not just terrible for privacy, it's also incredibly lame. What if you _really_ need to convert an AVI video to a PDF document? Try to find an online tool for that, I dare you.
