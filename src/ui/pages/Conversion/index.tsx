@@ -5,12 +5,14 @@ import { ConversionOptions, SelectedFiles, type ConversionOption, type Conversio
 import { Mode, ModeEnum } from "src/ui/ModeStore";
 import { getMatchingFromFormats } from "src/tools/fileFormats";
 import { downloadBytes } from "src/tools/download";
+import { copyText } from "src/tools/clipboard";
+import { fileDataUrl } from "src/tools/share";
 
 import ConversionHeader from "src/ui/components/Conversion/ConversionHeader";
 import FormatExplorer from "src/ui/components/Conversion/FormatExplorer";
 import LoadingScreen from "src/ui/components/LoadingScreen";
 import Footer from "src/ui/components/Footer";
-import { ArrowLeft, ArrowRight } from "lucide-preact";
+import { ArrowLeft, ArrowRight, Check, Copy } from "lucide-preact";
 import { PopupData } from "src/ui";
 import { closePopup, openPopup } from "src/ui/PopupStore";
 import FileInfoBadge from "src/ui/components/FileInfo";
@@ -84,6 +86,7 @@ export default function Conversion() {
 
 	const [toOption, setToOption] = useState<ConversionOption | null>(null);
 	const [isConverting, setIsConverting] = useState(false);
+	const [base64Copied, setBase64Copied] = useState(false);
 
 	useEffect(() => {
 		if (!firstFile || isConverting) return;
@@ -98,7 +101,25 @@ export default function Conversion() {
 		}
 
 		setToOption(null);
+		setBase64Copied(false);
 	}, [firstFile]);
+
+	const handleCopyBase64 = async () => {
+		if (files.length !== 1 || !firstFile) return;
+		try {
+			await copyText(await fileDataUrl(firstFile));
+			setBase64Copied(true);
+			setTimeout(() => setBase64Copied(false), 1400);
+		} catch (error) {
+			PopupData.value = {
+				title: "Clipboard unavailable",
+				text: error instanceof Error ? error.message : String(error),
+				dismissible: true,
+				buttonText: "OK"
+			};
+			openPopup();
+		}
+	};
 
 	const handleFromSelect = useCallback((option: ConversionOption | null) => {
 		setFromOption(option);
@@ -260,6 +281,14 @@ export default function Conversion() {
 							/>
 						))}
 					</div>
+					<StyledButton
+						disabled={files.length !== 1}
+						title={files.length === 1 ? "Copy a MIME-correct data URL" : "Select one file to copy as Base64"}
+						onClick={handleCopyBase64}
+					>
+						{base64Copied ? <Check size={15} /> : <Copy size={15} />}
+						{base64Copied ? "Copied" : "Copy Base64"}
+					</StyledButton>
 					{step === "select-to" && (
 						<StyledButton onClick={handleBack}>
 							<ArrowLeft size={16} />

@@ -3,8 +3,17 @@ import JSZip from "jszip";
 import { createTar } from "nanotar";
 
 import { combineArchive, normalizeArchivePath, renderCombinedMarkdown } from "../src/tools/archiveCombine";
-import { decodeBase64, filenameForFormat } from "../src/tools/base64";
+import { base64DataUrl, decodeBase64, encodeBase64, filenameForFormat } from "../src/tools/base64";
 import { buildOcrViewerDocument, flattenOcrWords } from "../src/tools/ocr";
+import {
+	decodeSharedFile,
+	encodeSharedFile,
+	mediaEmbedHtml,
+	previewKind,
+	sharePayloadFromHash,
+	shareUrl
+} from "../src/tools/share";
+import { sourcePreview } from "../src/tools/sourcePreview";
 
 describe("base64 input", () => {
 	test("decodes plain, whitespace, URL-safe, and data URL input", () => {
@@ -22,6 +31,48 @@ describe("base64 input", () => {
 		expect(() => decodeBase64("data:text/plain,hello")).toThrow("not base64 encoded");
 		expect(filenameForFormat("folder\\report.old", "pdf")).toBe("report.pdf");
 		expect(filenameForFormat("already.JSON", ".json")).toBe("already.JSON");
+	});
+
+	test("encodes large byte arrays and MIME-correct data URLs losslessly", () => {
+		const bytes = Uint8Array.from({ length: 80_003 }, (_, index) => index % 251);
+		const encoded = encodeBase64(bytes);
+		expect([...decodeBase64(encoded).bytes]).toEqual([...bytes]);
+		expect(base64DataUrl(Uint8Array.of(60, 62), "image/svg+xml")).toBe("data:image/svg+xml;base64,PD4=");
+	});
+});
+
+describe("fragment file sharing", () => {
+	test("round-trips exact binary bytes, Unicode metadata, and a portable URL", () => {
+		const file = {
+			name: "misty-rainbow-雪.webp",
+			mime: "image/webp",
+			bytes: Uint8Array.of(0, 1, 2, 127, 128, 254, 255)
+		};
+		const payload = encodeSharedFile(file);
+		expect(payload).toMatch(/^[A-Za-z0-9_-]+$/);
+		expect(decodeSharedFile(payload)).toEqual(file);
+		const url = shareUrl(file, "https://app.shel.sh/make/");
+		expect(url).toStartWith("https://app.shel.sh/make/#share:");
+		expect(sharePayloadFromHash(new URL(url).hash)).toBe(payload);
+	});
+
+	test("classifies native previews and emits self-contained media HTML", () => {
+		const svg = {
+			name: "sample.svg",
+			mime: "image/svg+xml",
+			bytes: new TextEncoder().encode("<svg><rect width=\"2\" height=\"2\"/></svg>")
+		};
+		expect(previewKind(svg.mime)).toBe("image");
+		expect(mediaEmbedHtml(svg)).toContain('<img src="data:image/svg+xml;base64,');
+		const source = sourcePreview(svg);
+		expect(source?.text).toContain("<rect");
+		expect(source?.language).toBe("xml");
+		expect(source?.html).toContain("hljs-tag");
+		expect(sourcePreview({ name: "tool.bin", mime: "application/octet-stream", bytes: Uint8Array.of(0, 1, 2) })).toBeNull();
+	});
+
+	test("rejects damaged share records", () => {
+		expect(() => decodeSharedFile("bm90LWEtc2hhcmUtcmVjb3Jk")).toThrow("damaged or unsupported");
 	});
 });
 

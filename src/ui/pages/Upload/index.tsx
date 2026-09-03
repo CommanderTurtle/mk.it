@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { ArrowRight, Download, FileArchive, FileCode2, RotateCcw, ScanText, Upload } from "lucide-preact";
+import { ArrowRight, Download, FileArchive, FileCode2, RotateCcw, ScanText, Share2, Upload } from "lucide-preact";
 
-import { ConversionOptions, goToUploadHome, SelectedFiles } from "src/main";
+import { ConversionOptions, goToUploadHome, openSharedFile, SelectedFiles } from "src/main";
 import { decodeBase64, filenameForFormat, type DecodedBase64 } from "src/tools/base64";
 import { downloadBytes } from "src/tools/download";
 import { getInputFormatChoices } from "src/tools/fileFormats";
@@ -90,6 +90,12 @@ export default function UploadPage() {
 		if (!file) return;
 		SelectedFiles.value = { [`${file.name}-${file.lastModified}`]: file };
 		CurrentPage.value = Pages.Conversion;
+	};
+
+	const shareDecoded = () => {
+		const file = makeBase64File();
+		if (!file || !decoded) return;
+		openSharedFile({ name: file.name, mime: file.type, bytes: decoded.bytes.slice() });
 	};
 
 	useEffect(() => {
@@ -192,6 +198,7 @@ export default function UploadPage() {
 									<StyledButton onClick={resetBase64}><RotateCcw size={14} /> Reset</StyledButton>
 									<span className="panel-actions-spacer" />
 									<StyledButton disabled={!selectedChoice} onClick={downloadDecoded}><Download size={14} /> Download</StyledButton>
+									<StyledButton disabled={!selectedChoice} onClick={shareDecoded}><Share2 size={14} /> Share</StyledButton>
 									<StyledButton variant={ButtonVariant.Primary} disabled={!selectedChoice} onClick={convertDecoded}>Convert <ArrowRight size={14} /></StyledButton>
 								</div>
 							</div>

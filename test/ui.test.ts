@@ -76,6 +76,53 @@ describe("four-tool home", () => {
 		expect(summary).toContain("18 bytes");
 		expect(await page.$eval(".base64-details select", select => select.options.length)).toBeGreaterThan(10);
 		expect(await page.$eval(".base64-details", element => element.textContent || "")).toContain("Convert");
+		expect(await page.$eval(".base64-details", element => element.textContent || "")).toContain("Share");
+	});
+
+	test("opens a fragment-shared SVG with highlighted source and an expandable native preview", async () => {
+		await clickButtonContaining(".base64-details", "Reset");
+		const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="blue"/></svg>';
+		const payload = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+		await page.$eval(".base64-panel textarea", (textarea, value) => {
+			textarea.value = value;
+			textarea.dispatchEvent(new Event("input", { bubbles: true }));
+		}, payload);
+		await clickButtonContaining(".base64-panel", "Done");
+		await clickButtonContaining(".base64-details", "Share");
+		await page.waitForSelector(".share-preview img");
+		expect(new URL(page.url()).hash).toStartWith("#share:");
+		expect(await page.$eval(".share-source", element => element.textContent || "")).toContain("View source code");
+		expect(await page.$eval(".share-source code", element => element.innerHTML)).toContain("hljs-tag");
+		if (process.env.CAPTURE_SHARE_UI) {
+			await page.screenshot({ path: process.env.CAPTURE_SHARE_UI, fullPage: true });
+		}
+		await page.click('.share-preview button[title="Expand preview"]');
+		await page.waitForFunction(() => document.querySelector<HTMLDialogElement>(".share-preview-dialog")?.open === true);
+		await page.click(".share-preview-dialog header button");
+		await clickButtonContaining(".tool-header", "All tools");
+		await page.waitForSelector(".home-shell");
+		expect(new URL(page.url()).hash).toBe("");
+	});
+
+	test("offers MIME-correct Base64 copying from the original converter", async () => {
+		await page.evaluate(() => {
+			Object.defineProperty(navigator, "clipboard", {
+				configurable: true,
+				value: { writeText: async (value: string) => { (window as Window & { copiedFixture?: string }).copiedFixture = value; } }
+			});
+			const input = document.querySelector<HTMLInputElement>(".upload-dropzone input");
+			if (!input) throw new Error("Missing converter input");
+			const transfer = new DataTransfer();
+			transfer.items.add(new File(["plain fixture"], "fixture.txt", { type: "text/plain" }));
+			input.files = transfer.files;
+			input.dispatchEvent(new Event("change", { bubbles: true }));
+		});
+		await page.waitForSelector(".conversion-body");
+		await clickButtonContaining(".conversion-action-bar", "Copy Base64");
+		await page.waitForFunction(() => (window as Window & { copiedFixture?: string }).copiedFixture?.startsWith("data:text/plain;base64,"));
+		expect(await page.evaluate(() => (window as Window & { copiedFixture?: string }).copiedFixture)).toBe("data:text/plain;base64,cGxhaW4gZml4dHVyZQ==");
+		await page.click(".conversion-header .logo");
+		await page.waitForSelector(".home-shell");
 	});
 
 	test("combines an uploaded ZIP and switches between pretty and raw", async () => {

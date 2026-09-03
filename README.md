@@ -15,8 +15,9 @@ For a semi-technical overview of this tool, check out the video: https://youtu.b
 
 This fork keeps the upstream conversion graph and its handlers intact, while expanding the home page to four entry points:
 
-- **Convert a file** is the original Convert to it workflow.
-- **Base64 file** accepts raw base64 or a base64 data URL, asks for a file name and any installed input format, then either downloads the decoded bytes or hands the file to the original converter.
+- **Convert a file** is the original Convert to it workflow. A single selected file can also be copied directly as a MIME-correct Base64 data URL without changing its bytes.
+- **Base64 file** accepts raw base64 or a base64 data URL, asks for a file name and any installed input format, then downloads the decoded bytes, hands the file to the original converter, or opens a share screen.
+- **Shared files** use a versioned `#share:` fragment containing compressed metadata and exact file bytes. The fragment is decoded locally and is never sent in the HTTP request. Textual files receive highlighted, copyable source; SVG images expose both source and image views; images, video, audio, and PDF files receive native previews with a full-window expander and copyable self-contained HTML.
 - **Image OCR** uses pinned Tesseract.js 7 worker, WebAssembly core, and English language assets copied into the static build. Browser-readable images are scanned directly; other installed image formats are first normalized to PNG through the existing conversion graph. The result includes an isolated image viewer with a selectable text layer and a plain-text view.
 - **Archive to Markdown** reads ZIP and TAR archives in memory, sorts paths, preserves text inside extension-aware code fences, and writes an explicit `(omitted)` entry for binary or oversized files. The result can be copied, viewed as raw or pretty Markdown, or downloaded as `combined.md`.
 
