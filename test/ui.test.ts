@@ -90,7 +90,13 @@ describe("four-tool home", () => {
 		await clickButtonContaining(".base64-panel", "Done");
 		await clickButtonContaining(".base64-details", "Share");
 		await page.waitForSelector(".share-preview img");
+		await page.waitForSelector(".share-hashes button");
 		expect(new URL(page.url()).hash).toStartWith("#share:");
+		const checksums = await page.$$eval(".share-hashes button", buttons => buttons.map(button => button.textContent || ""));
+		expect(checksums).toHaveLength(3);
+		expect(checksums[0]).toMatch(/SHA-256[a-f0-9]{64}/);
+		expect(checksums[1]).toMatch(/MD5[a-f0-9]{32}/);
+		expect(checksums[2]).toMatch(/SHA-1[a-f0-9]{40}/);
 		expect(await page.$eval(".share-source", element => element.textContent || "")).toContain("View source code");
 		expect(await page.$eval(".share-source code", element => element.innerHTML)).toContain("hljs-tag");
 		if (process.env.CAPTURE_SHARE_UI) {

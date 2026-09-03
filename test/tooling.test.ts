@@ -5,6 +5,7 @@ import { createTar } from "nanotar";
 import { combineArchive, normalizeArchivePath, renderCombinedMarkdown } from "../src/tools/archiveCombine";
 import { base64DataUrl, decodeBase64, encodeBase64, filenameForFormat } from "../src/tools/base64";
 import { buildOcrViewerDocument, flattenOcrWords } from "../src/tools/ocr";
+import { hashBytes, md5Hex } from "../src/tools/hashes";
 import {
 	decodeSharedFile,
 	encodeSharedFile,
@@ -42,6 +43,16 @@ describe("base64 input", () => {
 });
 
 describe("fragment file sharing", () => {
+	test("hashes the exact file bytes with standard checksum algorithms", async () => {
+		const bytes = new TextEncoder().encode("abc");
+		expect(await hashBytes(bytes)).toEqual({
+			sha256: "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+			md5: "900150983cd24fb0d6963f7d28e17f72",
+			sha1: "a9993e364706816aba3e25717850c26c9cd0d89d"
+		});
+		expect(md5Hex(new Uint8Array())).toBe("d41d8cd98f00b204e9800998ecf8427e");
+	});
+
 	test("round-trips exact binary bytes, Unicode metadata, and a portable URL", () => {
 		const file = {
 			name: "misty-rainbow-雪.webp",
