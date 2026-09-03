@@ -12,6 +12,7 @@ export interface SharedFileData {
 export type MediaPreviewKind = "image" | "video" | "audio" | "pdf";
 
 const SHARE_PREFIX = "#share:";
+const PREVIEW_PREFIX = "#p:";
 const MAGIC = Uint8Array.of(0x4d, 0x4b, 0x49, 0x54, 0x01); // MKIT + version 1
 const HEADER_LENGTH = MAGIC.length + 4;
 const MIME_PATTERN = /^[\w!#$&^.+-]+\/[\w!#$&^.+-]+(?:\s*;[^\r\n]*)?$/;
@@ -93,12 +94,24 @@ export function shareFragment(file: SharedFileData): string {
 }
 
 export function sharePayloadFromHash(hash: string): string | null {
-	return hash.startsWith(SHARE_PREFIX) ? hash.slice(SHARE_PREFIX.length) : null;
+	if (hash.startsWith(SHARE_PREFIX)) return hash.slice(SHARE_PREFIX.length);
+	if (hash.startsWith(PREVIEW_PREFIX)) return hash.slice(PREVIEW_PREFIX.length);
+	return null;
+}
+
+export function isSharePreviewHash(hash: string): boolean {
+	return hash.startsWith(PREVIEW_PREFIX);
 }
 
 export function shareUrl(file: SharedFileData, baseUrl: string): string {
 	const url = new URL(baseUrl);
 	url.hash = shareFragment(file).slice(1);
+	return url.href;
+}
+
+export function sharePreviewUrl(file: SharedFileData, baseUrl: string): string {
+	const url = new URL(baseUrl);
+	url.hash = `${PREVIEW_PREFIX.slice(1)}${encodeSharedFile(file)}`;
 	return url.href;
 }
 

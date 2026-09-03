@@ -68,6 +68,26 @@ describe("four-tool home", () => {
 		}
 	});
 
+	test("encodes an uploaded file as MIME data URL or raw Base64 without changing its bytes", async () => {
+		await page.evaluate(() => {
+			const input = document.querySelector<HTMLInputElement>(".base64-file-picker");
+			if (!input) throw new Error("Missing Base64 file input");
+			const transfer = new DataTransfer();
+			transfer.items.add(new File([Uint8Array.of(0, 255, 1, 2)], "bytes.bin"));
+			input.files = transfer.files;
+			input.dispatchEvent(new Event("change", { bubbles: true }));
+		});
+		await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>(".base64-panel textarea")?.value === "data:application/octet-stream;base64,AP8BAg==");
+		expect(await page.$eval(".encoded-file-summary", element => element.textContent || "")).toContain("4 bytes");
+		await page.click(".base64-mime-toggle input");
+		await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>(".base64-panel textarea")?.value === "AP8BAg==");
+		await page.$eval(".base64-panel textarea", textarea => {
+			textarea.value = "";
+			textarea.dispatchEvent(new Event("input", { bubbles: true }));
+		});
+		await page.click(".base64-mime-toggle input");
+	});
+
 	test("decodes base64 and hands it a native input format", async () => {
 		await page.type(".base64-panel textarea", "data:text/plain;base64,SGVsbG8gZnJvbSBicm93c2Vy");
 		await clickButtonContaining(".base64-panel", "Done");
@@ -110,6 +130,28 @@ describe("four-tool home", () => {
 		expect(new URL(page.url()).hash).toBe("");
 	});
 
+	test("opens HTML and Markdown shares through the compressed #p document preview", async () => {
+		const markdown = "# Local preview\n\n| A | B |\n|-|-|\n| 1 | 2 |";
+		const payload = `data:text/markdown;base64,${Buffer.from(markdown).toString("base64")}`;
+		await page.$eval(".base64-panel textarea", (textarea, value) => {
+			textarea.value = value;
+			textarea.dispatchEvent(new Event("input", { bubbles: true }));
+		}, payload);
+		await clickButtonContaining(".base64-panel", "Done");
+		await page.$eval(".base64-details input", input => { input.value = "report.md"; input.dispatchEvent(new Event("input", { bubbles: true })); });
+		await clickButtonContaining(".base64-details", "Share");
+		await page.waitForSelector(".share-preview iframe");
+		await clickButtonContaining(".share-actions", "Open preview");
+		await page.waitForFunction(() => location.hash.startsWith("#p:") && document.querySelector<HTMLDialogElement>(".share-preview-dialog")?.open === true);
+		await page.reload();
+		await page.waitForFunction(() => location.hash.startsWith("#p:") && document.querySelector<HTMLDialogElement>(".share-preview-dialog")?.open === true);
+		await page.click(".share-preview-dialog header button");
+		await page.waitForFunction(() => location.hash.startsWith("#share:"));
+		await clickButtonContaining(".tool-header", "All tools");
+		await page.waitForSelector(".home-shell");
+		await page.waitForSelector(".upload-dropzone:not(.upload-dropzone--pending)");
+	}, 30_000);
+
 	test("offers MIME-correct Base64 copying from the original converter", async () => {
 		await page.evaluate(() => {
 			Object.defineProperty(navigator, "clipboard", {
@@ -131,27 +173,22 @@ describe("four-tool home", () => {
 		await page.waitForSelector(".home-shell");
 	});
 
-	test("combines an uploaded ZIP and switches between pretty and raw", async () => {
-		await page.evaluate(() => {
-			const button = [...document.querySelectorAll<HTMLButtonElement>(".home-route-card")]
-				.find(candidate => candidate.textContent?.includes("Archive to Markdown"));
-			button?.click();
-		});
-		await page.waitForSelector(".combine-upload");
-
+	test("combines a ZIP uploaded through Base64 and switches between pretty and raw", async () => {
 		const zip = new JSZip();
 		zip.file("src/index.js", "console.log('browser test');\n");
 		zip.file("native/tool.dll", new Uint8Array([77, 90, 0, 1]));
 		const bytes = [...await zip.generateAsync({ type: "uint8array" })];
 		await page.evaluate(data => {
-			const input = document.querySelector<HTMLInputElement>(".combine-upload input");
-			if (!input) throw new Error("Missing archive input");
+			const input = document.querySelector<HTMLInputElement>(".base64-file-picker");
+			if (!input) throw new Error("Missing Base64 file input");
 			const transfer = new DataTransfer();
 			transfer.items.add(new File([new Uint8Array(data)], "fixture.zip", { type: "application/zip" }));
 			input.files = transfer.files;
 			input.dispatchEvent(new Event("change", { bubbles: true }));
 		}, bytes);
-
+		await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>(".base64-panel textarea")?.value.startsWith("data:application/zip;base64,"));
+		await clickButtonContaining(".base64-panel", "Done");
+		await clickButtonContaining(".base64-details", "Combine");
 		await page.waitForSelector(".combine-pretty article");
 		const pretty = await page.$eval(".combine-pretty", element => element.textContent || "");
 		expect(pretty).toContain("src/index.js");

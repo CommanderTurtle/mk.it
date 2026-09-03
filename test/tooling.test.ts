@@ -2,16 +2,19 @@ import { describe, expect, test } from "bun:test";
 import JSZip from "jszip";
 import { createTar } from "nanotar";
 
-import { combineArchive, normalizeArchivePath, renderCombinedMarkdown } from "../src/tools/archiveCombine";
+import { combineArchive, isSupportedArchive, normalizeArchivePath, renderCombinedMarkdown } from "../src/tools/archiveCombine";
 import { base64DataUrl, decodeBase64, encodeBase64, filenameForFormat } from "../src/tools/base64";
+import { buildMarkdownPreviewDocument, documentPreviewKind } from "../src/tools/documentPreview";
 import { buildOcrViewerDocument, flattenOcrWords } from "../src/tools/ocr";
 import { hashBytes, md5Hex } from "../src/tools/hashes";
 import {
 	decodeSharedFile,
 	encodeSharedFile,
+	isSharePreviewHash,
 	mediaEmbedHtml,
 	previewKind,
 	sharePayloadFromHash,
+	sharePreviewUrl,
 	shareUrl
 } from "../src/tools/share";
 import { sourcePreview } from "../src/tools/sourcePreview";
@@ -65,6 +68,20 @@ describe("fragment file sharing", () => {
 		const url = shareUrl(file, "https://app.shel.sh/make/");
 		expect(url).toStartWith("https://app.shel.sh/make/#share:");
 		expect(sharePayloadFromHash(new URL(url).hash)).toBe(payload);
+		const preview = sharePreviewUrl(file, "https://app.shel.sh/make/");
+		expect(preview).toStartWith("https://app.shel.sh/make/#p:");
+		expect(isSharePreviewHash(new URL(preview).hash)).toBe(true);
+		expect(sharePayloadFromHash(new URL(preview).hash)).toBe(payload);
+	});
+
+	test("builds direct HTML and GFM preview documents only for document formats", () => {
+		expect(documentPreviewKind({ name: "report.md", mime: "application/octet-stream" })).toBe("markdown");
+		expect(documentPreviewKind({ name: "page.bin", mime: "text/html" })).toBe("html");
+		expect(documentPreviewKind({ name: "photo.png", mime: "image/png" })).toBeNull();
+		const preview = buildMarkdownPreviewDocument("# Report\n\n| A | B |\n|-|-|\n| 1 | 2 |", "report.md");
+		expect(preview).toContain("<h1>Report</h1>");
+		expect(preview).toContain("<table>");
+		expect(preview).toContain("<title>report.md</title>");
 	});
 
 	test("classifies native previews and emits self-contained media HTML", () => {
@@ -88,6 +105,11 @@ describe("fragment file sharing", () => {
 });
 
 describe("archive combiner", () => {
+	test("recognizes ZIP and uncompressed TAR inputs by name or MIME", () => {
+		expect(isSupportedArchive({ name: "source.zip", type: "" })).toBe(true);
+		expect(isSupportedArchive({ name: "source.bin", type: "application/x-tar" })).toBe(true);
+		expect(isSupportedArchive({ name: "source.7z", type: "application/x-7z-compressed" })).toBe(false);
+	});
 	test("combines ZIP source text and keeps explicit binary omissions", async () => {
 		const zip = new JSZip();
 		zip.file("src/main.ts", "console.log('ok');\n````\n");

@@ -139,6 +139,34 @@
 	&.field-error { border-color: #d14343; }
 }
 
+.base64-file-picker { display: none; }
+
+.base64-entry-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+}
+
+.base64-mime-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	color: var(--text-secondary);
+	font-size: 0.72rem;
+	cursor: pointer;
+
+	input { accent-color: var(--primary); }
+}
+
+.encoded-file-summary {
+	margin-top: 0.5rem;
+	color: var(--text-secondary);
+	font: 0.67rem/1.4 ui-monospace, SFMono-Regular, Consolas, monospace;
+	overflow-wrap: anywhere;
+}
+
 .inline-error {
 	color: #d14343;
 	font-size: 0.73rem;

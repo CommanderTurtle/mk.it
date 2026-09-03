@@ -24,3 +24,4 @@ export const LoadingToolsText = signal<string | undefined>("Loading formats…")
 export const ConversionInProgress = signal(false);
 export const SharedFile = signal<SharedFileData | null>(null);
 export const ShareError = signal<string | null>(null);
+export const PendingArchive = signal<File | null>(null);
