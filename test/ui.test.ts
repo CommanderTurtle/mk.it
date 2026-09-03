@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import JSZip from "jszip";
 import puppeteer, { type Browser, type Page } from "puppeteer";
 
+import { shareUrl } from "../src/tools/share";
+
 let browser: Browser;
 let page: Page;
 
@@ -157,12 +159,32 @@ describe("four-tool home", () => {
 		await page.$eval(".base64-details input", input => { input.value = "report.md"; input.dispatchEvent(new Event("input", { bubbles: true })); });
 		await clickButtonContaining(".base64-details", "Share");
 		await page.waitForSelector(".share-preview iframe");
+		expect(await page.$eval(".share-preview iframe", iframe => iframe.hasAttribute("sandbox"))).toBe(true);
 		await clickButtonContaining(".share-actions", "Open preview");
 		await page.waitForFunction(() => location.hash.startsWith("#p:") && document.querySelector<HTMLDialogElement>(".share-preview-dialog")?.open === true);
 		await page.reload();
 		await page.waitForFunction(() => location.hash.startsWith("#p:") && document.querySelector<HTMLDialogElement>(".share-preview-dialog")?.open === true);
 		await page.click(".share-preview-dialog header button");
 		await page.waitForFunction(() => location.hash.startsWith("#share:"));
+		await clickButtonContaining(".tool-header", "All tools");
+		await page.waitForSelector(".home-shell");
+		await page.waitForSelector(".upload-dropzone:not(.upload-dropzone--pending)");
+	}, 30_000);
+
+	test("keeps Edge PDF previews on the native unsandboxed iframe path", async () => {
+		const url = shareUrl({
+			name: "paper.pdf",
+			mime: "application/pdf",
+			bytes: new TextEncoder().encode("%PDF-1.4\n%%EOF\n")
+		}, `http://localhost:${server.port}/make/index.html`);
+		await page.goto(url);
+		await page.waitForSelector(".share-preview iframe");
+		const iframe = await page.$eval(".share-preview iframe", element => ({
+			sandboxed: element.hasAttribute("sandbox"),
+			source: (element as HTMLIFrameElement).src
+		}));
+		expect(iframe.sandboxed).toBe(false);
+		expect(iframe.source).toStartWith("blob:");
 		await clickButtonContaining(".tool-header", "All tools");
 		await page.waitForSelector(".home-shell");
 		await page.waitForSelector(".upload-dropzone:not(.upload-dropzone--pending)");

@@ -29,6 +29,7 @@ function Media({ kind, url, name }: { kind: PreviewKind; url: string; name: stri
 	if (kind === "image") return <img src={url} alt={name} />;
 	if (kind === "video") return <video src={url} controls preload="metadata" />;
 	if (kind === "audio") return <audio src={url} controls preload="metadata" />;
+	if (kind === "pdf") return <iframe src={url} title={name} />;
 	return <iframe src={url} title={name} sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts" />;
 }
 
