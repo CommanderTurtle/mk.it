@@ -4,6 +4,7 @@ import type { ComponentChildren } from "preact";
 import { goToUploadHome } from "src/main";
 import Footer from "src/ui/components/Footer";
 import Logo from "src/ui/components/Logo";
+import ProjectLinks from "src/ui/components/ProjectLinks";
 import StyledButton from "src/ui/components/StyledButton";
 
 import "./index.css";
@@ -23,7 +24,10 @@ export default function ToolShell({ title, description, children }: ToolShellPro
 					<span className="tool-header-divider" />
 					<span className="tool-header-label">{title}</span>
 				</div>
-				<StyledButton onClick={goToUploadHome}><ArrowLeft size={15} /> All tools</StyledButton>
+				<div className="project-header-actions">
+					<ProjectLinks />
+					<StyledButton onClick={goToUploadHome}><ArrowLeft size={15} /> All tools</StyledButton>
+				</div>
 			</header>
 			<main className="tool-main">
 				<div className="tool-intro">

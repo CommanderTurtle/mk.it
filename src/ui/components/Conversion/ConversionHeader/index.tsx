@@ -1,5 +1,6 @@
 import Logo from "src/ui/components/Logo";
 import AdvancedModeToggle from "src/ui/components/AdvancedModeToggle";
+import ProjectLinks from "src/ui/components/ProjectLinks";
 import { goToUploadHome } from "src/main";
 
 import "./index.css";
@@ -18,6 +19,7 @@ export default function ConversionHeader({ stepLabel, logoDisabled = false }: Co
 			</div>
 
 			<div className="header-right">
+				<ProjectLinks />
 				<AdvancedModeToggle compact={false} />
 			</div>
 		</header>

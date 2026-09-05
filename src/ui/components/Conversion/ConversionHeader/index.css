@@ -1,11 +1,12 @@
 .conversion-header {
-	height: 56px;
+	min-height: 56px;
 	background: var(--bg-card);
 	border-block-end: 1px solid var(--border-primary);
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 1.25rem;
+	padding: 0.6rem 1.25rem;
 	z-index: 20;
 	flex-shrink: 0;
 	position: sticky;

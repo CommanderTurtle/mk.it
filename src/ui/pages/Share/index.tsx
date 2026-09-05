@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { Check, Copy, Download, Expand, ExternalLink, FileWarning, Link2, X, ZoomIn } from "lucide-preact";
+import { Check, Copy, Download, Expand, ExternalLink, FileWarning, Link2, Pencil, X, ZoomIn } from "lucide-preact";
 
 import { copyText } from "src/tools/clipboard";
 import { documentPreview, type DocumentPreviewKind } from "src/tools/documentPreview";
@@ -7,6 +7,7 @@ import { downloadBytes } from "src/tools/download";
 import { hashBytes } from "src/tools/hashes";
 import type { FileHashes } from "src/tools/hashes";
 import { imageViewerEval } from "src/tools/imageViewer";
+import { lnkrEditKind, lnkrEditUrl } from "src/tools/lnkr";
 import { isSharePreviewHash, mediaEmbedHtml, previewKind, sharePayloadFromHash, sharePreviewUrl, shareUrl, type MediaPreviewKind } from "src/tools/share";
 import { sourcePreview } from "src/tools/sourcePreview";
 import { ShareError, SharedFile } from "src/ui/AppState";
@@ -44,6 +45,7 @@ export default function SharePage() {
 	const [hashes, setHashes] = useState<FileHashes | null>(null);
 	const [hashError, setHashError] = useState("");
 	const source = useMemo(() => file ? sourcePreview(file) : null, [file]);
+	const editKind = file && source ? lnkrEditKind(file) : null;
 	const kind = file ? previewKind(file.mime) : null;
 	const previewDocument = useMemo(() => file && source ? documentPreview(file, source.text) : null, [file, source]);
 	const displayKind: PreviewKind | null = kind || previewDocument?.kind || null;
@@ -125,6 +127,17 @@ export default function SharePage() {
 		if (html) await copy("html", html);
 	};
 
+	const editInLnkr = () => {
+		if (!source || !editKind) return;
+		try {
+			// Synchronous, on-click encoding preserves browser user activation.
+			window.open(lnkrEditUrl(source.text, editKind), "_blank", "noopener,noreferrer");
+			setCopyError("");
+		} catch (caught) {
+			setCopyError(caught instanceof Error ? caught.message : String(caught));
+		}
+	};
+
 	const openImageViewer = () => {
 		const source = imageViewerEval(file);
 		if (!source) return;
@@ -188,6 +201,11 @@ export default function SharePage() {
 						</summary>
 						<div className="share-code-toolbar">
 							<span>{source.language}</span>
+							{editKind && !previewDocument && (
+								<button type="button" title="Open source in ln.kr in a new tab" onClick={editInLnkr}>
+									<Pencil size={13} /> Edit
+								</button>
+							)}
 							<button type="button" onClick={event => {
 								event.preventDefault();
 								void copy("source", source.text);
@@ -214,6 +232,11 @@ export default function SharePage() {
 									{copied === "html" ? <Check size={14} /> : <Copy size={14} />}
 									{copied === "html" ? "Copied" : "Copy HTML"}
 								</StyledButton>
+								{editKind && (
+									<StyledButton title="Open source in ln.kr in a new tab" onClick={editInLnkr}>
+										<Pencil size={14} /> Edit
+									</StyledButton>
+								)}
 								<StyledButton title="Expand preview" onClick={() => setExpanded(true)}>
 									<Expand size={14} /> Expand
 								</StyledButton>

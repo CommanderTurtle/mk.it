@@ -8,6 +8,7 @@ import { buildMarkdownPreviewDocument, documentPreviewKind } from "../src/tools/
 import { buildOcrViewerDocument, flattenOcrWords } from "../src/tools/ocr";
 import { hashBytes, md5Hex } from "../src/tools/hashes";
 import { imageViewerEval, imageViewerSource } from "../src/tools/imageViewer";
+import { lnkrEditKind, lnkrEditUrl, type LnkrKind } from "../src/tools/lnkr";
 import {
 	decodeSharedFile,
 	encodeSharedFile,
@@ -19,6 +20,44 @@ import {
 	shareUrl
 } from "../src/tools/share";
 import { sourcePreview } from "../src/tools/sourcePreview";
+
+describe("ln.kr text handoff", () => {
+	test("matches the canonical v4 encoder for every supported kind", () => {
+		// Generated with CommanderTurtle/ln.kr fad61a4 compressTextV4, not this adapter.
+		const vectors: Record<LnkrKind, string> = {
+			text: "=orQnQIXPPj56G@?b1~mgZ&.5KIsML$J8q(Jv@xLCaF'=1Q'TAQR@J':jIIK#t2v)0",
+			markdown: "l0iRnQIXPPj56G@?b1~mgZ&.5KIsML$J8q(Jv@xLCaF'=1Q'TAQR@J':jIIK#t2v)0",
+			javascript: "AK]SnQIXPPj56G@?b1~mgZ&.5KIsML$J8q(Jv@xLCaF'=1Q'TAQR@J':jIIK#t2v)0",
+			html: "pgRTnQIXPPj56G@?b1~mgZ&.5KIsML$J8q(Jv@xLCaF'=1Q'TAQR@J':jIIK#t2v)0"
+		};
+		for (const [kind, payload] of Object.entries(vectors)) {
+			const url = new URL(lnkrEditUrl("hello\r\n  世界 👩🏽‍💻\n", kind as LnkrKind));
+			expect(url.origin).toBe("https://a.shel.sh");
+			expect(url.pathname).toBe("/");
+			expect(url.hash).toBe(`#${payload}`);
+		}
+	});
+
+	test("preserves a leading # alphabet digit in an empty Markdown document", () => {
+		expect(lnkrEditUrl("", "markdown")).toBe("https://a.shel.sh/##VDnGzHk5xNDIbSb$vb-");
+	});
+
+	test("offers only Markdown, HTML, JavaScript and plain text", () => {
+		for (const [name, expected] of [
+			["report.MD", "markdown"], ["report.markdown", "markdown"],
+			["page.htm", "html"], ["page.html", "html"], ["main.js", "javascript"],
+			["main.mjs", "javascript"], ["main.cjs", "javascript"], ["note.txt", "text"]
+		]) expect(lnkrEditKind({ name, mime: "application/octet-stream" })).toBe(expected);
+		expect(lnkrEditKind({ name: "README", mime: "text/markdown; charset=utf-8" })).toBe("markdown");
+		for (const [name, mime] of [
+			["paper.pdf", "application/pdf"], ["image.svg", "image/svg+xml"],
+			["image.png", "image/png"], ["clip.mp4", "video/mp4"], ["sound.mp3", "audio/mpeg"],
+			["app.js", "application/pdf"], ["table.csv", "text/plain"],
+			["app.json", "application/json"], ["binary.bin", "application/octet-stream"],
+			["name.__proto__", "text/plain"], ["name.constructor", "text/plain"]
+		]) expect(lnkrEditKind({ name, mime })).toBeNull();
+	});
+});
 
 describe("base64 input", () => {
 	test("decodes plain, whitespace, URL-safe, and data URL input", () => {

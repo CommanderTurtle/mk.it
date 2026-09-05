@@ -1,0 +1,14 @@
+.project-links, .project-header-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.project-links {
+	font-size: 0.75rem;
+	white-space: nowrap;
+
+	a { color: var(--text-secondary); text-decoration: none; }
+	a:hover, a:focus-visible { color: var(--primary); text-decoration: underline; }
+}
