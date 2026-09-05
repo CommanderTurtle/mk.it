@@ -12,6 +12,7 @@ import { CurrentPage, LoadingToolsText, Pages, PendingArchive, PopupData } from 
 import Footer from "src/ui/components/Footer";
 import HelpButton from "src/ui/components/HelpButton";
 import Logo from "src/ui/components/Logo";
+import ProjectLinks from "src/ui/components/ProjectLinks";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 import { openPopup } from "src/ui/PopupStore";
 
@@ -185,7 +186,7 @@ export default function UploadPage() {
 						<Logo showName={true} size={36} onClick={goToUploadHome} />
 						<p>Private, on-device conversion and document tools.</p>
 					</div>
-					<HelpButton />
+					<div className="project-header-actions"><ProjectLinks /><HelpButton /></div>
 				</header>
 
 				<section className="home-primary-grid" aria-label="Primary tools">

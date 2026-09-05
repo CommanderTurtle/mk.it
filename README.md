@@ -34,6 +34,8 @@ This fork keeps the upstream conversion graph and its handlers intact, while exp
 
 The new paths do not upload user data or extract archives onto the filesystem. OCR runtime files are served from the same build rather than a CDN. Archive processing is bounded to 20,000 entries, 512 MiB expanded data, 8 MiB per text file, and 64 MiB of combined source text to avoid accidental archive bombs or an unresponsive tab.
 
+**Edit** on shared Markdown, HTML, JavaScript and TXT files opens their decoded text in [ln.kr](https://a.shel.sh/) in a new tab; use its **Edit a copy** action to edit. The normal v4 document link is generated only on click using the existing DEFLATE dependency (JavaScript is not auto-run). Header links also connect to ln.kr and [Webclip](https://app.shel.sh/webclip). Media and PDF previews are unchanged.
+
 ## Usage
 
 1. Go to [app.shel.sh/make](https://app.shel.sh/make/)

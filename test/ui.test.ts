@@ -3,6 +3,7 @@ import JSZip from "jszip";
 import puppeteer, { type Browser, type Page } from "puppeteer";
 
 import { shareUrl } from "../src/tools/share";
+import { lnkrEditUrl, type LnkrKind } from "../src/tools/lnkr";
 
 let browser: Browser;
 let page: Page;
@@ -70,6 +71,20 @@ describe("four-tool home", () => {
 		}
 	});
 
+	test("links to sibling projects in new tabs with the Webclip tooltip", async () => {
+		const links = await page.$$eval(".home-header .project-links a", anchors => anchors.map(anchor => ({
+			label: anchor.textContent, href: anchor.getAttribute("href"),
+			target: anchor.getAttribute("target"), rel: anchor.getAttribute("rel"), title: anchor.getAttribute("title")
+		})));
+		expect(links).toEqual([
+			{ label: "/lnkr/", href: "https://a.shel.sh/", target: "_blank", rel: "noopener noreferrer", title: null },
+			{ label: "webclip", href: "https://app.shel.sh/webclip", target: "_blank", rel: "noopener noreferrer", title: "for docx/ppt/epub/csv and more to Markdown" }
+		]);
+		await page.setViewport({ width: 375, height: 812 });
+		expect(await page.$eval(".project-links", element => element.getBoundingClientRect().right <= innerWidth)).toBe(true);
+		await page.setViewport({ width: 800, height: 600 });
+	});
+
 	test("encodes an uploaded file as MIME data URL or raw Base64 without changing its bytes", async () => {
 		await page.evaluate(() => {
 			const input = document.querySelector<HTMLInputElement>(".base64-file-picker");
@@ -121,6 +136,7 @@ describe("four-tool home", () => {
 		expect(checksums[2]).toMatch(/SHA-1[a-f0-9]{40}/);
 		expect(await page.$eval(".share-source", element => element.textContent || "")).toContain("View source code");
 		expect(await page.$eval(".share-source code", element => element.innerHTML)).toContain("hljs-tag");
+		expect(await page.$('button[title="Open source in ln.kr in a new tab"]')).toBeNull();
 		await page.click('.share-preview button[title="Open interactive pan-and-zoom image viewer"]');
 		await page.waitForFunction(() => [...document.body.children].some(element => (element as HTMLElement).style.zIndex === "999999"));
 		const interactive = await page.evaluate(() => {
@@ -185,8 +201,39 @@ describe("four-tool home", () => {
 		}));
 		expect(iframe.sandboxed).toBe(false);
 		expect(iframe.source).toStartWith("blob:");
+		expect(await page.$('button[title="Open source in ln.kr in a new tab"]')).toBeNull();
 		await clickButtonContaining(".tool-header", "All tools");
 		await page.waitForSelector(".home-shell");
+		await page.waitForSelector(".upload-dropzone:not(.upload-dropzone--pending)");
+	}, 30_000);
+
+	test("Edit hands text to ln.kr on click without leaving or mutating the share", async () => {
+		const text = "hello\r\n  世界 👩🏽‍💻\n";
+		for (const [name, mime, kind] of [
+			["note.txt", "text/plain", "text"], ["app.js", "text/javascript", "javascript"],
+			["page.html", "text/html", "html"], ["paper.md", "text/markdown", "markdown"]
+		]) {
+			const url = shareUrl({ name, mime, bytes: new TextEncoder().encode(text) }, `http://localhost:${server.port}/make/index.html`);
+			await page.goto(url);
+			await page.waitForSelector('button[title="Open source in ln.kr in a new tab"]');
+			await page.evaluate(() => {
+				const state = window as Window & { editCalls?: unknown[] };
+				state.editCalls = [];
+				window.open = (url, target, features) => { state.editCalls!.push([String(url), target, features]); return null; };
+			});
+			const scope = kind === "text" || kind === "javascript" ? ".share-code-toolbar" : ".share-preview";
+			await page.click(`${scope} button[title="Open source in ln.kr in a new tab"]`);
+			expect(await page.evaluate(() => (window as Window & { editCalls?: unknown[] }).editCalls)).toEqual([
+				[lnkrEditUrl(text, kind as LnkrKind), "_blank", "noopener,noreferrer"]
+			]);
+			expect(page.url()).toBe(url);
+			// The HTML parser normalizes CRLF for display; the handoff above must not.
+			expect(await page.$eval(".share-source code", element => element.textContent)).toBe(text.replaceAll("\r\n", "\n"));
+		}
+		await page.setViewport({ width: 375, height: 812 });
+		expect(await page.$$eval(".share-preview header button", buttons => buttons.every(button => button.getBoundingClientRect().right <= innerWidth))).toBe(true);
+		await page.setViewport({ width: 800, height: 600 });
+		await clickButtonContaining(".tool-header", "All tools");
 		await page.waitForSelector(".upload-dropzone:not(.upload-dropzone--pending)");
 	}, 30_000);
 
