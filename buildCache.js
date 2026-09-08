@@ -17,7 +17,7 @@ const server = Bun.serve({
     if (!(await file.exists())) return new Response("Not Found", { status: 404 });
     return new Response(file);
   },
-  port: 8080
+  port: 0
 });
 
 const browser = await puppeteer.launch({
@@ -35,7 +35,7 @@ await Promise.all([
       if (text === "Built initial format list.") resolve();
     });
   }),
-  page.goto("http://localhost:8080/convert/index.html")
+  page.goto(`http://localhost:${server.port}/convert/index.html`)
 ]);
 
 const cacheJSON = await page.evaluate((minify) => {
