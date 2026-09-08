@@ -38,7 +38,7 @@ import turbowarpHandler from "./turbowarp.ts";
 import libopenmptHandler from "./libopenmpt.ts";
 import { midiCodecHandler, midiSynthHandler } from "./midi.ts";
 import lzhHandler from "./lzh.ts";
-import txtToInfiniteCraftHandler from "./txtToInfiniteCraft.ts";
+import { txtToInfiniteCraftHandler, infiniteCraftToJsonHandler } from "./infiniteCraft.ts";
 import wadHandler from "./wad.ts";
 import espeakngHandler from "./espeakng.js"
 import exeToBatHandler from "./exeToBat.ts";
@@ -127,6 +127,7 @@ try { handlers.push(new lzhHandler()) } catch (_) { };
 try { handlers.push(new wadHandler()) } catch (_) { };
 try { handlers.push(new pandocHandler()) } catch (_) { };
 try { handlers.push(new txtToInfiniteCraftHandler()) } catch (_) { };
+try { handlers.push(new infiniteCraftToJsonHandler()) } catch (_) { };
 try { handlers.push(new espeakngHandler()) } catch (_) { };
 try { handlers.push(new exeToBatHandler()) } catch (_) { };
 try { handlers.push(new bsorHandler()) } catch (_) { };
