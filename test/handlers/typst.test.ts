@@ -6,7 +6,7 @@ import {
   postprocessTypstFromPandoc,
   preprocessHtmlForTypst,
   unpackTypstAssets,
-} from "../src/handlers/typst.ts";
+} from "../../src/handlers/typst.ts";
 
 GlobalRegistrator.register();
 
