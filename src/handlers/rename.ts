@@ -152,3 +152,48 @@ export const renameJsonHandler = renameHandler("renamejson", [
     lossless: true
   }
 ]);
+/// handler for renaming tar-based formats
+export const renameTarHandler = renameHandler("renametar", [
+  CommonFormats.TAR.builder("tar").allowTo(),
+  {
+    name: "Comic Book Archive (TAR)",
+    format: "cbt",
+    extension: "cbt",
+    mime: "application/vnd.comicbook+tar",
+    from: true,
+    to: false,
+    internal: "cbt",
+    category: Category.ARCHIVE,
+    lossless: true
+  },
+]);
+/// handler for renaming rar-based formats
+export const renameRarHandler = renameHandler("renamerar", [
+  CommonFormats.RAR.builder("rar").allowTo(),
+  {
+    name: "Comic Book Archive (RAR)",
+    format: "cbr",
+    extension: "cbr",
+    mime: "application/vnd.comicbook+rar",
+    from: true,
+    to: false,
+    internal: "cbr",
+    category: Category.ARCHIVE,
+    lossless: true
+  },
+]);
+/// handler for renaming 7z-based formats
+export const rename7zHandler = renameHandler("rename7z", [
+  CommonFormats.SZ.builder("7z").allowTo(),
+  {
+    name: "Comic Book Archive (7Z)",
+    format: "cb7",
+    extension: "cb7",
+    mime: "application/vnd.comicbook+7z",
+    from: true,
+    to: false,
+    internal: "cb7",
+    category: Category.ARCHIVE,
+    lossless: true
+  },
+]);
