@@ -101,8 +101,8 @@ async function inlineBlobBackedAttributes(
   }));
 }
 
-export default class EpubHandler implements FormatHandler {
-  public name: string = "epubjs-html";
+export default class epubHandler implements FormatHandler {
+  public name: string = "epub";
   public ready: boolean = false;
 
   public supportedFormats: FileFormat[] = [
@@ -164,16 +164,16 @@ export default class EpubHandler implements FormatHandler {
               <meta charset="utf-8">
               <title>${(currentBook as any).package?.metadata?.title || baseName}</title>
               <style>
-                body { 
-                  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, serif; 
+                body {
+                  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, serif;
                   max-width: 800px;
                   margin: 2rem auto;
                   padding: 0 2rem;
                   line-height: 1.6;
                   color: #1a1a1a;
                 }
-                img { 
-                  max-width: 100%; 
+                img {
+                  max-width: 100%;
                   height: auto !important;
                   break-inside: avoid;
                   page-break-inside: avoid;
@@ -205,7 +205,7 @@ export default class EpubHandler implements FormatHandler {
 
         const spineItems = (currentBook.spine as any).spineItems || [];
         const totalSpineItems = spineItems.length;
-        
+
         if (totalSpineItems === 0) {
           throw new Error("No spine items found in the EPUB.");
         }
@@ -312,7 +312,7 @@ export default class EpubHandler implements FormatHandler {
         // Gather fully merged HTML
         ctx?.log("Assembling final HTML layout buffer...");
         const finalHtml = "<!DOCTYPE html>\n" + printDoc.documentElement.outerHTML;
-        
+
         // Remove helper nodes
         printIframe.remove();
         epubContainer.remove();

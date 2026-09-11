@@ -19,9 +19,9 @@ import {
   getPPQ
 } from "ts-flp";
 
-class flptojsonHandler implements FormatHandler {
+class flpToJsonHandler implements FormatHandler {
 
-  public name: string = "flptojson";
+  public name: string = "flpToJson";
 
   public supportedFormats: FileFormat[] = [
     {
@@ -126,4 +126,4 @@ class flptojsonHandler implements FormatHandler {
   }
 }
 
-export default flptojsonHandler
+export default flpToJsonHandler

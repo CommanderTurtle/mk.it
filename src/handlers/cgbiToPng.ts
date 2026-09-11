@@ -144,7 +144,7 @@ async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8A
 }
 
 class cgbiToPngHandler implements FormatHandler {
-  public name = "CgBI to PNG converter";
+  public name = "cgbiToPng";
   public ready = true;
 
   public supportedFormats: FileFormat[] = [
@@ -155,7 +155,7 @@ class cgbiToPngHandler implements FormatHandler {
       mime: "image/png",
       from: true,
       to: false,
-      internal: "cgbi-png", 
+      internal: "cgbi-png",
       category: Category.IMAGE,
       lossless: true
     },
@@ -181,7 +181,7 @@ class cgbiToPngHandler implements FormatHandler {
     for (const inputFile of inputFiles) {
       try {
         const standardPng = await revertCgBIBuffer(inputFile.bytes);
-        
+
         const dotIndex = inputFile.name.lastIndexOf('.');
         const baseName = dotIndex !== -1 ? inputFile.name.substring(0, dotIndex) : inputFile.name;
         const outputName = `${baseName}.${outputFormat.extension}`;

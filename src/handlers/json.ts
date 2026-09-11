@@ -5,7 +5,7 @@ import * as yaml from "yaml";
 
 /// Converts things to JSON
 export class toJsonHandler implements FormatHandler {
-  public name: string = "tojson";
+  public name: string = "toJson";
   public ready: boolean = true;
 
   public supportedFormats: FileFormat[] = [
@@ -72,7 +72,7 @@ export class toJsonHandler implements FormatHandler {
 
 /// Converts to things from JSON
 export class fromJsonHandler {
-  public name: string = "fromjson";
+  public name: string = "fromJson";
   public ready: boolean = true;
 
   public supportedFormats: FileFormat[] = [

@@ -7,7 +7,7 @@ import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
 
 class qoiFuHandler implements FormatHandler {
 
-  public name: string = "qoi-fu";
+  public name: string = "qoiFu";
   public supportedFormats: FileFormat[] = [
     CommonFormats.PNG.supported("png", true, true, true),
     CommonFormats.JPEG.supported("jpeg", true, true),

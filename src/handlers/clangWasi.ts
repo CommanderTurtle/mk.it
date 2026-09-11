@@ -6,7 +6,7 @@ import { commands } from '@yowasp/clang';
 
 class clangWasiHandler implements FormatHandler {
 
-  public name: string = "clang-wasi";
+  public name: string = "clangWasi";
   public supportedFormats: FileFormat[] = [
     {
       name: "C Source File",
@@ -69,7 +69,7 @@ class clangWasiHandler implements FormatHandler {
       const output = await commands
       [inputFormat.internal === "cpp" ? "clang++" : "clang"]
       (
-        [inputFile.name, "-o", "out.wasm", "-O3", "-fno-exceptions"], 
+        [inputFile.name, "-o", "out.wasm", "-O3", "-fno-exceptions"],
         // this build specifically excludes exceptions for some reason
         {
           [inputFile.name]: inputFile.bytes

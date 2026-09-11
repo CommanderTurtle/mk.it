@@ -10,16 +10,15 @@ import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
 /**
  * LZH/LHA Archive Handler
  * Handles LZH (Lempel-Ziv-Huffman) and LHA archive formats
- * 
+ *
  * Supports:
  * - Extracting LZH/LHA archives to individual files
  * - Converting LZH/LHA archives to ZIP format
  * - Multiple compression methods (lh0, lh1, lh4, lh5, lh6, lh7)
  */
- 
-export class LZHHandler implements FormatHandler {
+export class lzhHandler implements FormatHandler {
   public name: string = "lzh";
-  
+
   public supportedFormats: FileFormat[] = [
     {
       name: "LZH/LHA Archive",
@@ -49,7 +48,7 @@ export class LZHHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat
   ): Promise<FileData[]> {
-    
+
     if (!this.ready) {
       throw new InitializationError("Handler not initialized.");
     }
@@ -124,7 +123,7 @@ export class LZHHandler implements FormatHandler {
           });
         }
 
-        const zipData = await zip.generateAsync({ 
+        const zipData = await zip.generateAsync({
           type: "uint8array",
           compression: "DEFLATE",
           compressionOptions: { level: 9 }
@@ -196,7 +195,7 @@ export class LZHHandler implements FormatHandler {
 }
 
 // Packs any input(s) into a singular LZH file. Separated for tree purposes.
-export class LZH2Handler implements FormatHandler {
+export class lzh2Handler implements FormatHandler {
   public name: string = "lzh2";
   
   public supportedFormats: FileFormat[] = [

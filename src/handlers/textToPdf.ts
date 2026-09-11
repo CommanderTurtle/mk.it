@@ -3,7 +3,7 @@ import CommonFormats from "../CommonFormats.ts";
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 
 class textToPdfHandler implements FormatHandler {
-  public name = "text-to-pdf";
+  public name = "textToPdf";
   public supportedFormats?: FileFormat[] = [
       CommonFormats.TEXT.builder("text").allowFrom(true).allowTo(false),
       CommonFormats.PDF.builder("pdf").allowFrom(false).allowTo(true),

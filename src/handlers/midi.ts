@@ -79,7 +79,7 @@ function loadFluidSynth(): Promise<{ JSSynth: any; sfontBin: ArrayBuffer }> {
 // shortest valid route.
 
 export class midiCodecHandler implements FormatHandler {
-  public name = "miditextcodec";
+  public name = "midiCodec";
   public supportedFormats: FileFormat[] = [];
   public ready = false;
 
@@ -198,7 +198,7 @@ export class midiCodecHandler implements FormatHandler {
 // midiCodecHandler so no direct text->wav edge is created in the routing graph.
 
 export class midiSynthHandler implements FormatHandler {
-  public name = "midi";
+  public name = "midiSynth";
   public supportedFormats: FileFormat[] = [];
   public ready = false;
 

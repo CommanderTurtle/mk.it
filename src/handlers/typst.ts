@@ -356,7 +356,7 @@ function parseSvgPageDimensions(svgBytes: Uint8Array): { widthPt: number; height
   };
 }
 
-class TypstHandler implements FormatHandler {
+class typstHandler implements FormatHandler {
   public name: string = "typst";
   public ready: boolean = false;
 
@@ -486,4 +486,4 @@ class TypstHandler implements FormatHandler {
   }
 }
 
-export default TypstHandler;
+export default typstHandler;

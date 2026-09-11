@@ -12,9 +12,9 @@ function base64ToBytes (base64: string) {
   return bytes;
 }
 
-class pdftoimgHandler implements FormatHandler {
+class pdfToImgHandler implements FormatHandler {
 
-  public name: string = "pdftoimg";
+  public name: string = "pdfToImg";
 
   public supportedFormats: FileFormat[] = [
     CommonFormats.PDF.builder("pdf").allowFrom(),
@@ -70,4 +70,4 @@ class pdftoimgHandler implements FormatHandler {
 
 }
 
-export default pdftoimgHandler;
+export default pdfToImgHandler;

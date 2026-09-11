@@ -140,7 +140,7 @@ async function decodeWithFFmpeg(
 }
 
 class floHandler implements FormatHandler {
-  public name: string = "floHandler";
+  public name: string = "flo";
   public supportedFormats: FileFormat[] = [];
   public ready: boolean = false;
   #worker?: Worker;
@@ -331,5 +331,3 @@ class floHandler implements FormatHandler {
 }
 
 export default floHandler;
-
-

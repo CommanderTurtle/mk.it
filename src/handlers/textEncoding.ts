@@ -103,8 +103,8 @@ const formats: FileFormat[] = [
   { name: "Plain Text (UTF-32 BE)",         format: "UTF-32 BE",         extension: "txt", mime: "text/plain; charset=UTF-32BE",          from: true,  to: true, internal: "utf32be", category: Category.TEXT, lossless: true },
 ];
 
-export default class TextEncodingHandler implements FormatHandler {
-  name = "TextEncoding";
+export default class textEncodingHandler implements FormatHandler {
+  name = "textEncoding";
   supportedFormats = formats;
   ready = true;
   init = async () => { this.ready = true };

@@ -108,9 +108,9 @@ async function htmlContentToSvgString(
   }
 }
 
-class HtmlToSvgHandler implements FormatHandler {
+class htmlToSvgHandler implements FormatHandler {
 
-  public name: string = "dom-to-svg";
+  public name: string = "htmlToSvg";
 
   public supportedFormats: FileFormat[] = [
     CommonFormats.HTML.supported("html", true, false),
@@ -154,4 +154,4 @@ class HtmlToSvgHandler implements FormatHandler {
 
 }
 
-export default HtmlToSvgHandler;
+export default htmlToSvgHandler;

@@ -18,7 +18,7 @@ const SCSS_FORMAT = new FormatDefinition(
 );
 
 class cssHandler implements FormatHandler {
-  public name: string = "CSS";
+  public name: string = "css";
   public supportedFormats?: FileFormat[];
   public ready: boolean = false;
 

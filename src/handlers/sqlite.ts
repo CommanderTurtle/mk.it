@@ -3,9 +3,9 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
 import {parse} from "papaparse";
 
-class sqlite3Handler implements FormatHandler {
+class sqliteHandler implements FormatHandler {
 
-  public name: string = "sqlite3";
+  public name: string = "sqlite";
   public supportedFormats?: FileFormat[];
   public ready: boolean = false;
 
@@ -33,7 +33,7 @@ class sqlite3Handler implements FormatHandler {
         category: Category.DATABASE,
         lossless: false
       },
-      // Lossy because extracts only tables  
+      // Lossy because extracts only tables
       CommonFormats.CSV.builder("csv").allowTo().allowFrom()
     ];
     this.ready = true;
@@ -81,7 +81,7 @@ class sqlite3Handler implements FormatHandler {
             );
             db.checkRc(rc);
 
-            
+
             for (const table of this.getTables(db)) {
                 const stmt = db.prepare(`SELECT * FROM ${table}`);
                 let csvStr = stmt.getColumnNames().join(",") + "\n";
@@ -108,10 +108,10 @@ class sqlite3Handler implements FormatHandler {
             throw new Error("Database pointer is undefined")
         }
 
-        
+
         for (const file of inputFiles) {
           const decoder = new TextDecoder('utf-8'); // decode as UTF-8
-          parse(decoder.decode(file.bytes), { 
+          parse(decoder.decode(file.bytes), {
             header: false,
             skipEmptyLines: true,
             complete: function(result) {
@@ -125,7 +125,7 @@ class sqlite3Handler implements FormatHandler {
 
               for (const row of result.data.slice(1) as string[][]) {
                 db.exec(`INSERT INTO ${tableName} (${header}) VALUES (${row.map((v, i) => formatValue(v, schema[i][1]))})`)
-              } 
+              }
             }
           });
         }
@@ -143,7 +143,7 @@ class sqlite3Handler implements FormatHandler {
   }
 }
 
-export default sqlite3Handler;
+export default sqliteHandler;
 
 function formatValue(value: string, type: string) {
     value = value.substring(1); // Strip of space from left

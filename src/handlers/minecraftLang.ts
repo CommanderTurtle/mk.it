@@ -1,9 +1,9 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 
-class mclangHandler implements FormatHandler {
+class minecraftLangHandler implements FormatHandler {
 
-  public name: string = "minecraft-lang";
+  public name: string = "minecraftLang";
   public supportedFormats?: FileFormat[];
   public ready: boolean = false;
 
@@ -96,4 +96,4 @@ class mclangHandler implements FormatHandler {
     }
 }
 
-export default mclangHandler;
+export default minecraftLangHandler;
