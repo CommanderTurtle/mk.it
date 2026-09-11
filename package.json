@@ -22,7 +22,9 @@
     "desktop:start": "bun run desktop:build && bun run desktop:preview",
     "desktop:dist:win": "bun run desktop:build && electron-builder --win --publish never",
     "desktop:dist:mac": "bun run desktop:build && electron-builder --mac --publish never",
-    "desktop:dist:linux": "bun run desktop:build && electron-builder --linux --publish never"
+    "desktop:dist:linux": "bun run desktop:build && electron-builder --linux --publish never",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "build": {
     "appId": "com.p2r3.convert",
@@ -46,6 +48,7 @@
     }
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "^20.8.7",
     "@preact/preset-vite": "^2.10.3",
     "@types/jszip": "^3.4.0",
     "@types/less": "^3.0.8",
@@ -53,12 +56,12 @@
     "@types/pdfkit": "^0.17.6",
     "electron": "^40.6.0",
     "electron-builder": "^26.8.1",
+    "happy-dom": "^20.8.7",
+    "oxfmt": "^0.67.0",
     "puppeteer": "^24.36.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
-    "vite-tsconfig-paths": "^6.0.5",
-    "@happy-dom/global-registrator": "^20.8.7",
-    "happy-dom": "^20.8.7"
+    "vite-tsconfig-paths": "^6.0.5"
   },
   "dependencies": {
     "@aiden0z/pptx-renderer": "^1.0.2",
