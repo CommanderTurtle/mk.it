@@ -10,7 +10,7 @@ export default class exeToBatHandler implements FormatHandler {
   name = "exeToBat";
   supportedFormats: FileFormat[] = [
     CommonFormats.EXE.builder("exe").allowFrom(),
-    CommonFormats.BATCH.builder("bat").allowTo().markLossless()
+    CommonFormats.BATCH.builder("bat").allowTo().markLossless(),
   ];
 
   ready = false;
@@ -28,7 +28,7 @@ export default class exeToBatHandler implements FormatHandler {
     inputFiles: FileData[],
     inputFormat: FileFormat,
     outputFormat: FileFormat,
-    args?: string[]
+    args?: string[],
   ): Promise<FileData[]> {
     if (DEBUG_EXE_TO_BAT) {
       console.log("[exe2bat] Converting:", inputFormat.mime, "→", outputFormat.mime);
@@ -36,7 +36,13 @@ export default class exeToBatHandler implements FormatHandler {
     }
 
     if (inputFormat.mime !== EXE_MIME || outputFormat.mime !== CommonFormats.BATCH.mime) {
-      if (DEBUG_EXE_TO_BAT) console.log("[exe2bat] MIME type mismatch - expected:", EXE_MIME, "→", CommonFormats.BATCH.mime);
+      if (DEBUG_EXE_TO_BAT)
+        console.log(
+          "[exe2bat] MIME type mismatch - expected:",
+          EXE_MIME,
+          "→",
+          CommonFormats.BATCH.mime,
+        );
       throw new TypeError("This handler only supports EXE to BAT conversion");
     }
 
@@ -55,25 +61,25 @@ export default class exeToBatHandler implements FormatHandler {
     const batName = `${exeName}.bat`;
 
     if (DEBUG_EXE_TO_BAT) {
-      console.log('[exe2bat] Converting file:', file.name);
-      console.log('[exe2bat] File size:', file.bytes.length, 'bytes');
+      console.log("[exe2bat] Converting file:", file.name);
+      console.log("[exe2bat] File size:", file.bytes.length, "bytes");
     }
 
     // Read the EXE file
     const exeBuffer = Buffer.from(file.bytes);
 
     // Encode directly as Base64 (no compression)
-    const base64 = exeBuffer.toString('base64');
+    const base64 = exeBuffer.toString("base64");
 
     if (DEBUG_EXE_TO_BAT) {
-      console.log('[exe2bat] Base64 length:', base64.length);
+      console.log("[exe2bat] Base64 length:", base64.length);
     }
 
     // Generate the batch wrapper using certutil
     const batContent = this.generateBatchWrapper(exeName, base64);
 
     if (DEBUG_EXE_TO_BAT) {
-      console.log('[exe2bat] Batch content length:', batContent.length);
+      console.log("[exe2bat] Batch content length:", batContent.length);
     }
 
     // Create buffer safely with error handling
@@ -81,16 +87,16 @@ export default class exeToBatHandler implements FormatHandler {
     try {
       batBytes = new TextEncoder().encode(batContent);
       if (DEBUG_EXE_TO_BAT) {
-        console.log('[exe2bat] Successfully encoded batch content');
+        console.log("[exe2bat] Successfully encoded batch content");
       }
     } catch (error) {
-      console.error('[exe2bat] Error encoding batch content:', error);
-      throw new Error('Failed to encode batch content');
+      console.error("[exe2bat] Error encoding batch content:", error);
+      throw new Error("Failed to encode batch content");
     }
 
     return {
       name: batName,
-      bytes: batBytes
+      bytes: batBytes,
     };
   }
 

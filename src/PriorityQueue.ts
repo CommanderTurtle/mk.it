@@ -7,7 +7,7 @@ class PriorityQueue<T extends object> {
     const cap = initialCapacity ?? 11;
     const com = comparator ?? null;
     if (cap < 1) {
-      throw new RangeError('initial capacity must be greater than or equal to 1');
+      throw new RangeError("initial capacity must be greater than or equal to 1");
     }
     this._queue = new Array<T>(cap);
     this._comparator = com;
@@ -16,10 +16,9 @@ class PriorityQueue<T extends object> {
   private grow() {
     const oldCapacity = this._size;
     // Double size if small; else grow by 50%
-    const newCapacity =
-      oldCapacity + (oldCapacity < 64 ? oldCapacity + 2 : oldCapacity >> 1);
+    const newCapacity = oldCapacity + (oldCapacity < 64 ? oldCapacity + 2 : oldCapacity >> 1);
     if (!Number.isSafeInteger(newCapacity)) {
-      throw new RangeError('OOM: new capacity not a safe integer');
+      throw new RangeError("OOM: new capacity not a safe integer");
     }
     this._queue.length = newCapacity;
   }
@@ -80,10 +79,7 @@ class PriorityQueue<T extends object> {
       let object = this._queue[child];
       const right = child + 1;
       // compare left right child, assign child the bigger one
-      if (
-        right < this._size &&
-        this._comparator!(object, this._queue[right]) > 0
-      ) {
+      if (right < this._size && this._comparator!(object, this._queue[right]) > 0) {
         object = this._queue[(child = right)];
       }
       // compare item and child if bigger is item, break
@@ -103,10 +99,7 @@ class PriorityQueue<T extends object> {
       let object = this._queue[child];
       const right = child + 1;
 
-      if (
-        right < this._size &&
-        object!.toString().localeCompare(this._queue[right]!.toString())
-      ) {
+      if (right < this._size && object!.toString().localeCompare(this._queue[right]!.toString())) {
         object = this._queue[(child = right)];
       }
       if (item.toString().localeCompare(object!.toString()) <= 0) {
@@ -190,9 +183,9 @@ class PriorityQueue<T extends object> {
       next: () => {
         return {
           done: i == this._size,
-          value: <T>this._queue[i++]
+          value: <T>this._queue[i++],
         };
-      }
+      },
     };
   }
 }

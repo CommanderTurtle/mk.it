@@ -33,72 +33,78 @@ async function replaceBlobUrlsInCss(
   cssText: string,
   cache: Map<string, Promise<string>>,
 ): Promise<string> {
-  const urls = Array.from(cssText.matchAll(blobUrlRegex()))
-    .map((match) => match[2]);
+  const urls = Array.from(cssText.matchAll(blobUrlRegex())).map((match) => match[2]);
   const uniqueUrls = Array.from(new Set(urls));
 
   if (uniqueUrls.length === 0) return cssText;
 
   const replacements = new Map<string, string>();
-  await Promise.all(uniqueUrls.map(async (url) => {
-    replacements.set(url, await blobUrlToDataUrl(url, cache));
-  }));
+  await Promise.all(
+    uniqueUrls.map(async (url) => {
+      replacements.set(url, await blobUrlToDataUrl(url, cache));
+    }),
+  );
 
   return cssText.replace(blobUrlRegex(), (full, quote, url) => {
     const replacement = replacements.get(url);
     if (!replacement) return full;
-    const normalizedQuote = quote || "\"";
+    const normalizedQuote = quote || '"';
     return `url(${normalizedQuote}${replacement}${normalizedQuote})`;
   });
 }
 
-async function inlineBlobBackedAttributes(
-  printDoc: Document,
-  cache: Map<string, Promise<string>>,
-) {
+async function inlineBlobBackedAttributes(printDoc: Document, cache: Map<string, Promise<string>>) {
   const attributeNames = ["src", "poster", "href", "xlink:href", "data"];
 
   for (const attributeName of attributeNames) {
     const nodes = Array.from(printDoc.querySelectorAll(`[${CSS.escape(attributeName)}]`));
-    await Promise.all(nodes.map(async (node) => {
-      const value = node.getAttribute(attributeName);
-      if (!value?.startsWith("blob:")) return;
-      node.setAttribute(attributeName, await blobUrlToDataUrl(value, cache));
-    }));
+    await Promise.all(
+      nodes.map(async (node) => {
+        const value = node.getAttribute(attributeName);
+        if (!value?.startsWith("blob:")) return;
+        node.setAttribute(attributeName, await blobUrlToDataUrl(value, cache));
+      }),
+    );
   }
 
   const srcsetNodes = Array.from(printDoc.querySelectorAll("[srcset]"));
-  await Promise.all(srcsetNodes.map(async (node) => {
-    const srcset = node.getAttribute("srcset");
-    if (!srcset?.includes("blob:")) return;
+  await Promise.all(
+    srcsetNodes.map(async (node) => {
+      const srcset = node.getAttribute("srcset");
+      if (!srcset?.includes("blob:")) return;
 
-    const rewritten = await Promise.all(srcset
-      .split(",")
-      .map(async (candidate) => {
-        const trimmed = candidate.trim();
-        if (!trimmed.startsWith("blob:")) return candidate;
+      const rewritten = await Promise.all(
+        srcset.split(",").map(async (candidate) => {
+          const trimmed = candidate.trim();
+          if (!trimmed.startsWith("blob:")) return candidate;
 
-        const [url, ...descriptors] = trimmed.split(/\s+/u);
-        const dataUrl = await blobUrlToDataUrl(url, cache);
-        return [dataUrl, ...descriptors].join(" ");
-      }));
+          const [url, ...descriptors] = trimmed.split(/\s+/u);
+          const dataUrl = await blobUrlToDataUrl(url, cache);
+          return [dataUrl, ...descriptors].join(" ");
+        }),
+      );
 
-    node.setAttribute("srcset", rewritten.join(", "));
-  }));
+      node.setAttribute("srcset", rewritten.join(", "));
+    }),
+  );
 
   const styledNodes = Array.from(printDoc.querySelectorAll("[style]"));
-  await Promise.all(styledNodes.map(async (node) => {
-    const style = node.getAttribute("style");
-    if (!style?.includes("blob:")) return;
-    node.setAttribute("style", await replaceBlobUrlsInCss(style, cache));
-  }));
+  await Promise.all(
+    styledNodes.map(async (node) => {
+      const style = node.getAttribute("style");
+      if (!style?.includes("blob:")) return;
+      node.setAttribute("style", await replaceBlobUrlsInCss(style, cache));
+    }),
+  );
 
   const styleTags = Array.from(printDoc.querySelectorAll("style"));
-  await Promise.all(styleTags.map(async (styleTag) => {
-    const cssText = styleTag.textContent;
-    if (!cssText?.includes("blob:")) return;
-    styleTag.textContent = await replaceBlobUrlsInCss(cssText, cache);
-  }));
+  await Promise.all(
+    styleTags.map(async (styleTag) => {
+      const cssText = styleTag.textContent;
+      if (!cssText?.includes("blob:")) return;
+      styleTag.textContent = await replaceBlobUrlsInCss(cssText, cache);
+    }),
+  );
 }
 
 export default class epubHandler implements FormatHandler {
@@ -148,7 +154,7 @@ export default class epubHandler implements FormatHandler {
         // Extract buffer
         const arrayBuffer = file.bytes.buffer.slice(
           file.bytes.byteOffset,
-          file.bytes.byteOffset + file.bytes.byteLength
+          file.bytes.byteOffset + file.bytes.byteLength,
         );
 
         ctx?.log(`Parsing EPUB buffer (${file.bytes.byteLength} bytes)...`);
@@ -199,7 +205,7 @@ export default class epubHandler implements FormatHandler {
         `);
         printDoc.close();
 
-        const printContent = printDoc.getElementById('print-content')!;
+        const printContent = printDoc.getElementById("print-content")!;
         const head = printDoc.head;
         const injectedStyles = new Set<string>();
 
@@ -213,7 +219,9 @@ export default class epubHandler implements FormatHandler {
         ctx?.log(`Found ${totalSpineItems} spine chapters. Rendering concurrently...`);
 
         const CONCURRENCY = 8;
-        const results: Array<{ headStyles: string[], bodyHTML: string } | null> = new Array(totalSpineItems).fill(null);
+        const results: Array<{ headStyles: string[]; bodyHTML: string } | null> = new Array(
+          totalSpineItems,
+        ).fill(null);
         let currentIndex = 0;
 
         const processWorker = async () => {
@@ -237,7 +245,9 @@ export default class epubHandler implements FormatHandler {
 
             ctx?.log(`Rendering chapter ${index + 1}/${totalSpineItems}...`);
 
-            const item = (currentBook.spine as any).get ? (currentBook.spine as any).get(index) : spineItems[index];
+            const item = (currentBook.spine as any).get
+              ? (currentBook.spine as any).get(index)
+              : spineItems[index];
 
             try {
               await rendition.display(item.href);
@@ -245,8 +255,9 @@ export default class epubHandler implements FormatHandler {
 
               if (contentsList && contentsList.length > 0) {
                 const sectionDoc = contentsList[0].document;
-                const headStyles = Array.from(sectionDoc.querySelectorAll('style, link[rel="stylesheet"]'))
-                  .map((node: any) => node.outerHTML);
+                const headStyles = Array.from(
+                  sectionDoc.querySelectorAll('style, link[rel="stylesheet"]'),
+                ).map((node: any) => node.outerHTML);
                 const bodyHTML = sectionDoc.body.innerHTML;
 
                 results[index] = { headStyles, bodyHTML };
@@ -260,31 +271,33 @@ export default class epubHandler implements FormatHandler {
           container.remove();
         };
 
-        const workers = Array.from({ length: Math.min(CONCURRENCY, totalSpineItems) }, () => processWorker());
+        const workers = Array.from({ length: Math.min(CONCURRENCY, totalSpineItems) }, () =>
+          processWorker(),
+        );
         await Promise.all(workers);
 
         for (let i = 0; i < totalSpineItems; i++) {
-            const res = results[i];
-            if (!res) continue;
+          const res = results[i];
+          if (!res) continue;
 
-            const tempDiv = printDoc.createElement('div');
-            tempDiv.innerHTML = res.headStyles.join('\n');
+          const tempDiv = printDoc.createElement("div");
+          tempDiv.innerHTML = res.headStyles.join("\n");
 
-            Array.from(tempDiv.childNodes).forEach((node: any) => {
-                if (node.nodeName.toLowerCase() === 'link') {
-                    if (!injectedStyles.has(node.href)) {
-                        injectedStyles.add(node.href);
-                        head.appendChild(node.cloneNode(true));
-                    }
-                } else if (node.nodeName.toLowerCase() === 'style') {
-                    head.appendChild(node.cloneNode(true));
-                }
-            });
+          Array.from(tempDiv.childNodes).forEach((node: any) => {
+            if (node.nodeName.toLowerCase() === "link") {
+              if (!injectedStyles.has(node.href)) {
+                injectedStyles.add(node.href);
+                head.appendChild(node.cloneNode(true));
+              }
+            } else if (node.nodeName.toLowerCase() === "style") {
+              head.appendChild(node.cloneNode(true));
+            }
+          });
 
-            const sectionWrapper = printDoc.createElement('div');
-            sectionWrapper.className = 'epub-section';
-            sectionWrapper.innerHTML = res.bodyHTML;
-            printContent.appendChild(sectionWrapper);
+          const sectionWrapper = printDoc.createElement("div");
+          sectionWrapper.className = "epub-section";
+          sectionWrapper.innerHTML = res.bodyHTML;
+          printContent.appendChild(sectionWrapper);
         }
 
         // Cleanup blob CSS links by inline fetching
@@ -292,11 +305,11 @@ export default class epubHandler implements FormatHandler {
         ctx?.log(`Chapters concatenated. Resolving ${cssLinks.length} dynamic stylesheets...`);
         const cssFetchPromises = cssLinks.map(async (link) => {
           const href = (link as HTMLLinkElement).href;
-          if (href.startsWith('blob:')) {
+          if (href.startsWith("blob:")) {
             try {
               const response = await fetch(href);
               const text = await replaceBlobUrlsInCss(await response.text(), blobUrlCache);
-              const style = printDoc.createElement('style');
+              const style = printDoc.createElement("style");
               style.textContent = text;
               link.replaceWith(style);
             } catch (e) {
@@ -319,9 +332,8 @@ export default class epubHandler implements FormatHandler {
 
         outputFiles.push({
           name: `${baseName}.html`,
-          bytes: new TextEncoder().encode(finalHtml)
+          bytes: new TextEncoder().encode(finalHtml),
         });
-
       }
     }
 

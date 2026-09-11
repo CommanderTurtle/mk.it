@@ -65,16 +65,9 @@ function elementHasMeaningfulContent(element: Element): boolean {
   if (element.children.length > 0) return true;
   if ((element.textContent || "").trim().length > 0) return true;
 
-  return [
-    "img",
-    "svg",
-    "table",
-    "hr",
-    "video",
-    "audio",
-    "canvas",
-    "iframe",
-  ].includes(element.tagName.toLowerCase());
+  return ["img", "svg", "table", "hr", "video", "audio", "canvas", "iframe"].includes(
+    element.tagName.toLowerCase(),
+  );
 }
 
 function shouldInsertPageBreakBefore(element: Element): boolean {
@@ -82,14 +75,18 @@ function shouldInsertPageBreakBefore(element: Element): boolean {
   if (classList.contains("__page") || classList.contains("epub-section")) return true;
 
   const styles = parseStyleAttribute(element.getAttribute("style") || "");
-  return hasPageBreakValue(styles.get("break-before"))
-    || hasPageBreakValue(styles.get("page-break-before"));
+  return (
+    hasPageBreakValue(styles.get("break-before")) ||
+    hasPageBreakValue(styles.get("page-break-before"))
+  );
 }
 
 function shouldInsertPageBreakAfter(element: Element): boolean {
   const styles = parseStyleAttribute(element.getAttribute("style") || "");
-  return hasPageBreakValue(styles.get("break-after"))
-    || hasPageBreakValue(styles.get("page-break-after"));
+  return (
+    hasPageBreakValue(styles.get("break-after")) ||
+    hasPageBreakValue(styles.get("page-break-after"))
+  );
 }
 
 function createPageBreakMarker(document: Document): HTMLParagraphElement {
@@ -99,11 +96,7 @@ function createPageBreakMarker(document: Document): HTMLParagraphElement {
   return marker;
 }
 
-function appendTypstAttribute(
-  element: Element,
-  name: string,
-  value: string | undefined,
-) {
+function appendTypstAttribute(element: Element, name: string, value: string | undefined) {
   if (!value || element.hasAttribute(name)) return;
   element.setAttribute(name, value);
 }
@@ -130,16 +123,9 @@ function applyTypstStyleHints(element: Element) {
   if (styles.size === 0) return;
 
   const tagName = element.tagName.toLowerCase();
-  const inlineTextContainer = [
-    "span",
-    "a",
-    "code",
-    "kbd",
-    "mark",
-    "small",
-    "sub",
-    "sup",
-  ].includes(tagName);
+  const inlineTextContainer = ["span", "a", "code", "kbd", "mark", "small", "sub", "sup"].includes(
+    tagName,
+  );
   const blockContainer = [
     "div",
     "p",
@@ -165,20 +151,12 @@ function applyTypstStyleHints(element: Element) {
       "typst:fill",
       styles.get("background") || styles.get("background-color"),
     );
-    appendTypstAttribute(
-      element,
-      "typst:inset",
-      styles.get("padding"),
-    );
-    appendTypstAttribute(
-      element,
-      "typst:stroke",
-      styles.get("border"),
-    );
+    appendTypstAttribute(element, "typst:inset", styles.get("padding"));
+    appendTypstAttribute(element, "typst:stroke", styles.get("border"));
 
     if (
-      styles.get("break-inside")?.toLowerCase() === "avoid"
-      || styles.get("page-break-inside")?.toLowerCase() === "avoid"
+      styles.get("break-inside")?.toLowerCase() === "avoid" ||
+      styles.get("page-break-inside")?.toLowerCase() === "avoid"
     ) {
       appendTypstAttribute(element, "typst:breakable", "false");
     }
@@ -196,9 +174,9 @@ export function preprocessHtmlForTypst(htmlContent: string): string {
 
   for (const element of elements) {
     if (
-      shouldInsertPageBreakBefore(element)
-      && sawMeaningfulContent
-      && element.previousElementSibling?.getAttribute("data-typst-pagebreak-marker") !== "true"
+      shouldInsertPageBreakBefore(element) &&
+      sawMeaningfulContent &&
+      element.previousElementSibling?.getAttribute("data-typst-pagebreak-marker") !== "true"
     ) {
       element.before(createPageBreakMarker(document));
     }
@@ -210,8 +188,8 @@ export function preprocessHtmlForTypst(htmlContent: string): string {
     }
 
     if (
-      shouldInsertPageBreakAfter(element)
-      && element.nextElementSibling?.getAttribute("data-typst-pagebreak-marker") !== "true"
+      shouldInsertPageBreakAfter(element) &&
+      element.nextElementSibling?.getAttribute("data-typst-pagebreak-marker") !== "true"
     ) {
       element.after(createPageBreakMarker(document));
     }
@@ -247,14 +225,7 @@ export async function collectTypstAssetFiles(
   excludedPaths: string[] = [],
 ): Promise<Record<string, Uint8Array>> {
   const bundledAssets: Record<string, Uint8Array> = {};
-  const excluded = new Set([
-    "stdin",
-    "stdout",
-    "stderr",
-    "warnings",
-    "output",
-    ...excludedPaths,
-  ]);
+  const excluded = new Set(["stdin", "stdout", "stderr", "warnings", "output", ...excludedPaths]);
 
   for (const [path, file] of Object.entries(files)) {
     if (excluded.has(path)) continue;
@@ -300,9 +271,10 @@ function base64ToBytes(base64: string): Uint8Array {
   return bytes;
 }
 
-export function unpackTypstAssets(
-  mainContent: string,
-): { mainContent: string; shadowFiles: Record<string, Uint8Array> } {
+export function unpackTypstAssets(mainContent: string): {
+  mainContent: string;
+  shadowFiles: Record<string, Uint8Array>;
+} {
   if (!mainContent.startsWith(TYPST_ASSET_MANIFEST_START)) {
     return { mainContent, shadowFiles: {} };
   }
@@ -369,17 +341,13 @@ class typstHandler implements FormatHandler {
   private $typst?: TypstSnippet;
 
   async init() {
-    const { $typst: typst } = await import(
-      "@myriaddreamin/typst.ts/dist/esm/contrib/snippet.mjs"
-    );
+    const { $typst: typst } = await import("@myriaddreamin/typst.ts/dist/esm/contrib/snippet.mjs");
 
     typst.setCompilerInitOptions({
-      getModule: () =>
-        `${import.meta.env.BASE_URL}wasm/typst_ts_web_compiler_bg.wasm`,
+      getModule: () => `${import.meta.env.BASE_URL}wasm/typst_ts_web_compiler_bg.wasm`,
     });
     typst.setRendererInitOptions({
-      getModule: () =>
-        `${import.meta.env.BASE_URL}wasm/typst_ts_renderer_bg.wasm`,
+      getModule: () => `${import.meta.env.BASE_URL}wasm/typst_ts_renderer_bg.wasm`,
     });
 
     this.$typst = typst;
@@ -388,7 +356,7 @@ class typstHandler implements FormatHandler {
 
   private async svgFilesToSinglePdf(inputFiles: FileData[]): Promise<FileData[]> {
     const $typst = this.$typst!;
-    const dimensions = inputFiles.map(file => parseSvgPageDimensions(file.bytes));
+    const dimensions = inputFiles.map((file) => parseSvgPageDimensions(file.bytes));
 
     const id = `s${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 11)}`;
     const shadowPaths: string[] = [];
@@ -416,10 +384,12 @@ class typstHandler implements FormatHandler {
       const pdfData = await $typst.pdf({ mainContent });
       if (!pdfData) throw new Error("Typst compilation to PDF failed.");
       const baseName = inputFiles[0].name.replace(/\.[^.]+$/u, "");
-      return [{
-        name: `${baseName}.pdf`,
-        bytes: new Uint8Array(pdfData),
-      }];
+      return [
+        {
+          name: `${baseName}.pdf`,
+          bytes: new Uint8Array(pdfData),
+        },
+      ];
     } finally {
       for (const p of shadowPaths) {
         await $typst.unmapShadow(p);
@@ -436,7 +406,7 @@ class typstHandler implements FormatHandler {
     if (!this.ready || !this.$typst) throw new InitializationError("Handler not initialized.");
 
     if (inputFormat.internal === "svg" && outputFormat.internal === "svg") {
-      return inputFiles.map(f => ({
+      return inputFiles.map((f) => ({
         name: f.name,
         bytes: f.bytes.slice(),
       }));

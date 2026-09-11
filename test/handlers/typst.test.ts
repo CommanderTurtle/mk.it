@@ -17,7 +17,9 @@ test("preprocessHtmlForTypst injects a page break marker between slide-like cont
   `);
 
   expect(normalized.match(new RegExp(TYPST_PAGEBREAK_MARKER, "gu"))?.length).toBe(1);
-  expect(normalized).toContain(`${TYPST_PAGEBREAK_MARKER}</p><div class="__page"><p>Slide 2</p></div>`);
+  expect(normalized).toContain(
+    `${TYPST_PAGEBREAK_MARKER}</p><div class="__page"><p>Slide 2</p></div>`,
+  );
 });
 
 test("preprocessHtmlForTypst adds Typst-friendly attributes from inline HTML styles", () => {
@@ -40,13 +42,7 @@ test("preprocessHtmlForTypst adds Typst-friendly attributes from inline HTML sty
 });
 
 test("postprocessTypstFromPandoc rewrites standalone page break markers into Typst column breaks", () => {
-  const typst = [
-    "= Slide 1",
-    "",
-    TYPST_PAGEBREAK_MARKER,
-    "",
-    "= Slide 2",
-  ].join("\n");
+  const typst = ["= Slide 1", "", TYPST_PAGEBREAK_MARKER, "", "= Slide 2"].join("\n");
 
   expect(postprocessTypstFromPandoc(typst)).toContain("#colbreak(weak: true)");
 });

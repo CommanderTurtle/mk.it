@@ -29,11 +29,10 @@ export class lzhHandler implements FormatHandler {
       to: true,
       internal: "lzh",
       category: Category.ARCHIVE,
-      lossless: true
+      lossless: true,
     },
-    CommonFormats.ZIP.builder("zip").allowFrom()
-      .allowTo().markLossless(),
-    CommonFormats.JSON.builder("json").allowTo()
+    CommonFormats.ZIP.builder("zip").allowFrom().allowTo().markLossless(),
+    CommonFormats.JSON.builder("json").allowTo(),
   ];
 
   public supportAnyInput: boolean = false;
@@ -46,9 +45,8 @@ export class lzhHandler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
-
     if (!this.ready) {
       throw new InitializationError("Handler not initialized.");
     }
@@ -63,12 +61,12 @@ export class lzhHandler implements FormatHandler {
 
         // Sanitize all string values to ensure valid JSON
         const sanitizeString = (str: string): string => {
-          return str.replace(/[\x00-\x1F\x7F-\x9F]/g, '').trim() || 'unknown';
+          return str.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim() || "unknown";
         };
 
         // Convert bytes to base64 string
         const bytesToBase64 = (bytes: Uint8Array): string => {
-          let binary = '';
+          let binary = "";
           for (let i = 0; i < bytes.length; i++) {
             binary += String.fromCharCode(bytes[i]);
           }
@@ -80,19 +78,20 @@ export class lzhHandler implements FormatHandler {
           fileCount: extractedFiles.length,
           totalOriginalSize: extractedFiles.reduce((sum, f) => sum + f.originalSize, 0),
           totalCompressedSize: extractedFiles.reduce((sum, f) => sum + f.compressedSize, 0),
-          files: extractedFiles.map(file => ({
+          files: extractedFiles.map((file) => ({
             filename: sanitizeString(file.filename),
             originalSize: file.originalSize,
             compressedSize: file.compressedSize,
             timestamp: file.timestamp.toISOString(),
             compressionMethod: sanitizeString(file.method),
-            crc: `0x${file.crc.toString(16).toUpperCase().padStart(4, '0')}`,
-            compressionRatio: file.compressedSize > 0 && file.originalSize > 0
-              ? ((1 - file.compressedSize / file.originalSize) * 100).toFixed(2) + '%'
-              : '0%',
+            crc: `0x${file.crc.toString(16).toUpperCase().padStart(4, "0")}`,
+            compressionRatio:
+              file.compressedSize > 0 && file.originalSize > 0
+                ? ((1 - file.compressedSize / file.originalSize) * 100).toFixed(2) + "%"
+                : "0%",
             isDirectory: file.method === "-lhd-" || file.filename.endsWith("/"),
-            data: bytesToBase64(file.data)
-          }))
+            data: bytesToBase64(file.data),
+          })),
         };
 
         const jsonStr = JSON.stringify(archiveInfo, null, 2);
@@ -101,7 +100,7 @@ export class lzhHandler implements FormatHandler {
 
         outputFiles.push({
           name: baseName + ".json",
-          bytes: encoder.encode(jsonStr)
+          bytes: encoder.encode(jsonStr),
         });
       }
     } else if (inputFormat.internal === "lzh" && outputFormat.internal === "zip") {
@@ -119,20 +118,20 @@ export class lzhHandler implements FormatHandler {
           }
 
           zip.file(file.filename, file.data, {
-            date: file.timestamp
+            date: file.timestamp,
           });
         }
 
         const zipData = await zip.generateAsync({
           type: "uint8array",
           compression: "DEFLATE",
-          compressionOptions: { level: 9 }
+          compressionOptions: { level: 9 },
         });
 
         const baseName = inputFile.name.replace(/\.(lzh|lha)$/i, "");
         outputFiles.push({
           name: baseName + ".zip",
-          bytes: zipData
+          bytes: zipData,
         });
       }
     } else if (inputFormat.internal === "lzh") {
@@ -152,7 +151,7 @@ export class lzhHandler implements FormatHandler {
 
           outputFiles.push({
             name: filename,
-            bytes: file.data
+            bytes: file.data,
           });
         }
       }
@@ -171,7 +170,7 @@ export class lzhHandler implements FormatHandler {
             filesToArchive.push({
               filename: filename,
               data: data,
-              timestamp: zipEntry.date || new Date()
+              timestamp: zipEntry.date || new Date(),
             });
           }
         }
@@ -183,11 +182,13 @@ export class lzhHandler implements FormatHandler {
         const baseName = inputFile.name.replace(/\.zip$/i, "");
         outputFiles.push({
           name: baseName + "." + outputFormat.extension,
-          bytes: lzhData
+          bytes: lzhData,
         });
       }
     } else {
-      throw new TypeError(`Unsupported conversion: ${inputFormat.format} to ${outputFormat.format}`);
+      throw new TypeError(
+        `Unsupported conversion: ${inputFormat.format} to ${outputFormat.format}`,
+      );
     }
 
     return outputFiles;
@@ -197,7 +198,7 @@ export class lzhHandler implements FormatHandler {
 // Packs any input(s) into a singular LZH file. Separated for tree purposes.
 export class lzh2Handler implements FormatHandler {
   public name: string = "lzh2";
-  
+
   public supportedFormats: FileFormat[] = [
     {
       name: "LZH/LHA Archive",
@@ -208,13 +209,13 @@ export class lzh2Handler implements FormatHandler {
       to: true,
       internal: "lzh",
       category: "archive",
-      lossless: true
+      lossless: true,
     },
   ];
 
   public supportAnyInput: boolean = true;
   public ready: boolean = false;
-  
+
   async init() {
     this.ready = true;
   }
@@ -222,9 +223,8 @@ export class lzh2Handler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    
     if (!this.ready) {
       throw new Error("Handler not initialized");
     }
@@ -238,7 +238,7 @@ export class lzh2Handler implements FormatHandler {
       filesToArchive.push({
         filename: inputFile.name,
         data: inputFile.bytes,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -247,9 +247,9 @@ export class lzh2Handler implements FormatHandler {
 
     outputFiles.push({
       name: "archive." + outputFormat.extension,
-      bytes: lzhData
+      bytes: lzhData,
     });
-    
+
     return outputFiles;
   }
 }

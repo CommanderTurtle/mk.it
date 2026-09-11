@@ -1,13 +1,31 @@
-import { parseJSON, parseJSON5, parseJSONC, parseYAML, parseTOML, parseINI, stringifyJSON, stringifyJSON5, stringifyJSONC, stringifyYAML, stringifyTOML, stringifyINI } from "confbox";
+import {
+  parseJSON,
+  parseJSON5,
+  parseJSONC,
+  parseYAML,
+  parseTOML,
+  parseINI,
+  stringifyJSON,
+  stringifyJSON5,
+  stringifyJSONC,
+  stringifyYAML,
+  stringifyTOML,
+  stringifyINI,
+} from "confbox";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { FormatDefinition, type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
+import {
+  FormatDefinition,
+  type FileData,
+  type FileFormat,
+  type FormatHandler,
+} from "../FormatHandler.ts";
 
 const JSON5_FORMAT = new FormatDefinition(
   "JSON5",
   "json5",
   "json5",
   "application/json5",
-  Category.DATA
+  Category.DATA,
 );
 
 const JSONC_FORMAT = new FormatDefinition(
@@ -15,7 +33,7 @@ const JSONC_FORMAT = new FormatDefinition(
   "jsonc",
   "jsonc",
   "application/jsonc",
-  Category.DATA
+  Category.DATA,
 );
 
 const TOML_FORMAT = new FormatDefinition(
@@ -23,7 +41,7 @@ const TOML_FORMAT = new FormatDefinition(
   "toml",
   "toml",
   "application/toml",
-  Category.DATA
+  Category.DATA,
 );
 
 const INI_FORMAT = new FormatDefinition(
@@ -31,7 +49,7 @@ const INI_FORMAT = new FormatDefinition(
   "ini",
   "ini",
   "text/plain",
-  Category.DATA
+  Category.DATA,
 );
 
 class configHandler implements FormatHandler {
@@ -59,10 +77,10 @@ class configHandler implements FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-    return inputFiles.map(file => {
+    return inputFiles.map((file) => {
       const baseName = file.name.split(".").slice(0, -1).join(".");
       const text = new TextDecoder().decode(file.bytes);
-      
+
       let object: any;
       switch (inputFormat.internal) {
         case "json":

@@ -1,11 +1,10 @@
-import * as vexml from '@stringsync/vexml';
-import VexFlow from 'vexflow';
-import type { FileData, FileFormat, FormatHandler } from '../FormatHandler.ts';
-import CommonFormats, { Category } from 'src/CommonFormats.ts';
-import { buildMidi, addNote } from './midi/midifilelib.js';
+import * as vexml from "@stringsync/vexml";
+import VexFlow from "vexflow";
+import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import CommonFormats, { Category } from "src/CommonFormats.ts";
+import { buildMidi, addNote } from "./midi/midifilelib.js";
 
 class vexFlowHandler implements FormatHandler {
-
   public name: string = "vexFlow";
   public supportedFormats?: FileFormat[];
   public ready: boolean = false;
@@ -16,17 +15,27 @@ class vexFlowHandler implements FormatHandler {
       CommonFormats.MUSICXML.builder("musicxml").allowFrom(),
       CommonFormats.MXL.builder("mxl").allowFrom(),
       CommonFormats.HTML.builder("html").allowTo(),
-      { name: "MIDI", format: "mid", extension: "mid", mime: "audio/midi", from: false, to: true, internal: "mid", category: Category.AUDIO, lossless: false }
+      {
+        name: "MIDI",
+        format: "mid",
+        extension: "mid",
+        mime: "audio/midi",
+        from: false,
+        to: true,
+        internal: "mid",
+        category: Category.AUDIO,
+        lossless: false,
+      },
     ];
 
     // Load VexFlow fonts (required for VexFlow 5)
     if (!vexFlowHandler.fontsLoaded) {
       try {
-        await VexFlow.loadFonts('Bravura', 'Academico');
+        await VexFlow.loadFonts("Bravura", "Academico");
         vexFlowHandler.fontsLoaded = true;
-        console.log('VexFlow fonts loaded successfully');
+        console.log("VexFlow fonts loaded successfully");
       } catch (e) {
-        console.warn('Error loading VexFlow fonts:', e);
+        console.warn("Error loading VexFlow fonts:", e);
         // Try to continue anyway
       }
     }
@@ -63,7 +72,7 @@ class vexFlowHandler implements FormatHandler {
 
     // Note name to MIDI number mapping
     const noteToMidi = (step: string, octave: number, alter: number = 0): number => {
-      const noteMap: Record<string, number> = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
+      const noteMap: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
       const baseNote = noteMap[step.toUpperCase()];
       if (baseNote === undefined) return 60; // Default to middle C
       return baseNote + (octave + 1) * 12 + alter;
@@ -92,14 +101,18 @@ class vexFlowHandler implements FormatHandler {
     }
 
     // Get all parts (tracks) - they are direct children of score-partwise
-    const parts = scorePartwise ?
-      scorePartwise.querySelectorAll(":scope > part") :
-      scoreTimewise ? scoreTimewise.querySelectorAll(":scope > part") : [];
+    const parts = scorePartwise
+      ? scorePartwise.querySelectorAll(":scope > part")
+      : scoreTimewise
+        ? scoreTimewise.querySelectorAll(":scope > part")
+        : [];
 
     console.log(`Found ${parts.length} part(s) in MusicXML`);
 
     if (parts.length === 0) {
-      throw new Error("No parts found in MusicXML. The file may be empty or have an unsupported structure.");
+      throw new Error(
+        "No parts found in MusicXML. The file may be empty or have an unsupported structure.",
+      );
     }
 
     parts.forEach((part, partIndex) => {
@@ -116,7 +129,7 @@ class vexFlowHandler implements FormatHandler {
           absoluteSec: null,
           type: "program_change",
           channel: channel,
-          program: 0 // Default to Acoustic Grand Piano
+          program: 0, // Default to Acoustic Grand Piano
         });
       }
 
@@ -154,13 +167,17 @@ class vexFlowHandler implements FormatHandler {
 
                 // Validate MIDI note is in valid range (21-108 for standard piano)
                 if (midiNote < 0 || midiNote > 127) {
-                  console.warn(`Invalid MIDI note ${midiNote} (${step}${octave}${alter}), skipping`);
+                  console.warn(
+                    `Invalid MIDI note ${midiNote} (${step}${octave}${alter}), skipping`,
+                  );
                   return;
                 }
 
                 // Skip extremely low notes that might be parsing errors
                 if (midiNote < 21) {
-                  console.warn(`Suspiciously low MIDI note ${midiNote} (${step}${octave}), skipping`);
+                  console.warn(
+                    `Suspiciously low MIDI note ${midiNote} (${step}${octave}), skipping`,
+                  );
                   return;
                 }
 
@@ -196,17 +213,17 @@ class vexFlowHandler implements FormatHandler {
     // to ensure proper format 0 MIDI file structure
 
     // Add header manually
-    const usedTracks = new Set(events.filter(e => e.track >= 0).map(e => e.track));
+    const usedTracks = new Set(events.filter((e) => e.track >= 0).map((e) => e.track));
     events.unshift(
       {
         track: -1,
         tick: 0,
         absoluteSec: null,
         type: "header",
-        format: 0,  // Force format 0 (single track)
-        numTracks: 1,  // Force single track
+        format: 0, // Force format 0 (single track)
+        numTracks: 1, // Force single track
         division: ticksPerBeat,
-        ticksPerBeat: ticksPerBeat
+        ticksPerBeat: ticksPerBeat,
       },
       {
         track: 0,
@@ -216,12 +233,14 @@ class vexFlowHandler implements FormatHandler {
         metaType: 0x51,
         metaName: "Set Tempo",
         tempo: Math.round(60_000_000 / currentTempo),
-        bpm: currentTempo
+        bpm: currentTempo,
       },
     );
 
     console.log(`Final event count: ${events.length}`);
-    console.log(`Note events: ${events.filter(e => e.type === "note_on" || e.type === "note_off").length}`);
+    console.log(
+      `Note events: ${events.filter((e) => e.type === "note_on" || e.type === "note_off").length}`,
+    );
 
     return events;
   }
@@ -229,13 +248,17 @@ class vexFlowHandler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     if (inputFormat.internal !== "musicxml" && inputFormat.internal !== "mxl") {
-      throw new TypeError(`Unsupported input format of ${inputFormat.internal}. Expected MusicXML or MXL.`);
+      throw new TypeError(
+        `Unsupported input format of ${inputFormat.internal}. Expected MusicXML or MXL.`,
+      );
     }
     if (outputFormat.internal !== "html" && outputFormat.internal !== "mid") {
-      throw new TypeError(`Unsupported output format of ${outputFormat.internal}. Expected HTML or MIDI.`);
+      throw new TypeError(
+        `Unsupported output format of ${outputFormat.internal}. Expected HTML or MIDI.`,
+      );
     }
 
     const outputFiles: FileData[] = [];
@@ -245,9 +268,9 @@ class vexFlowHandler implements FormatHandler {
         // Get the MusicXML string
         let xmlString: string;
 
-        if (inputFormat.internal === "mxl" || inputFile.name.toLowerCase().endsWith('.mxl')) {
+        if (inputFormat.internal === "mxl" || inputFile.name.toLowerCase().endsWith(".mxl")) {
           // MXL format (compressed) - need to decompress
-          const JSZip = (await import('jszip')).default;
+          const JSZip = (await import("jszip")).default;
           const zip = new JSZip();
           await zip.loadAsync(inputFile.bytes);
 
@@ -282,9 +305,14 @@ class vexFlowHandler implements FormatHandler {
           // If no container.xml or it didn't work, look for XML files
           if (!xmlFile) {
             const xmlFiles = zip.file(/\.xml$/i);
-            console.log("Found XML files:", xmlFiles.map(f => f.name));
+            console.log(
+              "Found XML files:",
+              xmlFiles.map((f) => f.name),
+            );
             // Skip META-INF files and container.xml
-            xmlFile = xmlFiles.find(f => !f.name.includes("META-INF") && !f.name.includes("container.xml"));
+            xmlFile = xmlFiles.find(
+              (f) => !f.name.includes("META-INF") && !f.name.includes("container.xml"),
+            );
             if (!xmlFile && xmlFiles.length > 0) {
               xmlFile = xmlFiles[0];
             }
@@ -308,7 +336,7 @@ class vexFlowHandler implements FormatHandler {
           const events = this.musicXMLToMidiEvents(xmlString);
 
           // Validate that we have some notes
-          const noteEvents = events.filter(e => e.type === "note_on" || e.type === "note_off");
+          const noteEvents = events.filter((e) => e.type === "note_on" || e.type === "note_off");
           if (noteEvents.length === 0) {
             throw new Error("No notes found in MusicXML file");
           }
@@ -316,9 +344,13 @@ class vexFlowHandler implements FormatHandler {
           const midiBytes = buildMidi(events);
 
           // Validate MIDI header
-          if (midiBytes.length < 14 ||
-              midiBytes[0] !== 0x4d || midiBytes[1] !== 0x54 ||
-              midiBytes[2] !== 0x68 || midiBytes[3] !== 0x64) {
+          if (
+            midiBytes.length < 14 ||
+            midiBytes[0] !== 0x4d ||
+            midiBytes[1] !== 0x54 ||
+            midiBytes[2] !== 0x68 ||
+            midiBytes[3] !== 0x64
+          ) {
             throw new Error("Failed to generate valid MIDI file");
           }
 
@@ -330,17 +362,17 @@ class vexFlowHandler implements FormatHandler {
         // Handle HTML output
         // Ensure fonts are loaded before rendering
         if (!vexFlowHandler.fontsLoaded) {
-          await VexFlow.loadFonts('Bravura', 'Academico');
+          await VexFlow.loadFonts("Bravura", "Academico");
           vexFlowHandler.fontsLoaded = true;
         }
-        VexFlow.setFonts('Bravura', 'Academico');
+        VexFlow.setFonts("Bravura", "Academico");
 
         // Configure vexml with proper width for multi-line rendering
         const config = {
           ...vexml.DEFAULT_CONFIG,
           WIDTH: 800, // Page width - controls line wrapping
           VIEWPORT_SCALE: 1.0,
-          DRAWING_BACKEND: 'canvas' as const, // Use canvas to avoid font loading issues
+          DRAWING_BACKEND: "canvas" as const, // Use canvas to avoid font loading issues
         };
 
         // Create a temporary div element for vexml to render into
@@ -353,16 +385,16 @@ class vexFlowHandler implements FormatHandler {
         const score = vexml.renderMusicXML(xmlString, div, { config });
 
         // Wait a bit for rendering to complete
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Extract the rendered content (canvas elements with music notation)
-        const canvases = div.querySelectorAll('canvas');
+        const canvases = div.querySelectorAll("canvas");
         if (canvases.length === 0) {
           throw new Error("Failed to render MusicXML - no canvases generated");
         }
 
         // Convert canvases to base64 images for embedding in HTML
-        const imageDataPromises = Array.from(canvases).map(canvas => {
+        const imageDataPromises = Array.from(canvases).map((canvas) => {
           return new Promise<string>((resolve) => {
             canvas.toBlob((blob) => {
               if (blob) {
@@ -370,18 +402,21 @@ class vexFlowHandler implements FormatHandler {
                 reader.onloadend = () => resolve(reader.result as string);
                 reader.readAsDataURL(blob);
               } else {
-                resolve(canvas.toDataURL('image/png'));
+                resolve(canvas.toDataURL("image/png"));
               }
-            }, 'image/png');
+            }, "image/png");
           });
         });
 
         const imageDataUrls = await Promise.all(imageDataPromises);
 
         // Create HTML with embedded images
-        const imagesHtml = imageDataUrls.map((dataUrl, idx) =>
-          `<img src="${dataUrl}" alt="Music notation page ${idx + 1}" style="display: block; width: 100%; margin-bottom: 20px;" />`
-        ).join('\n    ');
+        const imagesHtml = imageDataUrls
+          .map(
+            (dataUrl, idx) =>
+              `<img src="${dataUrl}" alt="Music notation page ${idx + 1}" style="display: block; width: 100%; margin-bottom: 20px;" />`,
+          )
+          .join("\n    ");
 
         // Create a complete HTML document with embedded images
         const html = `<!DOCTYPE html>

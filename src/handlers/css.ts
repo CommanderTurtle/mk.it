@@ -1,4 +1,9 @@
-import { FormatDefinition, type FileData, type FileFormat, type FormatHandler } from "../FormatHandler.ts";
+import {
+  FormatDefinition,
+  type FileData,
+  type FileFormat,
+  type FormatHandler,
+} from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 
 const LESS_FORMAT = new FormatDefinition(
@@ -6,7 +11,7 @@ const LESS_FORMAT = new FormatDefinition(
   "less",
   "less",
   "text/less",
-  Category.CODE
+  Category.CODE,
 );
 
 const SCSS_FORMAT = new FormatDefinition(
@@ -14,7 +19,7 @@ const SCSS_FORMAT = new FormatDefinition(
   "scss",
   "scss",
   "text/x-scss",
-  Category.CODE
+  Category.CODE,
 );
 
 class cssHandler implements FormatHandler {
@@ -24,14 +29,9 @@ class cssHandler implements FormatHandler {
 
   async init() {
     this.supportedFormats = [
-      CommonFormats.CSS.builder("css")
-        .allowFrom(true)
-        .allowTo(true)
-        .markLossless(),
-      LESS_FORMAT.builder("less")
-        .allowFrom(true),
-      SCSS_FORMAT.builder("scss")
-        .allowFrom(true)
+      CommonFormats.CSS.builder("css").allowFrom(true).allowTo(true).markLossless(),
+      LESS_FORMAT.builder("less").allowFrom(true),
+      SCSS_FORMAT.builder("scss").allowFrom(true),
     ];
     this.ready = true;
   }
@@ -52,7 +52,7 @@ class cssHandler implements FormatHandler {
         css = compiled;
       } else if (inputFormat.internal === "scss") {
         const sass = await import("sass");
-        const result = sass.compileString(source, {url: new URL(`file://${file.name}`)})
+        const result = sass.compileString(source, { url: new URL(`file://${file.name}`) });
         css = result.css;
       } else {
         css = source;
@@ -61,7 +61,7 @@ class cssHandler implements FormatHandler {
       outputFiles.push({
         name: `${basename}.${outputFormat.internal}`,
         bytes: new TextEncoder().encode(css),
-      })
+      });
     }
     return outputFiles;
   }

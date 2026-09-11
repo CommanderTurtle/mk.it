@@ -12,7 +12,6 @@ if (typeof window !== "undefined") {
 }
 
 class peToZipHandler implements FormatHandler {
-
   public name: string = "peToZip";
 
   public supportedFormats: FileFormat[] = [
@@ -26,9 +25,9 @@ class peToZipHandler implements FormatHandler {
       to: false,
       internal: "dll",
       category: Category.CODE,
-      lossless: false
+      lossless: false,
     },
-    CommonFormats.ZIP.builder("zip").allowTo().markLossless()
+    CommonFormats.ZIP.builder("zip").allowTo().markLossless(),
   ];
 
   public ready: boolean = true;
@@ -40,11 +39,12 @@ class peToZipHandler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
-
     if (outputFormat.format !== "zip") {
-      throw new TypeError(`Unsupported output format of ${outputFormat.format}. Only ZIP is supported.`);
+      throw new TypeError(
+        `Unsupported output format of ${outputFormat.format}. Only ZIP is supported.`,
+      );
     }
 
     const outputFiles: FileData[] = [];
@@ -67,7 +67,7 @@ class peToZipHandler implements FormatHandler {
           3: "Windows Console",
           7: "POSIX",
           9: "Windows CE",
-          10: "EFI Application"
+          10: "EFI Application",
         };
 
         const metadata = {
@@ -78,7 +78,7 @@ class peToZipHandler implements FormatHandler {
           imageBase: peFile.getImageBase(),
           sectionAlignment: peFile.getSectionAlignment(),
           imports: [] as any[],
-          exports: [] as any[]
+          exports: [] as any[],
         };
 
         zip.file("metadata.json", JSON.stringify(metadata, null, 2));
@@ -87,9 +87,9 @@ class peToZipHandler implements FormatHandler {
         const allSections = peFile.getAllSections();
 
         for (const section of allSections) {
-          const rawName = section.info.name.toString().replace(/\0/g, '');
-          const safeName = rawName.replace(/[^a-zA-Z0-9]/g, '');
-          const fileName = `section_${safeName || 'unnamed'}.bin`;
+          const rawName = section.info.name.toString().replace(/\0/g, "");
+          const safeName = rawName.replace(/[^a-zA-Z0-9]/g, "");
+          const fileName = `section_${safeName || "unnamed"}.bin`;
 
           if (section.data) {
             zip.file(fileName, section.data);
@@ -100,7 +100,7 @@ class peToZipHandler implements FormatHandler {
         const outputBytes = await zip.generateAsync({
           type: "uint8array",
           compression: "DEFLATE",
-          compressionOptions: { level: 9 }
+          compressionOptions: { level: 9 },
         });
 
         const baseName = inputFile.name.split(".").slice(0, -1).join(".");
@@ -108,10 +108,10 @@ class peToZipHandler implements FormatHandler {
 
         outputFiles.push({
           bytes: outputBytes,
-          name: newName
+          name: newName,
         });
-
-      } catch (e: any) { // error handling
+      } catch (e: any) {
+        // error handling
         console.error(`[petozip] Error converting ${inputFile.name}:`, e);
         throw new Error(`Failed to process PE file ${inputFile.name}: ${e.message}`);
       }

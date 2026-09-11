@@ -8,21 +8,20 @@ import normalizeMimeType from "src/normalizeMimeType.ts";
 import type { ConvertContext } from "src/ui/ProgressStore.js";
 
 const defaultSevenZipOptions = {
-  locateFile: () => "/convert/wasm/7zz.wasm"
-}
+  locateFile: () => "/convert/wasm/7zz.wasm",
+};
 
 function padNumberString(num: number, digits: number): string {
   let str = String(num);
 
   while (str.length < digits) {
-    str = "0"+str;
+    str = "0" + str;
   }
 
   return str;
 }
 
 class sevenZipHandler implements FormatHandler {
-
   public name: string = "sevenZip";
   public supportedFormats: FileFormat[] = [];
   public ready: boolean = false;
@@ -31,7 +30,7 @@ class sevenZipHandler implements FormatHandler {
 
   #tarCompressedFormats: string[] = [];
 
-  async init () {
+  async init() {
     let zipTo = false;
     let rarTo = false;
     let tarTo = false;
@@ -68,14 +67,11 @@ class sevenZipHandler implements FormatHandler {
       // Comic flags
       if (extension === "zip") {
         zipTo = flags.includes("C");
-      }
-      else if (extension === "rar") {
+      } else if (extension === "rar") {
         rarTo = flags.includes("C");
-      }
-      else if (extension === "tar") {
+      } else if (extension === "tar") {
         tarTo = flags.includes("C");
-      }
-      else if (extension === "7z") {
+      } else if (extension === "7z") {
         szTo = flags.includes("C");
       }
 
@@ -154,30 +150,34 @@ class sevenZipHandler implements FormatHandler {
     const priority = ["tar", "zip"];
     const prioritized = [];
     for (const format of priority) {
-      prioritized.push(this.supportedFormats.find(f => f.internal === format)!);
+      prioritized.push(this.supportedFormats.find((f) => f.internal === format)!);
     }
     this.supportedFormats = [
       ...prioritized,
-      ...this.supportedFormats.filter(f => !priority.includes(f.internal))
+      ...this.supportedFormats.filter((f) => !priority.includes(f.internal)),
     ];
 
     this.ready = true;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
     outputFormat: FileFormat,
     args?: string[],
-    ctx?: ConvertContext
+    ctx?: ConvertContext,
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
     if (inputFormat.internal === "brarchive") {
-        throw new Error(`sevenZipHandler cannot convert from ${inputFormat.mime}`);
+      throw new Error(`sevenZipHandler cannot convert from ${inputFormat.mime}`);
     }
 
-    if (!this.supportedFormats.some(format => format.to && format.internal === outputFormat.internal)) {
+    if (
+      !this.supportedFormats.some(
+        (format) => format.to && format.internal === outputFormat.internal,
+      )
+    ) {
       throw new TypeError(`sevenZipHandler cannot convert to ${outputFormat.mime}`);
     }
 
@@ -200,9 +200,10 @@ class sevenZipHandler implements FormatHandler {
     ctx?.log(`Initialising SevenZip for ${inputFormat.name} -> ${outputFormat.name}...`);
 
     // handle compressed tars
-    if (this.#tarCompressedFormats.includes(inputFormat.internal)
-      || this.#tarCompressedFormats.includes(outputFormat.internal)) {
-
+    if (
+      this.#tarCompressedFormats.includes(inputFormat.internal) ||
+      this.#tarCompressedFormats.includes(outputFormat.internal)
+    ) {
       if (outputFormat.internal === "tar") {
         let i = 0;
         for (const inputFile of inputFiles) {
@@ -234,9 +235,12 @@ class sevenZipHandler implements FormatHandler {
           i++;
         }
       } else {
-        throw new TypeError(`sevenZipHandler cannot convert from ${inputFormat.mime} to ${outputFormat.mime}`);
+        throw new TypeError(
+          `sevenZipHandler cannot convert from ${inputFormat.mime} to ${outputFormat.mime}`,
+        );
       }
-    } else if (this.supportedFormats.some(format => format.internal === inputFormat.internal)) { // Archive-to-archive conversion
+    } else if (this.supportedFormats.some((format) => format.internal === inputFormat.internal)) {
+      // Archive-to-archive conversion
       let i = 0;
       for (const inputFile of inputFiles) {
         // This converter cannot validate that a non-comic archive is a valid comic archive, so we disallow those conversions.
@@ -257,7 +261,11 @@ class sevenZipHandler implements FormatHandler {
 
         // Correct the file extension so the converter recognizes it.
         if (outputFormat.mime.includes("comicbook")) {
-          name = name.replace(/\.cbz$/,".zip").replace(/\.cbt$/,".tar").replace(/\.cbr$/,".rar").replace(/\.cb7$/,".7z");
+          name = name
+            .replace(/\.cbz$/, ".zip")
+            .replace(/\.cbt$/, ".tar")
+            .replace(/\.cbr$/, ".rar")
+            .replace(/\.cb7$/, ".7z");
         }
 
         ctx?.log(`Re-archiving contents as ${outputFormat.internal}...`, "debug");
@@ -268,23 +276,37 @@ class sevenZipHandler implements FormatHandler {
 
         // Change it back
         if (outputFormat.mime.includes("comicbook")) {
-          name = name.replace(/\.zip$/,".cbz").replace(/\.tar$/,".cbt").replace(/\.rar$/,".cbr").replace(/\.7z$/,".cb7");
+          name = name
+            .replace(/\.zip$/, ".cbz")
+            .replace(/\.tar$/, ".cbt")
+            .replace(/\.rar$/, ".cbr")
+            .replace(/\.7z$/, ".cb7");
         }
 
         outputFiles.push({ bytes, name });
         i++;
       }
-    } else { // anything-to-archive conversion
+    } else {
+      // anything-to-archive conversion
       ctx?.progress(`Creating ${outputFormat.name}...`, 0.5);
       ctx?.log(`Creating ${outputFormat.name} from ${inputFiles.length} files...`);
       const sevenZip = await createSevenZip();
 
       // Prevent just zipping another archive file and calling that conversion.
-      if (inputFormat.category && outputFormat.category && (inputFormat.category === Category.ARCHIVE || inputFormat.category.includes(Category.ARCHIVE)) && (outputFormat.category === Category.ARCHIVE || outputFormat.category.includes(Category.ARCHIVE))) {
-        throw new Error(`sevenZipHandler cannot convert from ${inputFormat.mime} to ${outputFormat.mime}`);
+      if (
+        inputFormat.category &&
+        outputFormat.category &&
+        (inputFormat.category === Category.ARCHIVE ||
+          inputFormat.category.includes(Category.ARCHIVE)) &&
+        (outputFormat.category === Category.ARCHIVE ||
+          outputFormat.category.includes(Category.ARCHIVE))
+      ) {
+        throw new Error(
+          `sevenZipHandler cannot convert from ${inputFormat.mime} to ${outputFormat.mime}`,
+        );
       }
 
-      const image_list = ["png","jpg","jpeg","webp","bmp","tiff","gif"];
+      const image_list = ["png", "jpg", "jpeg", "webp", "bmp", "tiff", "gif"];
       if (outputFormat.mime.includes("comicbook")) {
         // Single-gif catching
         if (inputFormat.internal === "gif" && inputFiles.length === 1) {
@@ -292,31 +314,42 @@ class sevenZipHandler implements FormatHandler {
         }
         // PDF catching
         else if (!image_list.includes(inputFormat.extension)) {
-          throw new Error("Invalid input for a CBX: "+inputFormat.internal);
+          throw new Error("Invalid input for a CBX: " + inputFormat.internal);
         }
       }
 
       sevenZip.FS.mkdir("data");
       sevenZip.FS.chdir("data");
-      const necessaryDigits = String(inputFiles.length-1).length;
+      const necessaryDigits = String(inputFiles.length - 1).length;
       for (let i = 0; i < inputFiles.length; i++) {
         ctx?.log(`Adding ${inputFiles[i].name} to archive...`, "debug");
         if (outputFormat.mime.includes("comicbook")) {
-          sevenZip.FS.writeFile(padNumberString(i,necessaryDigits)+"."+inputFormat.extension, inputFiles[i].bytes);
-        }
-        else {
+          sevenZip.FS.writeFile(
+            padNumberString(i, necessaryDigits) + "." + inputFormat.extension,
+            inputFiles[i].bytes,
+          );
+        } else {
           sevenZip.FS.writeFile(inputFiles[i].name, inputFiles[i].bytes);
         }
       }
 
-      const baseName = inputFiles[0].name.replace("_0."+inputFormat.extension,"."+inputFormat.extension).split(".").slice(0, -1).join(".");
-      let name = inputFiles.length === 1 || outputFormat.mime.includes("comicbook") ?
-        baseName + `.${outputFormat.extension}`
-        : `archive.${outputFormat.extension}`;
+      const baseName = inputFiles[0].name
+        .replace("_0." + inputFormat.extension, "." + inputFormat.extension)
+        .split(".")
+        .slice(0, -1)
+        .join(".");
+      let name =
+        inputFiles.length === 1 || outputFormat.mime.includes("comicbook")
+          ? baseName + `.${outputFormat.extension}`
+          : `archive.${outputFormat.extension}`;
 
       // Correct the file extension so the converter recognizes it.
       if (outputFormat.mime.includes("comicbook")) {
-        name = name.replace(/\.cbz$/,".zip").replace(/\.cbt$/,".tar").replace(/\.cbr$/,".rar").replace(/\.cb7$/,".7z");
+        name = name
+          .replace(/\.cbz$/, ".zip")
+          .replace(/\.cbt$/, ".tar")
+          .replace(/\.cbr$/, ".rar")
+          .replace(/\.cb7$/, ".7z");
       }
 
       ctx?.log(`Compiling archive ${name}...`);
@@ -327,7 +360,11 @@ class sevenZipHandler implements FormatHandler {
 
       // Change it back
       if (outputFormat.mime.includes("comicbook")) {
-        name = name.replace(/\.zip$/,".cbz").replace(/\.tar$/,".cbt").replace(/\.rar$/,".cbr").replace(/\.7z$/,".cb7");
+        name = name
+          .replace(/\.zip$/, ".cbz")
+          .replace(/\.tar$/, ".cbt")
+          .replace(/\.rar$/, ".cbr")
+          .replace(/\.7z$/, ".cb7");
       }
 
       outputFiles.push({ bytes, name });
@@ -337,7 +374,6 @@ class sevenZipHandler implements FormatHandler {
     ctx?.log(`SevenZip successfully processed ${inputFiles.length} files.`);
     return outputFiles;
   }
-
 }
 
 export default sevenZipHandler;
