@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 import pako from "pako";
 import * as NBT from "nbtify";

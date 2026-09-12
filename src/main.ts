@@ -1,7 +1,7 @@
 import type { FileFormat, FileData, FormatHandler, ConvertPathNode } from "./FormatHandler.js";
 import handlers from "./handlers/index.js";
 import { TraversionGraph } from "./TraversionGraph.js";
-import { CurrentPage, LoadingToolsText, Pages, PopupData } from "./ui/AppState.js";
+import { CurrentPage, LoadingToolsText, Pages } from "./ui/AppState.js";
 import { signal } from "@preact/signals";
 import { Mode, ModeEnum } from "./ui/ModeStore.js";
 import { ProgressStore } from "./ui/ProgressStore.js";

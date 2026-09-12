@@ -3,7 +3,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import Meyda from "meyda";
 import CommonFormats from "src/CommonFormats.ts";
 import { WaveFile } from "wavefile";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 class meydaHandler implements FormatHandler {
   public name: string = "meyda";

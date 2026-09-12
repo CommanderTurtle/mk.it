@@ -1,6 +1,6 @@
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { BadMagicError, InitializationError } from "src/errors.ts";
 
 const TEXTUREFLAGS_ENVMAP = 0x00004000;
 const RESOURCE_HIGH_RES_IMAGE = 0x30;

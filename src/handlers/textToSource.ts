@@ -19,7 +19,7 @@ function cpp(text: string): string {
 
 function go(text: string): string {
   text = text.replaceAll("`", '` + "`" + `');
-  return `package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\`${text}\`)\n}\n`;
+  return `package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println(\`${text}\`)\n}\n`;
 }
 
 function batch(text: string): string {

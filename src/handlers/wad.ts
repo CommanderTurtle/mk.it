@@ -2,7 +2,7 @@ import { FormatDefinition } from "../FormatHandler.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { BadMagicError } from "src/errors.ts";
 
 const WADFormat = new FormatDefinition(
   "Doom WAD Archive",

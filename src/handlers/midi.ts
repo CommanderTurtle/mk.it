@@ -13,7 +13,7 @@ import {
 } from "./midi/midifilelib.js";
 
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 const SAMPLE_RATE = 44100;
 const BUFFER_FRAMES = 4096;

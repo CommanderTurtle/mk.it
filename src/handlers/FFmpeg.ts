@@ -7,7 +7,7 @@ import type { LogEvent } from "@ffmpeg/ffmpeg";
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 class FFmpegHandler implements FormatHandler {
   static formatNames: Map<string, string> = new Map([

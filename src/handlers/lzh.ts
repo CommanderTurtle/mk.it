@@ -3,9 +3,7 @@ import { LZHDecoder } from "./lzh/decoder.ts";
 import { LZHEncoder, type LHAFileInput } from "./lzh/encoder.ts";
 import JSZip from "jszip";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import normalizeMimeType from "../normalizeMimeType.ts";
-import mime from "mime";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 /**
  * LZH/LHA Archive Handler

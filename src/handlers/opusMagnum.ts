@@ -270,7 +270,7 @@ function renderMolecule(molecule: OM_Molecule, format: string): Uint8Array {
     // Looping for Validation
     while (true) {
       svg =
-        "<svg xmlns='http://www.w3.org/2000/svg\' width='bigx' height='bigy' viewBox='smallx smally bigx bigy'>";
+        "<svg xmlns='http://www.w3.org/2000/svg' width='bigx' height='bigy' viewBox='smallx smally bigx bigy'>";
 
       const radius = 50 - iterations;
       const spacing_factor = 2.25;

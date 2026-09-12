@@ -74,7 +74,7 @@ export default class jsonToCHandler implements FormatHandler {
     bytes.forEach((byte) => {
       jsonStr += String.fromCharCode(byte);
     });
-    let jsonObj: Object = {};
+    let jsonObj: object = {};
     try {
       jsonObj = JSON.parse(jsonStr);
       isValidJson = true;
@@ -225,7 +225,7 @@ export default class jsonToCHandler implements FormatHandler {
     return result;
   }
 
-  async createStruct(pKey: string, pObject: Object, pRecursionLevel: number): Promise<string> {
+  async createStruct(pKey: string, pObject: object, pRecursionLevel: number): Promise<string> {
     let result: string = "";
     let indent: string = "\t".repeat(pRecursionLevel + 1);
     let shortIndent: string = "\t".repeat(pRecursionLevel);
@@ -238,7 +238,7 @@ export default class jsonToCHandler implements FormatHandler {
     }
 
     // Iterate through keys of object
-    let key: keyof Object;
+    let key: keyof object;
     for (key in pObject) {
       let val: any = pObject[key];
 
@@ -264,9 +264,9 @@ export default class jsonToCHandler implements FormatHandler {
     return result;
   }
 
-  async assignValues(pKey: string, pObject: Object): Promise<string> {
+  async assignValues(pKey: string, pObject: object): Promise<string> {
     let result: string = "";
-    let key: keyof Object;
+    let key: keyof object;
     for (key in pObject) {
       let val = pObject[key];
       let objType: JsonType.JsonType = JsonTypeFactory.fromAny(val);

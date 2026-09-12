@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import { Category } from "src/CommonFormats.ts";
 import SevenZip from "7z-wasm";
 import mime from "mime";
 import normalizeMimeType from "src/normalizeMimeType.ts";

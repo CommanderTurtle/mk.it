@@ -1,6 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import {
-  Magick,
   MagickFormat,
   MagickImageCollection,
   MagickReadSettings,
@@ -9,7 +8,7 @@ import {
   DitherMethod,
 } from "@imagemagick/magick-wasm";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { BadMagicError } from "src/errors.ts";
 
 class aperturePictureHandler implements FormatHandler {
   public name: string = "aperturePicture";

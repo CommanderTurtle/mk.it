@@ -1,6 +1,5 @@
 import { signal } from "@preact/signals";
 import { Category } from "src/CommonFormats";
-import type { ComponentType } from "preact";
 
 export type CategoryEnum = (typeof Category)[keyof typeof Category] | "all";
 

@@ -4,7 +4,7 @@
  * Based on the LHA archive format specification
  */
 
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { EOFError } from "src/errors.ts";
 
 export interface LHAFile {
   filename: string;

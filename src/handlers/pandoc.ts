@@ -3,7 +3,7 @@ import type { ConvertContext } from "../ui/ProgressStore.js";
 import CommonFormats from "src/CommonFormats.ts";
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 import {
   bundleTypstAssets,

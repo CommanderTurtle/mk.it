@@ -5,7 +5,7 @@ import {
   type FileFormat,
   type FormatHandler,
 } from "../FormatHandler.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { BadMagicError, InitializationError } from "src/errors.ts";
 
 const PNG_SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 const ICNS_MAGIC = "icns";

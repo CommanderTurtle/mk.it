@@ -2,12 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 
 import {
-  createTar,
-  createTarGzip,
-  createTarGzipStream,
   parseTar,
-  parseTarGzip,
-  type TarFileItem,
 } from "nanotar";
 import JSZip from "jszip";
 

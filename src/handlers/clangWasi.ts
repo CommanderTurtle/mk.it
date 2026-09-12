@@ -1,5 +1,5 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
+import { Category } from "src/CommonFormats.ts";
 import { commands } from "@yowasp/clang";
 
 class clangWasiHandler implements FormatHandler {

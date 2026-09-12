@@ -18,7 +18,7 @@ import LoadingScreen from "src/ui/components/LoadingScreen";
 import Footer from "src/ui/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-preact";
 import { PopupData } from "src/ui";
-import { closePopup, openPopup } from "src/ui/PopupStore";
+import { openPopup } from "src/ui/PopupStore";
 import FileInfoBadge from "src/ui/components/FileInfo";
 import { ConversionInProgress, CurrentPage, Pages } from "src/ui/AppState";
 import { ProgressStore } from "src/ui/ProgressStore";

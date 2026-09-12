@@ -130,7 +130,7 @@ export interface Height {
 }
 
 export interface Pause {
-  duration: BigInt;
+  duration: bigint;
   time: number;
 }
 
@@ -212,7 +212,7 @@ export class Replay {
       return get(pos - 4) | (get(pos - 3) << 8) | (get(pos - 2) << 16) | (get(pos - 1) << 24);
     }
 
-    function long(): BigInt {
+    function long(): bigint {
       const lower = int();
       const upper = int();
       return BigInt(upper) * BigInt("0x100000000") + BigInt(lower);

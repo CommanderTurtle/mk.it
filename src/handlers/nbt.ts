@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "src/FormatHandler.ts";
 import * as NBT from "nbtify";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { gzipSync, gunzipSync } from "fflate";
+import { gzipSync } from "fflate";
 
 class nbtHandler implements FormatHandler {
   public name: string = "nbt";
