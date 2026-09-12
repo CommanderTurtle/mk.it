@@ -3,6 +3,10 @@ import { ignorePatterns } from "./oxfmt.config.ts";
 
 export default defineConfig({
   ignorePatterns,
+  categories: {
+    correctness: "deny",
+    suspicious: "deny",
+  },
   rules: {
     "no-unused-vars": [
       "warn",
