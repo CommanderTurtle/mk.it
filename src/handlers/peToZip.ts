@@ -110,7 +110,7 @@ class peToZipHandler implements FormatHandler {
       } catch (e: any) {
         // error handling
         console.error(`[petozip] Error converting ${inputFile.name}:`, e);
-        throw new Error(`Failed to process PE file ${inputFile.name}: ${e.message}`);
+        throw new Error(`Failed to process PE file ${inputFile.name}: ${e.message}`, { cause: e });
       }
     }
 

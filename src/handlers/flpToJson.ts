@@ -114,7 +114,7 @@ class flpToJsonHandler implements FormatHandler {
       } catch (e: any) {
         // Error handling
         console.error(`[flptojson] Error converting ${inputFile.name}:`, e);
-        throw new Error(`Conversion failed for ${inputFile.name}: ${e.message}`);
+        throw new Error(`Conversion failed for ${inputFile.name}: ${e.message}`, { cause: e });
       }
     }
 

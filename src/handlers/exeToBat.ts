@@ -90,7 +90,7 @@ export default class exeToBatHandler implements FormatHandler {
       }
     } catch (error) {
       console.error("[exe2bat] Error encoding batch content:", error);
-      throw new Error("Failed to encode batch content");
+      throw new Error("Failed to encode batch content", { cause: error });
     }
 
     return {

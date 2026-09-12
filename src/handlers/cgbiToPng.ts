@@ -194,7 +194,7 @@ class cgbiToPngHandler implements FormatHandler {
           name: outputName,
         });
       } catch (error) {
-        throw new Error(`Failed to convert ${inputFile.name}: ${(error as Error).message}`);
+        throw new Error(`Failed to convert ${inputFile.name}: ${(error as Error).message}`, { cause: error });
       }
     }
 
