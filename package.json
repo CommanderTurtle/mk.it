@@ -25,7 +25,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix"
+    "lint:fix": "oxlint --fix",
+    "prepare": "husky"
   },
   "dependencies": {
     "7z-wasm": "^1.2.0",
@@ -104,12 +105,18 @@
     "electron": "^40.6.0",
     "electron-builder": "^26.8.1",
     "happy-dom": "^20.8.7",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
     "oxfmt": "^0.67.0",
     "oxlint": "^1.82.0",
     "puppeteer": "^24.36.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
     "vite-tsconfig-paths": "^6.0.5"
+  },
+  "lint-staged": {
+    "*": "bun run fmt --no-error-on-unmatched-pattern",
+    "*.{js,jsx,ts,tsx,mjs,cjs}": "bun run lint --no-error-on-unmatched-pattern"
   },
   "build": {
     "appId": "com.p2r3.convert",
