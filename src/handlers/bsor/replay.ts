@@ -401,8 +401,4 @@ export class Replay {
   }
 }
 
-class BSORError extends Error {
-  constructor(msg: string) {
-    super(msg);
-  }
-}
+class BSORError extends Error {}

@@ -172,7 +172,7 @@ function APFarray(data: Uint8Array): Uint8Array {
     }
   }
 
-  let revarray: Uint8Array = new Uint8Array(newarray.reverse().flat());
+  let revarray: Uint8Array = new Uint8Array(newarray.toReversed().flat());
   return revarray;
 }
 

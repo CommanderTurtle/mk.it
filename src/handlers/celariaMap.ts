@@ -10,6 +10,44 @@ import type { FlatVector3, Vector3 } from "celaria-formats/types/data.mts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
+function putInstances(
+  map: EditableCelariaMap | CelariaMap,
+  plainOldInstances: AllPlainOldInstanceTypes[],
+) {
+  map.instances = plainOldInstances.map((plainOldInstance) => {
+    switch (plainOldInstance.instanceType) {
+      case "Block":
+        const block = new Block(plainOldInstance.type);
+        block.position = plainOldInstance.position;
+        block.rotation = plainOldInstance.rotation;
+        block.scale = plainOldInstance.scale;
+        block.type = plainOldInstance.type;
+        return block;
+      case "Barrier":
+        const barrier = new Barrier();
+        barrier.position = plainOldInstance.position;
+        barrier.rotation = plainOldInstance.rotation;
+        barrier.scale = plainOldInstance.scale;
+        return barrier;
+      case "Spawn point":
+        const playerSpawnPoint = new PlayerSpawnPoint();
+        playerSpawnPoint.position = plainOldInstance.position;
+        playerSpawnPoint.rotation = plainOldInstance.rotation;
+        return playerSpawnPoint;
+      case "Dummy":
+        const tutorialHologram = new TutorialHologram(plainOldInstance.type);
+        tutorialHologram.scale = plainOldInstance.scale;
+        tutorialHologram.rotation = plainOldInstance.rotation;
+        tutorialHologram.position = plainOldInstance.position;
+        return tutorialHologram;
+      case "Sphere":
+        const sphere = new Sphere();
+        sphere.position = plainOldInstance.position;
+        return sphere;
+    }
+  });
+}
+
 class celariaMapHandler implements FormatHandler {
   public name: string = "celariaMap";
   public supportedFormats?: FileFormat[];
@@ -132,43 +170,6 @@ class celariaMapHandler implements FormatHandler {
           JSON.parse(new TextDecoder().decode(file.bytes)),
         );
         if (!typedParsedObject) throw new Error("Can't handle unknown parsed object.");
-        function putInstances(
-          map: EditableCelariaMap | CelariaMap,
-          plainOldInstances: AllPlainOldInstanceTypes[],
-        ) {
-          map.instances = plainOldInstances.map((plainOldInstance) => {
-            switch (plainOldInstance.instanceType) {
-              case "Block":
-                const block = new Block(plainOldInstance.type);
-                block.position = plainOldInstance.position;
-                block.rotation = plainOldInstance.rotation;
-                block.scale = plainOldInstance.scale;
-                block.type = plainOldInstance.type;
-                return block;
-              case "Barrier":
-                const barrier = new Barrier();
-                barrier.position = plainOldInstance.position;
-                barrier.rotation = plainOldInstance.rotation;
-                barrier.scale = plainOldInstance.scale;
-                return barrier;
-              case "Spawn point":
-                const playerSpawnPoint = new PlayerSpawnPoint();
-                playerSpawnPoint.position = plainOldInstance.position;
-                playerSpawnPoint.rotation = plainOldInstance.rotation;
-                return playerSpawnPoint;
-              case "Dummy":
-                const tutorialHologram = new TutorialHologram(plainOldInstance.type);
-                tutorialHologram.scale = plainOldInstance.scale;
-                tutorialHologram.rotation = plainOldInstance.rotation;
-                tutorialHologram.position = plainOldInstance.position;
-                return tutorialHologram;
-              case "Sphere":
-                const sphere = new Sphere();
-                sphere.position = plainOldInstance.position;
-                return sphere;
-            }
-          });
-        }
         if (outputFormat.internal === "ecmap") {
           const editableCelariaMap = new EditableCelariaMap();
           putInstances(editableCelariaMap, typedParsedObject.instances);

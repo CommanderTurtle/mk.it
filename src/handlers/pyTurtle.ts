@@ -26,6 +26,33 @@ function createContainer(svg: string) {
   return container;
 }
 
+function formatColor(col: string) {
+  if (!col || col === "none" || col === "transparent") return null;
+  if (col.startsWith("rgb")) {
+    const rgb = col.match(/\d+/g);
+    return (
+      "#" +
+      rgb!
+        .slice(0, 3)
+        .map((x) => parseInt(x).toString(16).padStart(2, "0"))
+        .join("")
+    );
+  }
+  return col;
+}
+
+// safe min/max, that better scale then Math
+function safeMin(arr: number[]) {
+  let m = Infinity;
+  for (const v of arr) if (v < m) m = v;
+  return m;
+}
+function safeMax(arr: number[]) {
+  let m = -Infinity;
+  for (const v of arr) if (v > m) m = v;
+  return m;
+}
+
 class pyTurtleHandler implements FormatHandler {
   public name: string = "pyTurtle";
   public supportedFormats?: FileFormat[];
@@ -96,34 +123,8 @@ class pyTurtleHandler implements FormatHandler {
     }
     const pt = svgEl.createSVGPoint(); // this API is deprecated
 
-    const formatColor = (col: string) => {
-      if (!col || col === "none" || col === "transparent") return null;
-      if (col.startsWith("rgb")) {
-        const rgb = col.match(/\d+/g);
-        return (
-          "#" +
-          rgb!
-            .slice(0, 3)
-            .map((x) => parseInt(x).toString(16).padStart(2, "0"))
-            .join("")
-        );
-      }
-      return col;
-    };
-
     let allPoints = [];
     let shapeData = [];
-    // safe min/max, that better scale then Math
-    const safeMin = (arr: number[]) => {
-      let m = Infinity;
-      for (const v of arr) if (v < m) m = v;
-      return m;
-    };
-    const safeMax = (arr: number[]) => {
-      let m = -Infinity;
-      for (const v of arr) if (v > m) m = v;
-      return m;
-    };
 
     for (const el of elements) {
       if (allPoints.length >= MAX_TOTAL_POINTS) {

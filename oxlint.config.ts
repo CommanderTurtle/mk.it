@@ -8,6 +8,9 @@ export default defineConfig({
     suspicious: "deny",
   },
   rules: {
+    "eslint/no-underscore-dangle": "allow",
+    "eslint/no-shadow": "allow",
+    "eslint/no-new": "allow",
     "no-unused-vars": [
       "warn",
       {

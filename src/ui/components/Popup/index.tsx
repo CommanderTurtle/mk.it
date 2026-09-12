@@ -43,6 +43,7 @@ export default function Popup() {
     if (!isInside && PopupData.value.dismissible) closePopup();
   };
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const handleButtonClick = () => {
     if (typeof PopupData.value.buttonOnClick === "function") {
       PopupData.value.buttonOnClick({} as any);
@@ -51,6 +52,7 @@ export default function Popup() {
     }
   };
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const getPopupContents = () => {
     if (PopupData.value.contents) return PopupData.value.contents;
     return (

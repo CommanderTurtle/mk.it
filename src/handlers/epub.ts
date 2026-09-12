@@ -10,8 +10,8 @@ function blobUrlRegex() {
 async function blobToDataUrl(blob: Blob): Promise<string> {
   return await new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
+    reader.addEventListener("loadend", () => resolve(reader.result as string));
+    reader.addEventListener("error", reject);
     reader.readAsDataURL(blob);
   });
 }

@@ -12,6 +12,7 @@ async function revertCgBIBuffer(input: Uint8Array | ArrayBuffer): Promise<Uint8A
     }
   }
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const concat = (arrays: Uint8Array[]) => {
     const totalLength = arrays.reduce((sum, arr) => sum + arr.length, 0);
     const result = new Uint8Array(totalLength);
@@ -194,7 +195,9 @@ class cgbiToPngHandler implements FormatHandler {
           name: outputName,
         });
       } catch (error) {
-        throw new Error(`Failed to convert ${inputFile.name}: ${(error as Error).message}`, { cause: error });
+        throw new Error(`Failed to convert ${inputFile.name}: ${(error as Error).message}`, {
+          cause: error,
+        });
       }
     }
 

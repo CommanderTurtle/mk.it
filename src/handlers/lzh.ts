@@ -5,6 +5,21 @@ import JSZip from "jszip";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import { InitializationError } from "src/errors.ts";
 
+// Convert bytes to base64 string
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+// Sanitize all string values to ensure valid JSON
+function sanitizeString(str: string): string {
+  // oxlint-disable-next-line eslint/no-control-regex
+  return str.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim() || "unknown";
+}
+
 /**
  * LZH/LHA Archive Handler
  * Handles LZH (Lempel-Ziv-Huffman) and LHA archive formats
@@ -56,21 +71,6 @@ export class lzhHandler implements FormatHandler {
       for (const inputFile of inputFiles) {
         const decoder = new LZHDecoder(inputFile.bytes);
         const extractedFiles = decoder.extractAll();
-
-        // Sanitize all string values to ensure valid JSON
-        const sanitizeString = (str: string): string => {
-          // eslint-disable-next-line no-control-regex
-          return str.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim() || "unknown";
-        };
-
-        // Convert bytes to base64 string
-        const bytesToBase64 = (bytes: Uint8Array): string => {
-          let binary = "";
-          for (let i = 0; i < bytes.length; i++) {
-            binary += String.fromCharCode(bytes[i]);
-          }
-          return btoa(binary);
-        };
 
         const archiveInfo = {
           archiveName: sanitizeString(inputFile.name),

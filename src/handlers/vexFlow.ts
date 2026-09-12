@@ -4,6 +4,14 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import { buildMidi, addNote } from "./midi/midifilelib.js";
 
+// Note name to MIDI number mapping
+function noteToMidi(step: string, octave: number, alter: number = 0): number {
+  const noteMap: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  const baseNote = noteMap[step.toUpperCase()];
+  if (baseNote === undefined) return 60; // Default to middle C
+  return baseNote + (octave + 1) * 12 + alter;
+}
+
 class vexFlowHandler implements FormatHandler {
   public name: string = "vexFlow";
   public supportedFormats?: FileFormat[];
@@ -68,14 +76,6 @@ class vexFlowHandler implements FormatHandler {
     const events: any[] = [];
     const ticksPerBeat = 480; // Standard MIDI resolution
     let currentTempo = 120; // Default BPM
-
-    // Note name to MIDI number mapping
-    const noteToMidi = (step: string, octave: number, alter: number = 0): number => {
-      const noteMap: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
-      const baseNote = noteMap[step.toUpperCase()];
-      if (baseNote === undefined) return 60; // Default to middle C
-      return baseNote + (octave + 1) * 12 + alter;
-    };
 
     // Parse divisions (ticks per quarter note in MusicXML)
     // Divisions can be in different places in the structure

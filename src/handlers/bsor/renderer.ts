@@ -16,9 +16,9 @@ export async function render(
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(width, height);
 
-  const frames = [...replay.frames].sort((a, b) => a.time - b.time);
+  const frames = [...replay.frames].toSorted((a, b) => a.time - b.time);
   let frameIndex = 0;
-  const noteEvents = [...replay.notes].sort((a, b) => a.time - b.time);
+  const noteEvents = [...replay.notes].toSorted((a, b) => a.time - b.time);
   let noteIndex = 0;
   const leftMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
   const rightMaterial = new THREE.MeshBasicMaterial({ color: 0x0080ff });

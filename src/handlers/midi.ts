@@ -28,8 +28,8 @@ function loadScript(src: string): Promise<void> {
   const p = new Promise<void>((resolve, reject) => {
     const script = document.createElement("script");
     script.src = src;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load ${src}`));
+    script.addEventListener("load", () => resolve());
+    script.addEventListener("error", () => reject(new Error(`Failed to load ${src}`)));
     document.head.appendChild(script);
   });
   scriptCache.set(src, p);
@@ -173,8 +173,8 @@ export class midiCodecHandler implements FormatHandler {
         const url = URL.createObjectURL(blob);
         const img = new Image();
         await new Promise<void>((res, rej) => {
-          img.onload = () => res();
-          img.onerror = () => rej(new Error("Failed to load spectrogram image"));
+          img.addEventListener("load", () => res());
+          img.addEventListener("error", () => rej(new Error("Failed to load spectrogram image")));
           img.src = url;
         });
         URL.revokeObjectURL(url);

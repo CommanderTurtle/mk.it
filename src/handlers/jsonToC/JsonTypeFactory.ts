@@ -1,5 +1,6 @@
 import { JsonType } from "./JsonType";
 
+// oxlint-disable-next-line typescript/no-extraneous-class
 export default class JsonTypeFactory {
   static fromCType(pCType: string): JsonType.JsonType {
     let result = new JsonType.InvalidType();
@@ -27,9 +28,9 @@ export default class JsonTypeFactory {
 
   static fromAny(pVal: any): JsonType.JsonType {
     let result: JsonType.JsonType = new JsonType.InvalidType();
-    if (pVal instanceof String || typeof pVal === "string") {
+    if (typeof pVal === "string") {
       result = new JsonType.StringType();
-    } else if (pVal instanceof Boolean || typeof pVal === "boolean") {
+    } else if (typeof pVal === "boolean") {
       result = new JsonType.BoolType();
     } else if (!isNaN(Number(pVal))) {
       if (Number.isInteger(Number(pVal))) {

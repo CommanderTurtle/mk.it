@@ -455,8 +455,8 @@ export class TraversionGraph {
       this.dispatchEvent("searching", current.path);
       this.nodes[current.index].edges.forEach((edgeIndex) => {
         let edge = this.edges[edgeIndex];
-        const indexInVisited = visited.get(edge.to.index) ?? -1;
-        if (indexInVisited >= 0 && indexInVisited < current.visitedBorder) return;
+        const targetIndexInVisited = visited.get(edge.to.index) ?? -1;
+        if (targetIndexInVisited >= 0 && targetIndexInVisited < current.visitedBorder) return;
         const handler = this.handlerByName.get(edge.handler);
         if (!handler) return; // If the handler for this edge is not found, skip it
 

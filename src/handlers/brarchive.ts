@@ -20,7 +20,7 @@ function write_lendian_4(x: number): number[] {
     num_string = "0" + num_string;
   }
 
-  console.log("write_lendian_4: " + "(" + x + ")" + " (" + num_string + ")");
+  console.log("write_lendian_4: (" + x + ") (" + num_string + ")");
 
   const array: number[] = [
     parseInt(num_string.substring(6, 8), 16),

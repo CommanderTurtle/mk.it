@@ -18,6 +18,7 @@ export default function HelpButton() {
     return () => instance.destroy();
   }, []);
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const onHelpClick = () => {
     PopupData.value = {
       dismissible: true,

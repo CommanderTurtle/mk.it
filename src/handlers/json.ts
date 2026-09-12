@@ -68,6 +68,20 @@ export class toJsonHandler implements FormatHandler {
   }
 }
 
+function xmlEscape(str: string): string {
+  return str
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;")
+    .replaceAll("&", "&amp;");
+}
+
+function csvEscape(str: string): string {
+  if (str.includes(",") || str.includes('"')) return `"${str.replaceAll('"', '""')}"`;
+  return str;
+}
+
 /// Converts to things from JSON
 export class fromJsonHandler {
   public name: string = "fromJson";
@@ -96,10 +110,6 @@ export class fromJsonHandler {
       switch (outputFormat.mime) {
         case "text/csv": {
           let keys: string[] = [];
-          function csvEscape(str: string): string {
-            if (str.includes(",") || str.includes('"')) return `"${str.replaceAll('"', '""')}"`;
-            return str;
-          }
           if (!Array.isArray(object)) {
             // turn into array
             let newObject: any = [];
@@ -123,7 +133,7 @@ export class fromJsonHandler {
               if (!keySet.has(key)) keySet.add(key);
             }
           }
-          keys = [...keySet].sort();
+          keys = [...keySet].toSorted();
           text += keys.map((x) => csvEscape(x)).join(",") + "\n";
           for (const value of object) {
             text +=
@@ -139,14 +149,6 @@ export class fromJsonHandler {
           break;
         }
         case "application/xml": {
-          function xmlEscape(str: string): string {
-            return str
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;")
-              .replaceAll("'", "&apos;")
-              .replaceAll("&", "&amp;");
-          }
           function write(value: any, tagName: string | null = null) {
             if (tagName != null) tagName = xmlEscape(tagName);
             if (typeof value !== "object") {

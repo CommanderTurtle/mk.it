@@ -211,7 +211,7 @@ class wadHandler implements FormatHandler {
           }
         } else {
           // Lossy mode: extract files as best effort
-          const sortedPaths = Object.keys(zip.files).sort();
+          const sortedPaths = Object.keys(zip.files).toSorted();
           for (const filePath of sortedPaths) {
             const entry = zip.files[filePath];
             if (entry.dir) continue;

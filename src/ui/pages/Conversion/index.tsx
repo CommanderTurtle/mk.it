@@ -119,12 +119,18 @@ function getMatchingFromFormats(
   return matched.size > 0 ? matched : options;
 }
 
-function downloadFile(bytes: Uint8Array, name: string, mime: string) {
-  const blob = new Blob([bytes as BlobPart], { type: mime });
+function downloadFile(bytes: Uint8Array, name: string, type: string) {
+  const blob = new Blob([bytes as BlobPart], { type: type });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = name;
   link.click();
+}
+
+function removeFile(key: string) {
+  const { [key as keyof typeof SelectedFiles.value]: _, ...rest } = SelectedFiles.value;
+  SelectedFiles.value = rest;
+  if (Object.keys(rest).length === 0) CurrentPage.value = Pages.Upload;
 }
 
 export default function Conversion() {
@@ -212,12 +218,6 @@ export default function Conversion() {
   const handleFromToClickTo = () => {
     setStep("select-to");
     setToOption(null);
-  };
-
-  const removeFile = (key: string) => {
-    const { [key as keyof typeof SelectedFiles.value]: _, ...rest } = SelectedFiles.value;
-    SelectedFiles.value = rest;
-    if (Object.keys(rest).length === 0) CurrentPage.value = Pages.Upload;
   };
 
   const handleConvert = async () => {

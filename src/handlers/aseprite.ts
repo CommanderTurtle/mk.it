@@ -322,7 +322,9 @@ function decodeAseprite(bytes: Uint8Array): ParsedAseprite {
 
   const output = new Uint8ClampedArray(width * height * 4);
 
-  const layerEntries = Array.from(targetFrame.values()).sort((a, b) => a.layerIndex - b.layerIndex);
+  const layerEntries = Array.from(targetFrame.values()).toSorted(
+    (a, b) => a.layerIndex - b.layerIndex,
+  );
   for (const cel of layerEntries) {
     const layer = layers[cel.layerIndex];
     if (layer && !layer.visible) continue;

@@ -20,15 +20,15 @@ async function init() {
   try {
     await initReflo("/convert/wasm/reflo_bg.wasm");
     // signal ready
-    (self as any).postMessage({ id: 0, type: "ready" });
+    (self as any).postMessage({ id: 0, type: "ready" }, self.location.origin);
   } catch (e: any) {
-    (self as any).postMessage({ id: 0, type: "error", error: String(e) });
+    (self as any).postMessage({ id: 0, type: "error", error: String(e) }, self.location.origin);
   }
 }
 
 init();
 
-self.onmessage = async (ev: MessageEvent) => {
+self.addEventListener("message", async (ev: MessageEvent) => {
   const msg = ev.data;
   const id: number = msg.id ?? -1;
   try {
@@ -56,6 +56,6 @@ self.onmessage = async (ev: MessageEvent) => {
       (self as any).postMessage(out, [bytes.buffer]);
     }
   } catch (e: any) {
-    (self as any).postMessage({ id, type: "error", error: String(e) });
+    (self as any).postMessage({ id, type: "error", error: String(e) }, self.location.origin);
   }
-};
+});

@@ -102,8 +102,8 @@ class libopenmptHandler implements FormatHandler {
     await new Promise<void>((resolve, reject) => {
       const script = document.createElement("script");
       script.src = "/convert/wasm/libopenmpt.js";
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("Failed to load libopenmpt.js"));
+      script.addEventListener("load", () => resolve());
+      script.addEventListener("error", () => reject(new Error("Failed to load libopenmpt.js")));
       document.head.appendChild(script);
     });
 

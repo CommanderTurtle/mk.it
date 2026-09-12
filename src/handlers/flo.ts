@@ -156,7 +156,7 @@ class floHandler implements FormatHandler {
     try {
       this.#worker = new Worker(new URL("./flo.worker.ts", import.meta.url), { type: "module" });
       this.#workerReady = new Promise((resolve, reject) => {
-        this.#worker!.onmessage = (ev: MessageEvent) => {
+        this.#worker!.addEventListener("message", (ev: MessageEvent) => {
           const m = ev.data as any;
           if (m && m.id === 0) {
             if (m.type === "ready") return resolve();
@@ -173,7 +173,7 @@ class floHandler implements FormatHandler {
               this.#pending.delete(m.id);
             }
           }
-        };
+        });
         // timeout
         setTimeout(() => reject("flo worker init timeout"), 15000);
       });

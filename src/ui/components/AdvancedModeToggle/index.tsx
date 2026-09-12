@@ -22,6 +22,7 @@ export default function AdvancedModeToggle({ compact = true }: AdvancedModeToggl
     return () => instance.destroy();
   }, [Mode.value]);
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const handleClick = () => {
     toggleMode();
   };
