@@ -49,13 +49,13 @@ export const ProgressStore = {
       log: (msg, level = "log") => {
         this.logs.value = [
           ...this.logs.value,
-          { timestamp: Date.now(), plugin: pluginName, message: msg, level }
+          { timestamp: Date.now(), plugin: pluginName, message: msg, level },
         ];
       },
       signal: parentSignal,
       throwIfAborted() {
         if (parentSignal.aborted) throw new DOMException("Conversion cancelled", "AbortError");
-      }
+      },
     };
-  }
+  },
 };

@@ -60,7 +60,10 @@ function isCubeElement(element: BBModelElement): element is BBModelCube {
 }
 
 function isMeshElement(element: BBModelElement): element is BBModelMesh {
-  return typeof (element as BBModelMesh).vertices === "object" && (element as BBModelMesh).vertices !== null;
+  return (
+    typeof (element as BBModelMesh).vertices === "object" &&
+    (element as BBModelMesh).vertices !== null
+  );
 }
 
 function toVector3(input?: number[]) {
@@ -72,7 +75,7 @@ function toEuler(input?: number[], order: THREE.EulerOrder = "ZYX") {
     THREE.MathUtils.degToRad(input?.[0] ?? 0),
     THREE.MathUtils.degToRad(input?.[1] ?? 0),
     THREE.MathUtils.degToRad(input?.[2] ?? 0),
-    order
+    order,
   );
 }
 
@@ -120,11 +123,7 @@ function createCubeGeometry(element: BBModelCube) {
   }
 
   geometry.setIndex(visibleIndices);
-  geometry.translate(
-    (minX + maxX) / 2,
-    (minY + maxY) / 2,
-    (minZ + maxZ) / 2
-  );
+  geometry.translate((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
   geometry.applyMatrix4(createPivotMatrix(element.origin, element.rotation));
 
   return geometry;
@@ -174,7 +173,9 @@ function createMeshGeometry(element: BBModelMesh) {
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
   geometry.setIndex(indices);
   // Mesh vertices are local to their origin, unlike cube coordinates.
-  geometry.applyMatrix4(new THREE.Matrix4().makeRotationFromEuler(toEuler(element.rotation, "XYZ")));
+  geometry.applyMatrix4(
+    new THREE.Matrix4().makeRotationFromEuler(toEuler(element.rotation, "XYZ")),
+  );
   const origin = toVector3(element.origin);
   geometry.translate(origin.x, origin.y, origin.z);
   geometry.computeVertexNormals();
@@ -200,8 +201,14 @@ function createElementObject(element: BBModelElement) {
 
 export function bbmodelToObject(model: BBModel) {
   const root = new THREE.Group();
-  const groupsByUuid = new Map((model.groups ?? []).flatMap(group => group.uuid ? [[group.uuid, group] as const] : []));
-  const elementsByUuid = new Map((model.elements ?? []).flatMap(element => element.uuid ? [[element.uuid, element] as const] : []));
+  const groupsByUuid = new Map(
+    (model.groups ?? []).flatMap((group) => (group.uuid ? [[group.uuid, group] as const] : [])),
+  );
+  const elementsByUuid = new Map(
+    (model.elements ?? []).flatMap((element) =>
+      element.uuid ? [[element.uuid, element] as const] : [],
+    ),
+  );
   const attachedGroups = new Set<string>();
   const attachedElements = new Set<string>();
 
@@ -222,11 +229,14 @@ export function bbmodelToObject(model: BBModel) {
 
     if (Array.isArray(entry.children)) {
       const group = entry.uuid ? groupsByUuid.get(entry.uuid) : undefined;
-      attachGroup({
-        ...group,
-        ...entry,
-        children: entry.children
-      }, parent);
+      attachGroup(
+        {
+          ...group,
+          ...entry,
+          children: entry.children,
+        },
+        parent,
+      );
       return;
     }
 
@@ -281,7 +291,7 @@ export function bbmodelToObject(model: BBModel) {
 }
 
 export function bbmodelToObj(input: string | BBModel) {
-  const model = typeof input === "string" ? JSON.parse(input) as BBModel : input;
+  const model = typeof input === "string" ? (JSON.parse(input) as BBModel) : input;
   const exporter = new OBJExporter();
   return exporter.parse(bbmodelToObject(model));
 }
@@ -307,7 +317,7 @@ class bbmodelHandler implements FormatHandler {
       .withExt("bbmodel")
       .withCategory("model")
       .allowFrom(true)
-      .allowTo(false)
+      .allowTo(false),
   ];
 
   async init() {
@@ -317,13 +327,13 @@ class bbmodelHandler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     if (inputFormat.internal !== "bbmodel" || outputFormat.internal !== "obj") {
       throw new Error("Invalid input/output format.");
     }
 
-    return inputFiles.map(file => {
+    return inputFiles.map((file) => {
       const baseName = file.name.replace(/\.[^.]+$/u, "");
       const text = new TextDecoder().decode(file.bytes);
       const bytes = new TextEncoder().encode(bbmodelToObj(text));

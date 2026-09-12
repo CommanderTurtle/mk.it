@@ -1,12 +1,9 @@
-// file: clang-wasi.ts
-
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { commands } from '@yowasp/clang';
+import { Category } from "src/CommonFormats.ts";
+import { commands } from "@yowasp/clang";
 
 class clangWasiHandler implements FormatHandler {
-
-  public name: string = "clang-wasi";
+  public name: string = "clangWasi";
   public supportedFormats: FileFormat[] = [
     {
       name: "C Source File",
@@ -55,31 +52,30 @@ class clangWasiHandler implements FormatHandler {
   ];
   public ready: boolean = false;
 
-  async init () {
+  async init() {
     this.ready = true;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
     for (const inputFile of inputFiles) {
-      const output = await commands
-      [inputFormat.internal === "cpp" ? "clang++" : "clang"]
-      (
-        [inputFile.name, "-o", "out.wasm", "-O3", "-fno-exceptions"], 
+      const output = await commands[inputFormat.internal === "cpp" ? "clang++" : "clang"](
+        [inputFile.name, "-o", "out.wasm", "-O3", "-fno-exceptions"],
         // this build specifically excludes exceptions for some reason
         {
-          [inputFile.name]: inputFile.bytes
-        }
+          [inputFile.name]: inputFile.bytes,
+        },
       );
       if (!output) throw new Error("clang did not return any files?");
 
       const data = output["out.wasm"];
       let bytes;
-      if (data instanceof Uint8Array) { // js wtf is this ??
+      if (data instanceof Uint8Array) {
+        // js wtf is this ??
         bytes = data;
       } else if (typeof data === "string") {
         bytes = new TextEncoder().encode(data);
@@ -94,7 +90,6 @@ class clangWasiHandler implements FormatHandler {
     }
     return outputFiles;
   }
-
 }
 
 export default clangWasiHandler;

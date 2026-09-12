@@ -8,16 +8,15 @@ const toonFormat = new FormatDefinition(
   "toon",
   "toon",
   "text/toon",
-  Category.DATA
+  Category.DATA,
 );
 
 class toonHandler implements FormatHandler {
-
   public name: string = "toon";
 
   public supportedFormats?: FileFormat[] = [
     CommonFormats.JSON.supported("json", true, true, true),
-    toonFormat.supported("toon", true, true, true)
+    toonFormat.supported("toon", true, true, true),
   ];
 
   public ready: boolean = false;
@@ -29,7 +28,7 @@ class toonHandler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     switch (inputFormat.mime) {
       case CommonFormats.JSON.mime:
@@ -37,7 +36,7 @@ class toonHandler implements FormatHandler {
           throw new TypeError(`Unsupported output format MIME: ${outputFormat.mime}`);
         }
 
-        return inputFiles.map(file => {
+        return inputFiles.map((file) => {
           const text = new TextDecoder().decode(file.bytes);
           let jsonData = JSON.parse(text);
 
@@ -46,7 +45,7 @@ class toonHandler implements FormatHandler {
 
           return {
             name,
-            bytes: new TextEncoder().encode(toonData)
+            bytes: new TextEncoder().encode(toonData),
           };
         });
 
@@ -55,7 +54,7 @@ class toonHandler implements FormatHandler {
           throw new TypeError(`Unsupported output format MIME: ${outputFormat.mime}`);
         }
 
-        return inputFiles.map(file => {
+        return inputFiles.map((file) => {
           const toonData = new TextDecoder().decode(file.bytes);
           const jsonData = JSON.stringify(decode(toonData));
 
@@ -63,7 +62,7 @@ class toonHandler implements FormatHandler {
 
           return {
             name,
-            bytes: new TextEncoder().encode(jsonData)
+            bytes: new TextEncoder().encode(jsonData),
           };
         });
 

@@ -1,8 +1,4 @@
-import {
-  buildPresentation,
-  parseZip,
-  renderSlide,
-} from "@aiden0z/pptx-renderer";
+import { buildPresentation, parseZip, renderSlide } from "@aiden0z/pptx-renderer";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import CommonFormats from "src/CommonFormats.ts";
@@ -10,24 +6,27 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 async function waitForSlideToSettle(element: HTMLElement): Promise<void> {
   const imagePromises = Array.from(element.querySelectorAll("img"))
-    .filter(image => !image.complete)
-    .map(image => new Promise<void>(resolve => {
-      image.addEventListener("load", () => resolve(), { once: true });
-      image.addEventListener("error", () => resolve(), { once: true });
-    }));
+    .filter((image) => !image.complete)
+    .map(
+      (image) =>
+        new Promise<void>((resolve) => {
+          image.addEventListener("load", () => resolve(), { once: true });
+          image.addEventListener("error", () => resolve(), { once: true });
+        }),
+    );
 
   await Promise.all(imagePromises);
-  await new Promise<void>(resolve => {
+  await new Promise<void>((resolve) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => resolve());
     });
   });
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
 }
 
 async function canvasToPngDataUrl(canvas: HTMLCanvasElement): Promise<string> {
   const blob = await new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(blob => {
+    canvas.toBlob((blob) => {
       if (!blob) {
         reject(new Error("Failed to encode rendered slide as PNG."));
         return;
@@ -94,9 +93,7 @@ export default class pptxRendererHandler implements FormatHandler {
         }
 
         const pageFormat: [number, number] = [presentation.width, presentation.height];
-        const orientation = presentation.width >= presentation.height
-          ? "landscape"
-          : "portrait";
+        const orientation = presentation.width >= presentation.height ? "landscape" : "portrait";
         const pdf = new jsPDF({
           orientation,
           unit: "px",

@@ -3,7 +3,7 @@ import CommonFormats from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 function nextPaint(): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => resolve());
     });
@@ -12,18 +12,24 @@ function nextPaint(): Promise<void> {
 
 async function waitForRenderableAssets(root: ParentNode): Promise<void> {
   const pendingImages = Array.from(root.querySelectorAll("img"))
-    .filter(image => !image.complete)
-    .map(image => new Promise<void>(resolve => {
-      image.addEventListener("load", () => resolve(), { once: true });
-      image.addEventListener("error", () => resolve(), { once: true });
-    }));
+    .filter((image) => !image.complete)
+    .map(
+      (image) =>
+        new Promise<void>((resolve) => {
+          image.addEventListener("load", () => resolve(), { once: true });
+          image.addEventListener("error", () => resolve(), { once: true });
+        }),
+    );
 
   const pendingVideos = Array.from(root.querySelectorAll("video"))
-    .filter(video => video.readyState < 2)
-    .map(video => new Promise<void>(resolve => {
-      video.addEventListener("loadeddata", () => resolve(), { once: true });
-      video.addEventListener("error", () => resolve(), { once: true });
-    }));
+    .filter((video) => video.readyState < 2)
+    .map(
+      (video) =>
+        new Promise<void>((resolve) => {
+          video.addEventListener("loadeddata", () => resolve(), { once: true });
+          video.addEventListener("error", () => resolve(), { once: true });
+        }),
+    );
 
   await Promise.all([...pendingImages, ...pendingVideos]);
   await nextPaint();
@@ -40,12 +46,14 @@ function measureRenderedElement(
   options: HtmlToSvgOptions,
 ): { width: number; height: number } {
   const rect = element.getBoundingClientRect();
-  const widthCandidate = element instanceof HTMLElement || element instanceof SVGElement
-    ? Math.max(rect.width, element.scrollWidth || 0, element.clientWidth || 0)
-    : rect.width;
-  const heightCandidate = element instanceof HTMLElement || element instanceof SVGElement
-    ? Math.max(rect.height, element.scrollHeight || 0, element.clientHeight || 0)
-    : rect.height;
+  const widthCandidate =
+    element instanceof HTMLElement || element instanceof SVGElement
+      ? Math.max(rect.width, element.scrollWidth || 0, element.clientWidth || 0)
+      : rect.width;
+  const heightCandidate =
+    element instanceof HTMLElement || element instanceof SVGElement
+      ? Math.max(rect.height, element.scrollHeight || 0, element.clientHeight || 0)
+      : rect.height;
 
   return {
     width: Math.max(1, Math.ceil(options.width ?? widthCandidate)),
@@ -108,27 +116,25 @@ async function htmlContentToSvgString(
   }
 }
 
-class HtmlToSvgHandler implements FormatHandler {
-
-  public name: string = "dom-to-svg";
+class htmlToSvgHandler implements FormatHandler {
+  public name: string = "htmlToSvg";
 
   public supportedFormats: FileFormat[] = [
     CommonFormats.HTML.supported("html", true, false),
-    CommonFormats.SVG.supported("svg", false, true, false)
+    CommonFormats.SVG.supported("svg", false, true, false),
   ];
 
   public ready: boolean = true;
 
-  async init () {
+  async init() {
     this.ready = true;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
     outputFormat: FileFormat,
   ): Promise<FileData[]> {
-
     if (inputFormat.internal !== "html") throw "Invalid input format.";
     if (outputFormat.internal !== "svg") throw "Invalid output format.";
 
@@ -149,9 +155,7 @@ class HtmlToSvgHandler implements FormatHandler {
     }
 
     return outputFiles;
-
   }
-
 }
 
-export default HtmlToSvgHandler;
+export default htmlToSvgHandler;

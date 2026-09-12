@@ -3,10 +3,10 @@ import CommonFormats from "../CommonFormats.ts";
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 
 class textToPdfHandler implements FormatHandler {
-  public name = "text-to-pdf";
+  public name = "textToPdf";
   public supportedFormats?: FileFormat[] = [
-      CommonFormats.TEXT.builder("text").allowFrom(true).allowTo(false),
-      CommonFormats.PDF.builder("pdf").allowFrom(false).allowTo(true),
+    CommonFormats.TEXT.builder("text").allowFrom(true).allowTo(false),
+    CommonFormats.PDF.builder("pdf").allowFrom(false).allowTo(true),
   ];
   public ready = false;
 
@@ -22,8 +22,7 @@ class textToPdfHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
 
     for (const file of inputFiles) {
-      const text = new TextDecoder().decode(file.bytes)
-        .replace(/\p{Extended_Pictographic}/gu, ""); // Remove emojis
+      const text = new TextDecoder().decode(file.bytes).replace(/\p{Extended_Pictographic}/gu, ""); // Remove emojis
 
       const doc = new PDFDocument({
         size: "A4",
@@ -36,7 +35,9 @@ class textToPdfHandler implements FormatHandler {
         doc.on("data", (chunk: Uint8Array) => chunks.push(chunk));
         doc.on("end", async () => {
           try {
-            const buffer = await new Blob(chunks as BlobPart[], { type: "application/pdf" }).arrayBuffer();
+            const buffer = await new Blob(chunks as BlobPart[], {
+              type: "application/pdf",
+            }).arrayBuffer();
             resolve(new Uint8Array(buffer));
           } catch (error) {
             reject(error);
@@ -46,7 +47,7 @@ class textToPdfHandler implements FormatHandler {
         doc.on("error", reject);
 
         doc.font("Courier").fontSize(11).fillColor("#000000");
-        doc.text(text.replace(/\r\n|\r/g, '\n'), {
+        doc.text(text.replace(/\r\n|\r/g, "\n"), {
           width: 595.28 - 72 - 72,
           align: "left",
         });
