@@ -45,7 +45,7 @@ for (const handler of handlers) {
   if (!supportedFormatCache.has(handler.name)) {
     try {
       await handler.init();
-    } catch (_) {
+    } catch {
       continue;
     }
     if (handler.supportedFormats) {

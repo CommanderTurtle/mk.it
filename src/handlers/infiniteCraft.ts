@@ -134,7 +134,7 @@ class infiniteCraftToJsonHandler implements FormatHandler {
         let json: string;
         try {
           json = decoder.decode(decompressedBytes);
-        } catch (_) {
+        } catch {
           throw new Error("Invalid IC file: decompressed data is not UTF-8 JSON.");
         }
         if (json.trimStart().startsWith("[")) {

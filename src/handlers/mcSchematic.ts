@@ -71,7 +71,7 @@ class mcSchematicHandler implements FormatHandler {
       let unzipped;
       try {
         unzipped = gunzipSync(file.bytes);
-      } catch (e) {
+      } catch {
         // Fallback for uncompressed NBT
         unzipped = file.bytes;
       }
@@ -350,7 +350,6 @@ class mcSchematicHandler implements FormatHandler {
 
           // Handle boundary overlap
           if (bitOffset + BigInt(bitsPerBlock) > 64n && longIndex + 1 < longs.length) {
-            const remainingBits = bitOffset + BigInt(bitsPerBlock) - 64n;
             longs[longIndex + 1] |= blockId >> (64n - bitOffset);
           }
 

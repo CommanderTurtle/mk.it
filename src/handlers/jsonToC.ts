@@ -79,7 +79,7 @@ export default class jsonToCHandler implements FormatHandler {
       jsonObj = JSON.parse(jsonStr);
       isValidJson = true;
     } catch (err) {
-      console.error(`${pFile.name} is not a valid JSON file.`);
+      console.error(`${pFile.name} is not a valid JSON file: ${err}.`);
     }
 
     if (isValidJson) {
@@ -119,7 +119,6 @@ export default class jsonToCHandler implements FormatHandler {
     const STRUCT_REGEX = /^(typedef struct|union)\s*{\s*$/;
     const STRUCT_END_REGEX = /^}\s*.+$/;
     const ARRAY_REGEX = /(^.+)\[(\d+)\]$/;
-    let previousLine: string = "";
 
     for (let line of lines) {
       line = line.trim();
@@ -215,7 +214,6 @@ export default class jsonToCHandler implements FormatHandler {
           previousResult = previousResult[varName] = dataType.value;
         }
       }
-      previousLine = line;
     }
 
     let resultStr = JSON.stringify(resultObj, undefined, 4);

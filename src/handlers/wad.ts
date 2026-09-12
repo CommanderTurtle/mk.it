@@ -189,7 +189,7 @@ class wadHandler implements FormatHandler {
             const parsedMeta = JSON.parse(metaText);
             metadata = parsedMeta;
             wadType = parsedMeta.wadType;
-          } catch (e) {
+          } catch {
             // Invalid metadata, proceed without it
           }
         }

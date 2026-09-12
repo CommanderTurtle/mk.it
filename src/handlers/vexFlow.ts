@@ -67,7 +67,6 @@ class vexFlowHandler implements FormatHandler {
 
     const events: any[] = [];
     const ticksPerBeat = 480; // Standard MIDI resolution
-    let currentTick = 0;
     let currentTempo = 120; // Default BPM
 
     // Note name to MIDI number mapping
@@ -136,7 +135,7 @@ class vexFlowHandler implements FormatHandler {
       const measures = part.querySelectorAll("measure");
       console.log(`Part ${partIndex}: ${measures.length} measure(s)`);
 
-      measures.forEach((measure, measureIndex) => {
+      measures.forEach((measure, _measureIndex) => {
         const notes = measure.querySelectorAll("note");
 
         notes.forEach((note) => {
@@ -213,7 +212,6 @@ class vexFlowHandler implements FormatHandler {
     // to ensure proper format 0 MIDI file structure
 
     // Add header manually
-    const usedTracks = new Set(events.filter((e) => e.track >= 0).map((e) => e.track));
     events.unshift(
       {
         track: -1,
@@ -382,7 +380,7 @@ class vexFlowHandler implements FormatHandler {
         div.style.padding = "20px";
 
         // Render using vexml - we already have xmlString from above
-        const score = vexml.renderMusicXML(xmlString, div, { config });
+        const _score = vexml.renderMusicXML(xmlString, div, { config });
 
         // Wait a bit for rendering to complete
         await new Promise((resolve) => setTimeout(resolve, 100));

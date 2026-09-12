@@ -787,7 +787,7 @@ export class opusMagnumMainHandler implements FormatHandler {
         }
       }
       // Otherwise, split down the middle.
-      catch (_) {
+      catch {
         reagents = [];
         products = [];
 

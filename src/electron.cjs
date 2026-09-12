@@ -64,7 +64,7 @@ app.whenReady().then(() => {
         while (decodedPath !== decodeURIComponent(decodedPath)) {
           decodedPath = decodeURIComponent(decodedPath);
         }
-      } catch (e) {
+      } catch {
         return new Response("Malformed URL", { status: 400 });
       }
       urlPath = decodedPath;
@@ -89,7 +89,7 @@ app.whenReady().then(() => {
         statusText: response.statusText,
         headers: headers,
       });
-    } catch (error) {
+    } catch {
       return new Response("File Not Found", { status: 404 });
     }
   });

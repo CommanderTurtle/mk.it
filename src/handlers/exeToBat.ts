@@ -28,7 +28,6 @@ export default class exeToBatHandler implements FormatHandler {
     inputFiles: FileData[],
     inputFormat: FileFormat,
     outputFormat: FileFormat,
-    args?: string[],
   ): Promise<FileData[]> {
     if (DEBUG_EXE_TO_BAT) {
       console.log("[exe2bat] Converting:", inputFormat.mime, "→", outputFormat.mime);

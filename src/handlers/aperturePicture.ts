@@ -62,9 +62,6 @@ class aperturePictureHandler implements FormatHandler {
       }
     } else if (inputFormat.internal === "bmp") {
       // we're just throwing science at the wall to see what sticks
-      const w = 320,
-        h = 200;
-
       const inputMagickFormat = inputFormat.internal as MagickFormat;
       const inputSettings = new MagickReadSettings();
       const totalPixels = 320 * 200;

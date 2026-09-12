@@ -16,12 +16,9 @@ type Msg =
     }
   | { id: number; type: "encodeResult"; bytes: Uint8Array };
 
-let ready = false;
-
 async function init() {
   try {
     await initReflo("/convert/wasm/reflo_bg.wasm");
-    ready = true;
     // signal ready
     (self as any).postMessage({ id: 0, type: "ready" });
   } catch (e: any) {
@@ -62,5 +59,3 @@ self.onmessage = async (ev: MessageEvent) => {
     (self as any).postMessage({ id, type: "error", error: String(e) });
   }
 };
-
-

@@ -1,9 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 
-import {
-  parseTar,
-} from "nanotar";
+import { parseTar } from "nanotar";
 import JSZip from "jszip";
 
 const image_list = ["png", "jpg", "webp", "bmp", "tiff", "gif"];

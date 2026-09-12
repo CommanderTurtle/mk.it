@@ -59,6 +59,7 @@ export class lzhHandler implements FormatHandler {
 
         // Sanitize all string values to ensure valid JSON
         const sanitizeString = (str: string): string => {
+          // eslint-disable-next-line no-control-regex
           return str.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim() || "unknown";
         };
 

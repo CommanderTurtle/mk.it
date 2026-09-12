@@ -84,7 +84,7 @@ async function decodeWithBrowser(
   } catch (e) {
     try {
       await audioCtx.close();
-    } catch (_) {}
+    } catch {}
     throw e;
   }
 }
@@ -98,7 +98,7 @@ async function decodeWithFFmpeg(
   // produce f32le raw samples with WAV header so we can parse sampleRate/channels
   try {
     await ffmpeg.exec(["-i", "infile", "-f", "wav", "out.wav"]);
-  } catch (e) {
+  } catch {
     // If probing failed, try interpreting input as raw float32 PCM (f32le) with defaults
     try {
       await ffmpeg.exec([
@@ -252,7 +252,6 @@ class floHandler implements FormatHandler {
     inputFiles: FileData[],
     inputFormat: FileFormat,
     outputFormat: FileFormat,
-    args?: string[],
   ): Promise<FileData[]> {
     if (!inputFiles || inputFiles.length === 0) throw new RangeError("No input files.");
     const file = inputFiles[0];
@@ -309,7 +308,7 @@ class floHandler implements FormatHandler {
       } | null = null;
       try {
         decoded = await decodeWithBrowser(new Uint8Array(file.bytes));
-      } catch (e) {
+      } catch {
         // fallback to ffmpeg
         decoded = await decodeWithFFmpeg(new Uint8Array(file.bytes));
       }

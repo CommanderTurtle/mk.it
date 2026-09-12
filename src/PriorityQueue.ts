@@ -9,7 +9,7 @@ class PriorityQueue<T extends object> {
     if (cap < 1) {
       throw new RangeError("initial capacity must be greater than or equal to 1");
     }
-    this._queue = new Array<T>(cap);
+    this._queue = Array.from({ length: cap });
     this._comparator = com;
   }
 

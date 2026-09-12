@@ -47,7 +47,7 @@ export class espeakngHandler implements FormatHandler {
           tts.speak(
             new TextDecoder().decode(file.bytes),
             (audio: Float32Array, sampleRate: number) => {
-              resolve(SimpleTTS.createAudioBuffer(audio, tts.sampleRate) as AudioBuffer);
+              resolve(SimpleTTS.createAudioBuffer(audio, sampleRate) as AudioBuffer);
             },
           );
         });

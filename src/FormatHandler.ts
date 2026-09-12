@@ -85,15 +85,13 @@ export class FormatDefinition implements IFormatDefinition {
    * Builder can be used to create FileFormat based on this format definition
    */
   builder(ref: string) {
-    const def = this;
-
     const builder = {
       // FileFormat fields
-      name: def.name,
-      format: def.format,
-      extension: def.extension,
-      mime: def.mime,
-      category: def.category,
+      name: this.name,
+      format: this.format,
+      extension: this.extension,
+      mime: this.mime,
+      category: this.category,
       internal: ref,
       from: false,
       to: false,

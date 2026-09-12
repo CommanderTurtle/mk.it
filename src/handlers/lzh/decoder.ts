@@ -68,6 +68,7 @@ export class LZHDecoder {
     const decoder = new TextDecoder("utf-8", { fatal: false });
     let str = decoder.decode(validBytes);
     // Remove any remaining null bytes and control characters
+    // oxlint-disable-next-line eslint/no-control-regex
     str = str.replace(/[\x00-\x1F\x7F]/g, "");
     return str;
   }
@@ -102,8 +103,7 @@ export class LZHDecoder {
       return null; // End of archive or invalid header
     }
 
-    const startOffset = this.offset - 1;
-    const headerChecksum = this.readByte();
+    const _headerChecksum = this.readByte();
 
     // Read method (5 bytes)
     const method = this.readString(5);
@@ -133,7 +133,7 @@ export class LZHDecoder {
     const timestamp = this.dosDateTimeToDate(dosDate, dosTime);
 
     // Read attributes
-    const attributes = this.readByte();
+    const _attributes = this.readByte();
 
     // Read level
     const level = this.readByte();
@@ -205,6 +205,7 @@ export class LZHDecoder {
     }
 
     // Sanitize filename to ensure it's valid UTF-8 without null bytes
+    // oxlint-disable-next-line eslint/no-control-regex
     const sanitizedFilename = filename.replace(/[\x00-\x1F\x7F]/g, "").trim() || "unnamed";
 
     return {

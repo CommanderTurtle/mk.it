@@ -65,12 +65,12 @@ export namespace JsonType {
         this.numElements = pNumElements;
       }
       this.type = pType;
-      this.value = new Array(this.numElements);
+      this.value = Array.from({ length: this.numElements });
     }
 
     setNumElements(pNumElements: number) {
       this.numElements = pNumElements;
-      this.value = new Array(this.numElements);
+      this.value = Array.from({ length: this.numElements });
     }
 
     toCType(): string {
@@ -91,7 +91,7 @@ export namespace JsonType {
     toCType(): string {
       throw new Error("Unable to convert ObjectType to C type");
     }
-    convertValue(pValue: string): void {}
+    convertValue(_pValue: string): void {}
   }
 
   export class InvalidType implements JsonType {

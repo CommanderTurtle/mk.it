@@ -59,7 +59,7 @@ class alsHandler implements FormatHandler {
         let xml: string;
         try {
           xml = decoder.decode(decompressedBytes);
-        } catch (_) {
+        } catch {
           throw new Error("Invalid ALS file: decompressed data is not UTF-8 XML.");
         }
         if (!xml.trimStart().startsWith("<")) {

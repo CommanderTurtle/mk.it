@@ -122,7 +122,7 @@ export default class epubHandler implements FormatHandler {
 
   async doConvert(
     inputFiles: FileData[],
-    _inputFormat: FileFormat,
+    inputFormat: FileFormat,
     outputFormat: FileFormat,
     _args?: string[],
     ctx?: ConvertContext,
@@ -219,9 +219,10 @@ export default class epubHandler implements FormatHandler {
         ctx?.log(`Found ${totalSpineItems} spine chapters. Rendering concurrently...`);
 
         const CONCURRENCY = 8;
-        const results: Array<{ headStyles: string[]; bodyHTML: string } | null> = new Array(
-          totalSpineItems,
-        ).fill(null);
+        const results: Array<{ headStyles: string[]; bodyHTML: string } | null> = Array.from(
+          { length: totalSpineItems },
+          () => null,
+        );
         let currentIndex = 0;
 
         const processWorker = async () => {

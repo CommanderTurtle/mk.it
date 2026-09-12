@@ -84,7 +84,7 @@ class azw3Handler implements FormatHandler {
               const src = img.getAttribute("src");
               if (src && src.startsWith("kindle:embed:")) {
                 try {
-                  const [b, inline] = await (book as any).loadResourceBlob(src);
+                  const [b] = await (book as any).loadResourceBlob(src);
                   if (b) {
                     type = b.type;
                     const arrayBuffer = await b.arrayBuffer();

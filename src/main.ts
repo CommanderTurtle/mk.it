@@ -189,14 +189,6 @@ window.tryConvertByTraversing = async function (
   return null;
 };
 
-function downloadFile(bytes: Uint8Array, name: string, mime: string) {
-  const blob = new Blob([bytes as BlobPart], { type: mime });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = name;
-  link.click();
-}
-
 async function initSupportedFormats() {
   try {
     try {

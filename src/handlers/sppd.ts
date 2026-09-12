@@ -219,7 +219,7 @@ class sppdHandler implements FormatHandler {
   private pointLight = new THREE.PointLight(0xffffff, 1e5, 4096);
 
   private wallObjects: THREE.Mesh[] = [];
-  private entityObjects = new Array(2048);
+  private entityObjects = Array.from({ length: 2048 });
   private voxelGridOffset: Vector | null = null;
   private prevBluePortalPos: Vector | null = null;
   private prevOrangePortalPos: Vector | null = null;

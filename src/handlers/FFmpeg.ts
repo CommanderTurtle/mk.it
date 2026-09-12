@@ -141,7 +141,7 @@ class FFmpegHandler implements FormatHandler {
           const details = await getMuxerDetails(primaryFormat);
           extension = details.extension;
           mimeType = details.mimeType;
-        } catch (e) {
+        } catch {
           extension = format;
           mimeType = mime.getType(format) || "video/" + format;
         }
