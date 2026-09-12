@@ -1,6 +1,3 @@
-// file: flptojson.ts
-// npm install ts-flp buffer
-
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { Buffer } from "buffer";
 import CommonFormats, { Category } from "src/CommonFormats.ts";

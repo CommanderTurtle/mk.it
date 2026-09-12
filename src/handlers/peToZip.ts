@@ -1,6 +1,3 @@
-// file: petozip.ts
-// npm install pe-library jszip buffer
-
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import * as Pe from "pe-library";
 import JSZip from "jszip";
