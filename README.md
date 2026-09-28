@@ -11,7 +11,9 @@ bun install && `
 bun pm trust tesseract.js && `
 bun pm trust @parcel/watcher && `
 bun pm trust puppeteer esbuild canvas electron-winstaller && `
-bun install && bun run build
+bun pm trust es5-ext && bun install && cd src/handlers/sppd && bun install && `
+cd ../../../ && bun install && bun run build && `
+echo "not convoluted at all, build ready"
 ```
 
 Many online file conversion tools are **boring** and **insecure**. They only allow conversion between two formats in the same medium (images to images, videos to videos, etc.), and they require that you _upload your files to some server_.
