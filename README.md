@@ -195,6 +195,8 @@ RUN_OCR_E2E=1 bun test test/ui.test.ts
 
 ### Adding dependencies
 
+Dependencies are listed in [package.json](./package.json) and [.gitmodules](./.gitmodules); bundled components retain their upstream terms beside their source files.
+
 If your tool requires an external dependency (which it likely does), there are currently two well-established ways of going about this:
 
 - If it's an `npm` package, just install it to the project like you normally would.
