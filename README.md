@@ -195,7 +195,7 @@ RUN_OCR_E2E=1 bun test test/ui.test.ts
 
 ### Adding dependencies
 
-Dependencies are listed in [package.json](./package.json) and [.gitmodules](./.gitmodules); bundled components retain their upstream terms beside their source files.
+Project modifications use [AGPL-3.0](./LICENSE); inherited convert code retains its [upstream terms](./src/UPSTREAM-LICENSE), and dependencies listed in [package.json](./package.json) and [.gitmodules](./.gitmodules) retain their notices.
 
 If your tool requires an external dependency (which it likely does), there are currently two well-established ways of going about this:
 
