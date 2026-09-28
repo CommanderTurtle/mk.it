@@ -13,6 +13,8 @@ import { sourcePreview } from "src/tools/sourcePreview";
 import { ShareError, SharedFile } from "src/ui/AppState";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 import ToolShell from "src/ui/components/ToolShell";
+import CombinedPreview from "src/ui/components/CombinedPreview";
+import { parseCombinedMarkdown } from "src/tools/combined-markdown.js";
 
 import "./index.css";
 
@@ -45,6 +47,7 @@ export default function SharePage() {
 	const [hashes, setHashes] = useState<FileHashes | null>(null);
 	const [hashError, setHashError] = useState("");
 	const source = useMemo(() => file ? sourcePreview(file) : null, [file]);
+	const combined = useMemo(() => file && source && /(?:^|[/\\])combined\.md$/i.test(file.name) ? parseCombinedMarkdown(source.text) : null, [file, source]);
 	const editKind = file && source ? lnkrEditKind(file) : null;
 	const kind = file ? previewKind(file.mime) : null;
 	const previewDocument = useMemo(() => file && source ? documentPreview(file, source.text) : null, [file, source]);
@@ -242,7 +245,7 @@ export default function SharePage() {
 								</StyledButton>
 							</div>
 						</header>
-						<div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>
+						{combined && source ? <CombinedPreview source={source.text} /> : <div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>}
 					</section>
 				)}
 
@@ -263,7 +266,7 @@ export default function SharePage() {
 					onClick={event => { if (event.target === event.currentTarget) closePreview(); }}
 				>
 					<header><strong>{file.name}</strong><button type="button" onClick={closePreview} aria-label="Close preview"><X size={20} /></button></header>
-					<div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>
+					{combined && source ? <CombinedPreview source={source.text} /> : <div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>}
 				</dialog>
 			)}
 		</ToolShell>

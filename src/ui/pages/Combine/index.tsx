@@ -6,6 +6,7 @@ import { downloadText } from "src/tools/download";
 import { PendingArchive } from "src/ui/AppState";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 import ToolShell from "src/ui/components/ToolShell";
+import CombinedPreview from "src/ui/components/CombinedPreview";
 
 import "./index.css";
 
@@ -122,16 +123,7 @@ export default function CombinePage() {
 						{error && <div className="combine-error" role="alert">{error}</div>}
 						{result && previewMode === "raw" && <textarea className="combine-raw" value={result.markdown} readOnly spellcheck={false} aria-label="Combined Markdown" />}
 						{result && previewMode === "pretty" && (
-							<div className="combine-pretty">
-								{result.entries.map((entry, index) => (
-									<article key={`${entry.path}-${index}`}>
-										<h2>File: ./{entry.path}</h2>
-										{entry.omittedReason
-											? <p className="omitted">(omitted — {entry.omittedReason})</p>
-											: <pre><code>{entry.text}</code></pre>}
-									</article>
-								))}
-							</div>
+							<CombinedPreview source={result.markdown} />
 						)}
 					</>
 				)}

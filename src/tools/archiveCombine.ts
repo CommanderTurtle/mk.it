@@ -1,5 +1,6 @@
 import JSZip, { type JSZipObject } from "jszip";
 import { parseTar } from "nanotar";
+import { combinedFileSection } from "./combined-markdown.js";
 
 export const MAX_ARCHIVE_ENTRIES = 20_000;
 export const MAX_TEXT_FILE_BYTES = 8 * 1024 * 1024;
@@ -122,20 +123,6 @@ function decodeText(bytes: Uint8Array): string | undefined {
 	}
 }
 
-function longestBacktickRun(text: string): number {
-	let longest = 0;
-	let current = 0;
-	for (const char of text) {
-		if (char === "`") {
-			current += 1;
-			longest = Math.max(longest, current);
-		} else {
-			current = 0;
-		}
-	}
-	return longest;
-}
-
 export function renderCombinedMarkdown(entries: CombinedArchiveEntry[]): string {
 	return entries.map(entry => {
 		const heading = `## File: ./${entry.path}`;
@@ -144,9 +131,7 @@ export function renderCombinedMarkdown(entries: CombinedArchiveEntry[]): string 
 		}
 
 		const text = entry.text || "";
-		const fence = "`".repeat(Math.max(3, longestBacktickRun(text) + 1));
-		const trailingNewline = text.endsWith("\n") || text.length === 0 ? "" : "\n";
-		return `${heading}\n\n${fence}${entry.language}\n${text}${trailingNewline}${fence}\n\n***`;
+		return combinedFileSection(entry.path, text, entry.language);
 	}).join("\n\n") + (entries.length ? "\n" : "");
 }
 
