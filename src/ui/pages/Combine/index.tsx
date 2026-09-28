@@ -90,12 +90,12 @@ export default function CombinePage() {
 						<input
 							ref={inputRef}
 							type="file"
-							accept=".zip,.tar,application/zip,application/x-tar"
+							accept=".zip,.tar,.7z,application/zip,application/x-tar,application/x-7z-compressed"
 							onChange={() => void processArchive(inputRef.current?.files?.[0])}
 						/>
 						<FileArchive size={38} />
-						<strong>Select a ZIP or TAR archive</strong>
-						<span>ZIP and TAR stay entirely in this browser.</span>
+						<strong>Select a ZIP, TAR or 7z archive</strong>
+						<span>Archives stay entirely in this browser.</span>
 					</div>
 				)}
 

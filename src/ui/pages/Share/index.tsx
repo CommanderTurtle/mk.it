@@ -2,13 +2,15 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { Check, Copy, Download, Expand, ExternalLink, FileWarning, Link2, Pencil, X, ZoomIn } from "lucide-preact";
 
 import { copyText } from "src/tools/clipboard";
-import { documentPreview, type DocumentPreviewKind } from "src/tools/documentPreview";
-import { downloadBytes } from "src/tools/download";
+import { buildMarkdownPreviewDocument, documentPreview, type DocumentPreviewKind } from "src/tools/documentPreview";
+import { downloadBytes, downloadText } from "src/tools/download";
+import type { CombinedArchive } from "src/tools/archiveCombine";
 import { hashBytes } from "src/tools/hashes";
 import type { FileHashes } from "src/tools/hashes";
 import { imageViewerEval } from "src/tools/imageViewer";
 import { lnkrEditKind, lnkrEditUrl } from "src/tools/lnkr";
-import { isSharePreviewHash, mediaEmbedHtml, previewKind, sharePayloadFromHash, sharePreviewUrl, shareUrl, type MediaPreviewKind } from "src/tools/share";
+import { isSharePreviewHash, mediaEmbedHtml, previewKind, sharePayloadFromHash, sharePreviewUrl, shareUrl, type MediaPreviewKind, type SharedFileData } from "src/tools/share";
+import { previewSharedArchive, sharedArchiveFormat } from "src/tools/sharedArchive";
 import { sourcePreview } from "src/tools/sourcePreview";
 import { ShareError, SharedFile } from "src/ui/AppState";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
@@ -46,12 +48,18 @@ export default function SharePage() {
 	const [copyError, setCopyError] = useState("");
 	const [hashes, setHashes] = useState<FileHashes | null>(null);
 	const [hashError, setHashError] = useState("");
-	const source = useMemo(() => file ? sourcePreview(file) : null, [file]);
+	const [archivePreview, setArchivePreview] = useState<{ file: SharedFileData; result?: CombinedArchive; error?: string } | null>(null);
+	const archiveFormat = useMemo(() => file ? sharedArchiveFormat(file) : null, [file]);
+	const archiveResult = archivePreview?.file === file ? archivePreview?.result : undefined;
+	const archiveError = archivePreview?.file === file ? archivePreview?.error : undefined;
+	const source = useMemo(() => file && !archiveFormat ? sourcePreview(file) : null, [file, archiveFormat]);
 	const combined = useMemo(() => file && source && /(?:^|[/\\])combined\.md$/i.test(file.name) ? parseCombinedMarkdown(source.text) : null, [file, source]);
-	const editKind = file && source ? lnkrEditKind(file) : null;
-	const kind = file ? previewKind(file.mime) : null;
+	const combinedSource = archiveResult?.markdown ?? (combined && source ? source.text : null);
+	const editKind = archiveResult ? "markdown" : file && source ? lnkrEditKind(file) : null;
+	const kind = file && !archiveFormat ? previewKind(file.mime) : null;
 	const previewDocument = useMemo(() => file && source ? documentPreview(file, source.text) : null, [file, source]);
 	const displayKind: PreviewKind | null = kind || previewDocument?.kind || null;
+	const canPreview = Boolean(archiveResult || (displayKind && objectUrl));
 	const directPreview = isSharePreviewHash(location.hash);
 	const base = new URL(import.meta.env.BASE_URL, location.origin).href;
 	const link = useMemo(() => {
@@ -60,27 +68,39 @@ export default function SharePage() {
 			? shareUrl(file, new URL(import.meta.env.BASE_URL, location.origin).href)
 			: location.href;
 	}, [file]);
-	const previewLink = useMemo(() => file && previewDocument ? sharePreviewUrl(file, base) : "", [file, previewDocument, base]);
+	const previewLink = useMemo(() => file && (previewDocument || archiveResult) ? sharePreviewUrl(file, base) : "", [file, previewDocument, archiveResult, base]);
 
 	useEffect(() => {
-		if (!file) return;
+		setArchivePreview(null);
+		if (!file || !archiveFormat) return;
+		let cancelled = false;
+		void previewSharedArchive(file).then(result => {
+			if (!cancelled && result) setArchivePreview({ file, result });
+		}).catch(caught => {
+			if (!cancelled) setArchivePreview({ file, error: caught instanceof Error ? caught.message : String(caught) });
+		});
+		return () => { cancelled = true; };
+	}, [file, archiveFormat]);
+
+	useEffect(() => {
+		if (!file || archiveFormat) { setObjectUrl(""); return; }
 		const url = previewDocument
 			? URL.createObjectURL(new Blob([previewDocument.html], { type: "text/html;charset=utf-8" }))
 			: URL.createObjectURL(new Blob([file.bytes as BlobPart], { type: file.mime }));
 		setObjectUrl(url);
 		return () => URL.revokeObjectURL(url);
-	}, [file, previewDocument]);
+	}, [file, previewDocument, archiveFormat]);
 
 	useEffect(() => {
-		if (directPreview && displayKind && objectUrl) setExpanded(true);
-	}, [directPreview, displayKind, objectUrl]);
+		if (directPreview && canPreview) setExpanded(true);
+	}, [directPreview, canPreview]);
 
 	useEffect(() => {
 		const dialog = dialogRef.current;
 		if (!dialog) return;
 		if (expanded && !dialog.open) dialog.showModal();
 		if (!expanded && dialog.open) dialog.close();
-	}, [expanded, objectUrl]);
+	}, [expanded, objectUrl, canPreview]);
 
 	useEffect(() => {
 		if (!file) return;
@@ -126,15 +146,16 @@ export default function SharePage() {
 	}
 
 	const copyHtml = async () => {
-		const html = previewDocument?.html || mediaEmbedHtml(file);
+		const html = archiveResult ? buildMarkdownPreviewDocument(archiveResult.markdown, "combined.md") : previewDocument?.html || mediaEmbedHtml(file);
 		if (html) await copy("html", html);
 	};
 
 	const editInLnkr = () => {
-		if (!source || !editKind) return;
+		const text = archiveResult?.markdown ?? source?.text;
+		if (text === undefined || !editKind) return;
 		try {
 			// Synchronous, on-click encoding preserves browser user activation.
-			window.open(lnkrEditUrl(source.text, editKind), "_blank", "noopener,noreferrer");
+			window.open(lnkrEditUrl(text, editKind), "_blank", "noopener,noreferrer");
 			setCopyError("");
 		} catch (caught) {
 			setCopyError(caught instanceof Error ? caught.message : String(caught));
@@ -157,6 +178,12 @@ export default function SharePage() {
 		setExpanded(false);
 	};
 
+	const previewContent = () => {
+		if (archiveResult && !archiveResult.entries.length) return <p className="share-archive-note">This archive contains no files.</p>;
+		if (combinedSource !== null) return <CombinedPreview source={combinedSource} />;
+		return displayKind ? <div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div> : null;
+	};
+
 	return (
 		<ToolShell
 			title="Shared file"
@@ -169,7 +196,7 @@ export default function SharePage() {
 				</div>
 				<div className="share-head-tools">
 					<div className="share-actions">
-						{previewDocument && (
+						{previewLink && (
 							<StyledButton title="Open the direct #p preview" onClick={() => { location.href = previewLink; }}>
 								<ExternalLink size={15} /> Open preview
 							</StyledButton>
@@ -179,7 +206,7 @@ export default function SharePage() {
 							{copied === "link" ? "Copied" : "Copy share link"}
 						</StyledButton>
 						<StyledButton variant={ButtonVariant.Primary} onClick={() => downloadBytes(file.bytes, file.name, file.mime)}>
-							<Download size={15} /> Download
+							<Download size={15} /> {archiveFormat ? "Download original archive" : "Download"}
 						</StyledButton>
 					</div>
 					<div className="share-hashes" aria-live="polite">
@@ -221,11 +248,16 @@ export default function SharePage() {
 					</details>
 				)}
 
-				{displayKind && objectUrl && (
+				{canPreview && (
 					<section className="tool-surface share-preview">
 						<header>
-							<div><strong>Preview</strong><small>{displayKind}</small></div>
+							<div><strong>Preview</strong><small>{archiveResult ? "combined.md" : displayKind}</small></div>
 							<div>
+								{archiveResult && (
+									<StyledButton onClick={() => downloadText(archiveResult.markdown, "combined.md", "text/markdown;charset=utf-8")}>
+										<Download size={14} /> Download combined.md
+									</StyledButton>
+								)}
 								{kind === "image" && (
 									<StyledButton title="Open interactive pan-and-zoom image viewer" onClick={openImageViewer}>
 										<ZoomIn size={14} /> Pan &amp; zoom
@@ -245,11 +277,20 @@ export default function SharePage() {
 								</StyledButton>
 							</div>
 						</header>
-						{combined && source ? <CombinedPreview source={source.text} /> : <div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>}
+						{archiveResult && <p className="share-archive-note">Text preview only; binary files stay in the original archive. The download and checksums above always refer to that original archive.</p>}
+						{previewContent()}
 					</section>
 				)}
 
-				{!displayKind && !source && (
+				{archiveFormat && !archiveResult && (
+					<section className="tool-surface share-binary" role={archiveError ? "alert" : "status"} aria-busy={!archiveError}>
+						<strong>{archiveError ? "Archive preview unavailable" : "Reading archive…"}</strong>
+						<span>{archiveError || "Building combined.md locally in your browser."}</span>
+						<span>The original archive and its checksums remain available above.</span>
+					</section>
+				)}
+
+				{!archiveFormat && !displayKind && !source && (
 					<section className="tool-surface share-binary">
 						<FileWarning size={30} />
 						<strong>Binary file</strong>
@@ -258,7 +299,7 @@ export default function SharePage() {
 				)}
 			</div>
 
-			{displayKind && objectUrl && (
+			{canPreview && (
 				<dialog
 					ref={dialogRef}
 					className="share-preview-dialog"
@@ -266,7 +307,7 @@ export default function SharePage() {
 					onClick={event => { if (event.target === event.currentTarget) closePreview(); }}
 				>
 					<header><strong>{file.name}</strong><button type="button" onClick={closePreview} aria-label="Close preview"><X size={20} /></button></header>
-					{combined && source ? <CombinedPreview source={source.text} /> : <div className={`share-media share-media--${displayKind}`}><Media kind={displayKind} url={objectUrl} name={file.name} /></div>}
+					{previewContent()}
 				</dialog>
 			)}
 		</ToolShell>

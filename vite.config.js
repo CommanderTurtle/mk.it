@@ -14,6 +14,7 @@ export default defineConfig({
     ]
   },
   base: "/make/",
+  worker: { format: "es" },
   plugins: [
     viteStaticCopy({
       targets: [

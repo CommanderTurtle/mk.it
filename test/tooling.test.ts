@@ -177,7 +177,7 @@ describe("archive combiner", () => {
 	test("recognizes ZIP and uncompressed TAR inputs by name or MIME", () => {
 		expect(isSupportedArchive({ name: "source.zip", type: "" })).toBe(true);
 		expect(isSupportedArchive({ name: "source.bin", type: "application/x-tar" })).toBe(true);
-		expect(isSupportedArchive({ name: "source.7z", type: "application/x-7z-compressed" })).toBe(false);
+		expect(isSupportedArchive({ name: "source.7z", type: "application/x-7z-compressed" })).toBe(true);
 	});
 	test("combines ZIP source text and keeps explicit binary omissions", async () => {
 		const zip = new JSZip();

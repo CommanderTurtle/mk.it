@@ -22,7 +22,7 @@ export interface CombinedArchive {
 	omitted: number;
 }
 
-interface RawArchiveEntry {
+export interface RawArchiveEntry {
 	path: string;
 	size: number;
 	read: () => Promise<Uint8Array>;
@@ -174,18 +174,39 @@ function isTar(file: Pick<File, "name" | "type">): boolean {
 	return /\.tar$/i.test(file.name) || file.type === "application/x-tar";
 }
 
+function isSevenZip(file: Pick<File, "name" | "type">): boolean {
+	return /\.7z$/i.test(file.name) || file.type === "application/x-7z-compressed";
+}
+
 export function isSupportedArchive(file: Pick<File, "name" | "type">): boolean {
-	return isZip(file) || isTar(file);
+	return isZip(file) || isTar(file) || isSevenZip(file);
 }
 
 export async function combineArchive(file: File): Promise<CombinedArchive> {
 	if (file.size > MAX_TOTAL_INFLATED_BYTES) {
 		throw new Error(`The archive itself exceeds the ${formatBytes(MAX_TOTAL_INFLATED_BYTES)} safety limit.`);
 	}
+	// 7-Zip's synchronous WASM runs off the UI thread and is released after each preview.
+	if (isSevenZip(file) && typeof window !== "undefined") {
+		return new Promise((resolve, reject) => {
+			const worker = new Worker(new URL("./archiveCombine.worker.ts", import.meta.url), { type: "module" });
+			const finish = () => { clearTimeout(timer); worker.terminate(); };
+			const timer = setTimeout(() => { finish(); reject(new Error("Archive preview exceeded the one-minute safety limit.")); }, 60_000);
+			worker.onmessage = ({ data }) => { finish(); data.error ? reject(new Error(data.error)) : resolve(data.result); };
+			worker.onerror = () => { finish(); reject(new Error("The local archive preview engine could not be loaded.")); };
+			worker.postMessage(file);
+		});
+	}
 	let rawEntries: RawArchiveEntry[];
 	if (isZip(file)) rawEntries = await readZipEntries(file);
 	else if (isTar(file)) rawEntries = await readTarEntries(file);
-	else throw new Error("Choose a ZIP or TAR archive.");
+	else if (isSevenZip(file)) {
+		const { readSevenZipEntries } = await import("./sevenZipArchive");
+		rawEntries = await readSevenZipEntries(file, {
+			maxEntries: MAX_ARCHIVE_ENTRIES, maxInflatedBytes: MAX_TOTAL_INFLATED_BYTES, maxTextBytes: MAX_TEXT_FILE_BYTES,
+			isBinary: path => BINARY_EXTENSIONS.has(extensionFor(path))
+		});
+	} else throw new Error("Choose a ZIP, TAR or 7z archive.");
 
 	if (rawEntries.length > MAX_ARCHIVE_ENTRIES) {
 		throw new Error(`The archive contains ${rawEntries.length.toLocaleString()} files; the safe limit is ${MAX_ARCHIVE_ENTRIES.toLocaleString()}.`);

@@ -315,7 +315,7 @@ export default function UploadPage() {
 					</button>
 					<button className="home-route-card" onClick={() => CurrentPage.value = Pages.Combine}>
 						<span className="home-tool-icon"><FileArchive size={21} /></span>
-						<span className="route-copy"><strong>Archive to Markdown</strong><small>Combine ZIP or TAR source trees; mark binaries omitted.</small></span>
+						<span className="route-copy"><strong>Archive to Markdown</strong><small>Combine ZIP, TAR or 7z source trees; mark binaries omitted.</small></span>
 						<ArrowRight size={18} />
 					</button>
 				</section>
