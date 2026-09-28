@@ -1,12 +1,15 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
-
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { BadMagicError, InitializationError } from "src/errors.ts";
 
 class aperturePictureHandler implements FormatHandler {
   public name: string = "aperturePicture";
   public supportedFormats?: FileFormat[];
   public ready: boolean = false;
+  public offload: boolean = true;
+
+  #canvas?: OffscreenCanvas;
+  #ctx?: OffscreenCanvasRenderingContext2D;
 
   async init() {
     this.supportedFormats = [
@@ -16,16 +19,15 @@ class aperturePictureHandler implements FormatHandler {
         extension: "apf",
         mime: "image/x-aperture-picture",
         from: true,
-        to: false,
+        to: true,
         internal: "apf",
         category: Category.IMAGE,
         lossless: true,
       },
-      CommonFormats.BMP.builder("bmp")
-        .allowFrom(false)
-        .allowTo(true)
-        .markLossless(),
+      CommonFormats.BMP.builder("bmp").allowFrom(true).allowTo(true).markLossless(),
     ];
+    this.#canvas = new OffscreenCanvas(320, 200);
+    this.#ctx = this.#canvas.getContext("2d") || undefined;
     this.ready = true;
   }
 
@@ -37,25 +39,66 @@ class aperturePictureHandler implements FormatHandler {
     const outputFiles: FileData[] = [];
     const decoder = new TextDecoder();
 
-    for (const file of inputFiles) {
-      const text = decoder.decode(file.bytes);
-      const lines = text.split(/\r?\n/);
-      if (lines[0] !== "APERTURE IMAGE FORMAT (c) 1985")
-        throw new BadMagicError(`File is not an APF file as it lacks the magic header. First line of file: ${lines[0]}`);
+    if (inputFormat.internal === "apf") {
+      for (const file of inputFiles) {
+        const text = decoder.decode(file.bytes);
+        const lines = text.split(/\r?\n/);
+        if (lines[0] !== "APERTURE IMAGE FORMAT (c) 1985")
+          throw new BadMagicError(
+            `File is not an APF file as it lacks the magic header. First line of file: ${lines[0]}`,
+          );
 
-      const SK = parseInt(lines[1]);
-      const data = lines.slice(2).join("");
-      const bitmap = decodeAPF(data, SK);
-      const bmp = bitmapTo1BitBMP(bitmap, 320, 200);
+        const SK = parseInt(lines[1]);
+        const data = lines.slice(2).join("");
+        const bitmap = decodeAPF(data, SK);
+        const bmp = bitmapTo1BitBMP(bitmap, 320, 200);
 
-      outputFiles.push({
-        bytes: bmp,
-        name: file.name.replace(/\.[^/.]+$/, "") + ".bmp",
-      });
+        outputFiles.push({
+          bytes: bmp,
+          name: file.name.replace(/\.[^/.]+$/, "") + ".bmp",
+        });
+      }
+    } else if (inputFormat.internal === "bmp") {
+      if (!this.#canvas || !this.#ctx) {
+        throw new InitializationError("Handler not initialized.");
+      }
+      for (const inputFile of inputFiles) {
+        const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
+        const image = await createImageBitmap(blob);
+        try {
+          this.#ctx.fillStyle = "white";
+          this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
+          this.#ctx.drawImage(image, 0, 0, this.#canvas.width, this.#canvas.height);
+        } finally {
+          image.close();
+        }
+
+        const pixels = this.#ctx.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+        const data = new Uint8Array(pixels.width * pixels.height);
+        for (let i = 0; i < data.length; i++) {
+          const brightness = rgbaToGrayscale(
+            pixels.data[i * 4],
+            pixels.data[i * 4 + 1],
+            pixels.data[i * 4 + 2],
+            1,
+          );
+          data[i] = brightness < 128 ? 0 : 255;
+        }
+        outputFiles.push({
+          bytes: new TextEncoder().encode(encodeAPF(data)),
+          name: inputFile.name.replace(/\.[^/.]+$/, "") + ".apf",
+        });
+      }
+    } else {
+      throw new Error("Input not APF or BMP");
     }
-
     return outputFiles;
   }
+}
+
+function rgbaToGrayscale(r: number, g: number, b: number, a: number): number {
+  // https://www.grayscaleimage.com/three-algorithms-for-converting-color-to-grayscale/
+  return 0.299 * (r * a) + 0.587 * (g * a) + 0.114 * (b * a);
 }
 
 function decodeAPF(data: string, SK: number): Uint8Array {
@@ -68,7 +111,8 @@ function decodeAPF(data: string, SK: number): Uint8Array {
     draw = true, // no idea how this works. the original basic code from the ARG sets draw to false and then inverts it and when i implemented that it kinda worked but the colour was inverted so i removed the draw  = !draw and it refused to draw anything so i just flipped this to true and now it works. i'm way too ill for this
     sn = 0;
 
-  for (let i = 0; i < data.length; i++) { // this loop doesn't exactly match what the original basic script does but it should be cleaner. it went through a lot of iterations while i was trying to fix edge-cases so if anything looks off lmk
+  for (let i = 0; i < data.length; i++) {
+    // this loop doesn't exactly match what the original basic script does but it should be cleaner. it went through a lot of iterations while i was trying to fix edge-cases so if anything looks off lmk
     let r = data.charCodeAt(i) - 32;
     draw = !draw;
 
@@ -90,7 +134,69 @@ function decodeAPF(data: string, SK: number): Uint8Array {
   return bmp;
 }
 
-function bitmapTo1BitBMP( // note i initially used 24-bit BMPs but the filesize was much larger for a b&w image so i decided to go with a 1-bit BMP. unfortunately this means the code to make it is much larger because i have to create a larger header for the colour palette and i have to do some bit shifting because of the nature of writing to bits instead of bytes whereas I could just write in a loop for 24-bit. worth it for the smaller file size though trust me
+// split array into 200 arrays that are then reversed, converted into 255s and 0s, and turned back into 1 array
+function APFarray(data: Uint8Array): Uint8Array {
+  let temparray: number[] = [];
+  let newarray: number[][] = [];
+  let pal: number[] = [];
+  let ispalflipped: boolean = false;
+
+  for (const b of data) {
+    if (!pal.includes(b)) {
+      // get used colors
+      pal.push(b);
+    }
+    if (pal.length === 2) {
+      break;
+    }
+  }
+  if (pal[0] > pal[1]) {
+    ispalflipped = true;
+  }
+  for (const b of data) {
+    let uh = 0;
+    if (ispalflipped) {
+      uh = (1 - pal.indexOf(b)) * 255;
+    } else {
+      uh = pal.indexOf(b) * 255;
+    }
+    temparray.push(uh);
+    if (temparray.length === 320) {
+      newarray.push(temparray);
+      temparray = []; // clear temp array and add it to the new array
+    }
+  }
+
+  let revarray: Uint8Array = new Uint8Array(newarray.toReversed().flat());
+  return revarray;
+}
+
+function encodeAPF(data: Uint8Array): string {
+  let apf: string = "APERTURE IMAGE FORMAT (c) 1985\n1\n"; // header and ls of 1
+  const q_data = APFarray(data);
+  console.log(q_data);
+  let runlen = 0;
+  let currun = 0;
+
+  for (const p of q_data) {
+    if (p === currun) {
+      runlen += 1;
+      if (runlen == 94) {
+        runlen = 0;
+        apf += "~ ";
+      }
+    } else {
+      apf += String.fromCharCode(runlen + 32);
+      currun = p;
+      runlen = 1;
+    }
+  }
+  apf += String.fromCharCode(runlen + 32);
+  return apf;
+}
+
+function bitmapTo1BitBMP(
+  // note i initially used 24-bit BMPs but the filesize was much larger for a b&w image so i decided to go with a 1-bit BMP. unfortunately this means the code to make it is much larger because i have to create a larger header for the colour palette and i have to do some bit shifting because of the nature of writing to bits instead of bytes whereas I could just write in a loop for 24-bit. worth it for the smaller file size though trust me
   bitmap: Uint8Array,
   width: number,
   height: number,
@@ -146,5 +252,4 @@ function bitmapTo1BitBMP( // note i initially used 24-bit BMPs but the filesize 
 
 export default aperturePictureHandler;
 
-// logical next step is to go from BMP to APF but that is far beyond my level of knowledge. if anyone wants to take a crack at it the original basic code is in the old ARG Wiki at http://portalwiki.asshatter.org/index.php/Aperture_Image_Format.html#GW-Basic_AMF.2FAPF_Viewer_Source
 // if anyone wants to implement basic 1-bit colour, the .amf format is very simple, covered at http://portalwiki.asshatter.org/index.php/Aperture_Menu_Format.html. All you'd need to implement that is to check line 0 is APERTURE MENU FORMAT (c) 1985 and then line 1 is the colour info, comma separated. Idk what the RGB mappings for them are but the number meanings are at https://en.wikibooks.org/wiki/QBasic/Text_Output#Color_by_Number

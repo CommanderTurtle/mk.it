@@ -62,6 +62,8 @@ describe("four-tool home", () => {
 	test("keeps the original converter and exposes the three new tools", async () => {
 		const text = await page.$eval(".home-shell", element => element.textContent || "");
 		expect(text).toContain("mk.it");
+		expect(await page.$eval("footer .footer-copyright", element => element.textContent?.trim())).toBe("🐢");
+		expect(await page.$eval("footer a", element => element.getAttribute("href"))).toBe("https://github.com/CommanderTurtle/mk.it");
 		expect(text).toContain("Convert a file");
 		expect(text).toContain("Base64 file");
 		expect(text).toContain("Image OCR");
@@ -274,11 +276,12 @@ describe("four-tool home", () => {
 		await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>(".base64-panel textarea")?.value.startsWith("data:application/zip;base64,"));
 		await clickButtonContaining(".base64-panel", "Done");
 		await clickButtonContaining(".base64-details", "Combine");
-		await page.waitForSelector(".combine-pretty article");
-		const pretty = await page.$eval(".combine-pretty", element => element.textContent || "");
-		expect(pretty).toContain("src/index.js");
-		expect(pretty).toContain("native/tool.dll");
-		expect(pretty).toContain("omitted");
+		await page.waitForSelector(".combined-browser .cb-file");
+		const paths = await page.$$eval(".cb-file", elements => elements.map(element => element.getAttribute("title")));
+		expect(paths).toEqual(["native/tool.dll", "src/index.js"]);
+		expect(await page.$eval(".cb-content", element => element.textContent || "")).toContain("console.log('browser test');");
+		await page.click('.cb-file[title="native/tool.dll"]');
+		expect(await page.$eval(".cb-content", element => element.textContent || "")).toContain("Omitted:");
 
 		await clickButtonContaining(".combine-actions", "Render raw");
 		await page.waitForSelector(".combine-raw");

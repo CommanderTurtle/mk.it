@@ -55,6 +55,7 @@ Ever since the YouTube video released, we've been getting spammed with issues su
 There are thousands of file formats out there. It can take hours to add support for just one. The math is simple - we can't possibly support every single file. As such, simply listing your favorite file formats is not helpful. We already know that there are formats we don't support, we don't need tickets to tell us that.
 
 When suggesting a file format, you must _at minimum_:
+
 - Make sure that there isn't already an issue about the same thing, and that we don't already support the format.
 - Explain what you expect the conversion to be like (what medium is it converting to/from). It's important to note here that simply parsing the underlying data is _not sufficient_. Imagine if we only treated SVG images as raw XML data and didn't support converting them to raster images - that would defeat the point. In other words, try to avoid crude "binary waterfalls".
 - Provide links to existing browser-based solutions if possible, or at the very least a reference for implementing the format, and make sure the license is compatible with GPL-2.0.
@@ -69,7 +70,7 @@ Though please note, "converting X to Y doesn't work" is **not** a bug report.  H
 
 ### Local development (Bun + Vite)
 
-1. Clone this repository ***WITH SUBMODULES***. You can use `git clone --recursive https://github.com/p2r3/convert` for that. Omitting submodules will leave you missing a few dependencies.
+1. Clone this repository _**WITH SUBMODULES**_. You can use `git clone --recursive https://github.com/p2r3/convert` for that. Omitting submodules will leave you missing a few dependencies.
 2. Install [Bun](https://bun.sh/).
 3. Run `bun install` to install dependencies.
 4. Run `bunx vite` to start the development server.
@@ -123,14 +124,10 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 
 class dummyHandler implements FormatHandler {
-
   public name: string = "dummy";
   public supportedFormats: FileFormat[] = [
     // Example PNG format, with both input and output disabled
-    CommonFormats.PNG.builder("png")
-      .markLossless()
-      .allowFrom(false)
-      .allowTo(false),
+    CommonFormats.PNG.builder("png").markLossless().allowFrom(false).allowTo(false),
 
     // Alternatively, if you need a custom format, define it like so:
     {
@@ -141,25 +138,25 @@ class dummyHandler implements FormatHandler {
       from: false,
       to: false,
       internal: "gif",
-      category: [Category.IMAGE, CATEGORY.VIDEO], // See src/CommonFormats.ts for valid categories
-      lossless: false
+      category: [Category.IMAGE, Category.VIDEO], // See src/CommonFormats.ts for valid categories
+      lossless: false,
     },
   ];
   public ready: boolean = false;
+  public offload: boolean = true;
 
-  async init () {
+  async init() {
     this.ready = true;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
     return outputFiles;
   }
-
 }
 
 export default dummyHandler;
@@ -171,8 +168,9 @@ There are a few additional things that I want to point out in particular:
 
 - Pay attention to the naming system. If your tool is called `dummy`, then the class should be called `dummyHandler`, and the file should be called `dummy.ts`.
 - The handler is responsible for setting the output file's name. This is done to allow for flexibility in rare cases where the _full_ file name matters. Of course, in most cases, you'll only have to swap the file extension.
-- The handler is also responsible for ensuring that any byte buffers that enter or exit the handler _do not get mutated_. If necessary, clone the buffer by wrapping it in `new Uint8Array()`.
+- The handler is also responsible for ensuring that any FileData or byte buffer objects that enter the handler _do not get mutated_. If necessary, clone the buffer by wrapping it in `new Uint8Array()`.
 - When handling MIME types, run them through [normalizeMimeType](src/normalizeMimeType.ts) first. One file can have multiple valid MIME types, which isn't great when you're trying to match them algorithmically.
+- Your handler may run in a web worker, so make sure that you do not use any incompatible Web APIs. `HTMLCanvasElement` -> `OffscreenCanvas` (`toBlob()` -> `convertToBlob()`), `new Image()` -> `createImageBitmap()`, avoid web audio and DOM APIs where possible. `offload` is last resort.
 - When implementing/suggesting a new file format, please treat the file as the media that it represents, not the data that it contains. For example, if you were making an SVG handler, you should treat the file as an _image_, not as XML. In other words, avoid simple "binary waterfalls", as they're not semantically meaningful.
 
 ### Testing

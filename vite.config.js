@@ -1,46 +1,45 @@
 import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import tsconfigPaths from "vite-tsconfig-paths";
-import preact from "@preact/preset-vite"
+import preact from "@preact/preset-vite";
 
 export default defineConfig({
   publicDir: "public",
   optimizeDeps: {
-    exclude: [
-      "@ffmpeg/ffmpeg",
-      "@sqlite.org/sqlite-wasm",
-      "@bokuweb/zstd-wasm",
-      "@yowasp/clang",
-    ]
+    exclude: ["@ffmpeg/ffmpeg", "@sqlite.org/sqlite-wasm", "@bokuweb/zstd-wasm", "@yowasp/clang"],
   },
   base: "/make/",
-  worker: { format: "es" },
+  worker: {
+    format: "es",
+  },
+  resolve: {
+    tsconfigPaths: true,
+  },
   plugins: [
     viteStaticCopy({
       targets: [
         {
           src: "favicon.ico",
-          dest: "."
+          dest: ".",
         },
         {
           src: "node_modules/@flo-audio/reflo/reflo_bg.wasm",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "src/handlers/pandoc/pandoc.wasm",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "node_modules/@ffmpeg/core/dist/esm/ffmpeg-core.*",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "node_modules/@imagemagick/magick-wasm/dist/magick.wasm",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "src/handlers/libopenmpt/libopenmpt.wasm",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "src/handlers/libopenmpt/libopenmpt.js",
@@ -49,75 +48,82 @@ export default defineConfig({
           // rebasing its otherwise-unused locateFile fallback for mk.it.
           transform: {
             encoding: "utf8",
-            handler: content => content.replaceAll("/convert/", "/make/")
-          }
+            handler: (content) => content.replaceAll("/convert/", "/make/"),
+          },
         },
         {
           src: "node_modules/js-synthesizer/externals/libfluidsynth-2.4.6.js",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "node_modules/js-synthesizer/dist/js-synthesizer.js",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "src/handlers/midi/TimGM6mb.sf2",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "src/handlers/espeakng.js/js/espeakng.worker.js",
-          dest: "js"
+          dest: "js",
         },
         {
           src: "src/handlers/espeakng.js/js/espeakng.worker.data",
-          dest: "js"
+          dest: "js",
+        },
+        {
+          src: "node_modules/pdfjs-dist/{standard_fonts,cmaps,wasm}",
+          dest: "js/pdfjs",
         },
         {
           src: "node_modules/pdf-parse/dist/pdf-parse/web/pdf.worker.mjs",
-          dest: "js"
+          dest: "js",
         },
         {
           src: "node_modules/tesseract.js/dist/worker.min.js",
-          dest: "js/tesseract"
+          dest: "js/tesseract",
         },
         {
           src: "node_modules/tesseract.js-core/tesseract-core-lstm.wasm.js",
-          dest: "js/tesseract-core"
+          dest: "js/tesseract-core",
         },
         {
           src: "node_modules/tesseract.js-core/tesseract-core-simd-lstm.wasm.js",
-          dest: "js/tesseract-core"
+          dest: "js/tesseract-core",
         },
         {
           src: "node_modules/tesseract.js-core/tesseract-core-relaxedsimd-lstm.wasm.js",
-          dest: "js/tesseract-core"
+          dest: "js/tesseract-core",
         },
         {
           src: "node_modules/@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz",
-          dest: "tesseract-lang"
+          dest: "tesseract-lang",
         },
         {
           src: "node_modules/turbowarp-packager-browser/dist/scaffolding/*",
-          dest: "js/turbowarp-scaffolding"
+          dest: "js/turbowarp-scaffolding",
         },
         {
           src: "node_modules/7z-wasm/7zz.wasm",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm",
-          dest: "wasm"
+          dest: "wasm",
         },
         {
           src: "node_modules/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm",
-          dest: "wasm"
-        }
-      ]
+          dest: "wasm",
+        },
+        {
+          src: "src/handlers/typst-assets/files/fonts/*",
+          dest: "wasm/typst",
+        },
+      ],
     }),
-    tsconfigPaths(),
     preact({
       prefreshEnabled: false,
-      reactAliasesEnabled: true
-    })
-  ]
+      reactAliasesEnabled: true,
+    }),
+  ],
 });

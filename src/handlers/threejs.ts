@@ -1,5 +1,6 @@
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import { InitializationError } from "src/errors.ts";
 
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -7,7 +8,6 @@ import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 
 class threejsHandler implements FormatHandler {
-
   public name: string = "threejs";
   public supportedFormats = [
     {
@@ -19,7 +19,7 @@ class threejsHandler implements FormatHandler {
       to: false,
       internal: "glb",
       category: Category.MODEL,
-      lossless: false
+      lossless: false,
     },
     {
       name: "GL Transmission Format",
@@ -30,7 +30,7 @@ class threejsHandler implements FormatHandler {
       to: false,
       internal: "glb",
       category: Category.MODEL,
-      lossless: false
+      lossless: false,
     },
     {
       name: "Wavefront OBJ",
@@ -45,28 +45,35 @@ class threejsHandler implements FormatHandler {
     },
     CommonFormats.PNG.supported("png", false, true),
     CommonFormats.JPEG.supported("jpeg", false, true),
-    CommonFormats.WEBP.supported("webp", false, true)
+    CommonFormats.WEBP.supported("webp", false, true),
   ];
   public ready: boolean = false;
+  public offload: boolean = true;
 
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(90, 16 / 9, 0.1, 4096);
-  private renderer = new THREE.WebGLRenderer();
+  private canvas?: OffscreenCanvas;
+  private renderer?: THREE.WebGLRenderer;
 
-  async init () {
-    this.renderer.setSize(960, 540);
+  async init() {
+    this.canvas = new OffscreenCanvas(960, 540);
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    this.renderer.setSize(960, 540, false);
     this.ready = true;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
+    if (!this.ready || !this.canvas || !this.renderer) {
+      throw new InitializationError("Handler not initialized.");
+    }
+
     const outputFiles: FileData[] = [];
 
     for (const inputFile of inputFiles) {
-
       const blob = new Blob([inputFile.bytes as BlobPart]);
       const url = URL.createObjectURL(blob);
 
@@ -100,20 +107,14 @@ class threejsHandler implements FormatHandler {
       this.renderer.render(this.scene, this.camera);
       this.scene.remove(object);
 
-      const bytes: Uint8Array = await new Promise((resolve, reject) => {
-        this.renderer.domElement.toBlob((blob) => {
-          if (!blob) return reject("Canvas output failed");
-          blob.arrayBuffer().then(buf => resolve(new Uint8Array(buf)));
-        }, outputFormat.mime);
-      });
+      const rendered = await this.canvas.convertToBlob({ type: outputFormat.mime });
+      const bytes = new Uint8Array(await rendered.arrayBuffer());
       const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
       outputFiles.push({ bytes, name });
-
     }
 
     return outputFiles;
   }
-
 }
 
 export default threejsHandler;

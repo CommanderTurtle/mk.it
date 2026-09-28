@@ -9,6 +9,7 @@ export default class wabtHandler implements FormatHandler {
   public name: string = "wabt";
   public supportedFormats?: FileFormat[];
   public ready: boolean = false;
+  public offload: boolean = true;
 
   private wabtModule?: WabtModule;
 
@@ -71,9 +72,7 @@ export default class wabtHandler implements FormatHandler {
     if (inputFormat.internal == "wasm" && outputFormat.internal == "wat") {
       for (const file of inputFiles) {
         outputFiles.push({
-          name:
-            file.name.split(".").slice(0, -1).join(".") +
-            `.${outputFormat.extension}`,
+          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
           bytes: this.wasm2wat(file.bytes),
         });
       }
@@ -83,9 +82,7 @@ export default class wabtHandler implements FormatHandler {
     if (inputFormat.internal == "wat" && outputFormat.internal == "wasm") {
       for (const file of inputFiles) {
         outputFiles.push({
-          name:
-            file.name.split(".").slice(0, -1).join(".") +
-            `.${outputFormat.extension}`,
+          name: file.name.split(".").slice(0, -1).join(".") + `.${outputFormat.extension}`,
           bytes: this.wat2wasm(file.name, file.bytes),
         });
       }

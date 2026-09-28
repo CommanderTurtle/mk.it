@@ -8,19 +8,19 @@ const bsonFormat = new FormatDefinition(
   "bson",
   "bson",
   "application/bson",
-  Category.DATA
+  Category.DATA,
 );
 
 class bsonHandler implements FormatHandler {
-
   public name: string = "bson";
 
   public supportedFormats?: FileFormat[] = [
     CommonFormats.JSON.supported("json", true, true, true),
-    bsonFormat.supported("bson", true, true, true)
+    bsonFormat.supported("bson", true, true, true),
   ];
 
   public ready: boolean = false;
+  public offload: boolean = true;
 
   async init() {
     this.ready = true;
@@ -29,7 +29,7 @@ class bsonHandler implements FormatHandler {
   async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     switch (inputFormat.mime) {
       case CommonFormats.JSON.mime:
@@ -37,7 +37,7 @@ class bsonHandler implements FormatHandler {
           throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
         }
 
-        return inputFiles.map(file => {
+        return inputFiles.map((file) => {
           const text = new TextDecoder().decode(file.bytes);
           let jsonData = JSON.parse(text);
 
@@ -51,7 +51,7 @@ class bsonHandler implements FormatHandler {
 
           return {
             name,
-            bytes: bsonResult
+            bytes: bsonResult,
           };
         });
 
@@ -60,7 +60,7 @@ class bsonHandler implements FormatHandler {
           throw new TypeError(`Unsupported output format: ${outputFormat.internal}`);
         }
 
-        return inputFiles.map(file => {
+        return inputFiles.map((file) => {
           const bsonData = BSON.deserialize(file.bytes);
           const text = JSON.stringify(bsonData);
 
@@ -68,7 +68,7 @@ class bsonHandler implements FormatHandler {
 
           return {
             name,
-            bytes: new TextEncoder().encode(text)
+            bytes: new TextEncoder().encode(text),
           };
         });
 

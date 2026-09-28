@@ -1,4 +1,3 @@
-
 /**
  * Definition of file format. Contains format defined constants like mime type and names
  */
@@ -15,7 +14,7 @@ export interface IFormatDefinition {
   /** MIME type. */
   mime: string;
   /** Category for grouping formats. */
-  category?: Array<string> | string
+  category?: Array<string> | string;
 }
 
 export interface FileFormat extends IFormatDefinition {
@@ -45,13 +44,13 @@ export class FormatDefinition implements IFormatDefinition {
     format: string,
     extension: string,
     mime: string,
-    category?: string[] | string
+    category?: string[] | string,
   ) {
-    this.name = name
-    this.format = format
-    this.extension = extension
-    this.mime = mime
-    this.category = category
+    this.name = name;
+    this.format = format;
+    this.extension = extension;
+    this.mime = mime;
+    this.category = category;
   }
 
   /**
@@ -64,15 +63,21 @@ export class FormatDefinition implements IFormatDefinition {
    * @param override Format definition values to override
    * @returns
    */
-  supported(ref: string, from: boolean, to: boolean, lossless?: boolean, override: Partial<IFormatDefinition> = {}): FileFormat {
+  supported(
+    ref: string,
+    from: boolean,
+    to: boolean,
+    lossless?: boolean,
+    override: Partial<IFormatDefinition> = {},
+  ): FileFormat {
     return {
       ...this,
       ...override,
       internal: ref,
       from: from,
       to: to,
-      lossless: lossless ?? false
-    }
+      lossless: lossless ?? false,
+    };
   }
 
   /**
@@ -80,15 +85,13 @@ export class FormatDefinition implements IFormatDefinition {
    * Builder can be used to create FileFormat based on this format definition
    */
   builder(ref: string) {
-    const def = this;
-
     const builder = {
       // FileFormat fields
-      name: def.name,
-      format: def.format,
-      extension: def.extension,
-      mime: def.mime,
-      category: def.category,
+      name: this.name,
+      format: this.format,
+      extension: this.extension,
+      mime: this.mime,
+      category: this.category,
       internal: ref,
       from: false,
       to: false,
@@ -126,8 +129,8 @@ export class FormatDefinition implements IFormatDefinition {
        * Replaces format category
        */
       withCategory(category: string[] | string | undefined) {
-        this.category = category
-        return this
+        this.category = category;
+        return this;
       },
       override(values: Partial<IFormatDefinition>) {
         Object.assign(this, values);
@@ -139,25 +142,32 @@ export class FormatDefinition implements IFormatDefinition {
   }
 }
 
-
+/** Describes a file.
+ *
+ * **Please note:** _handlers_ are responsible for ensuring the lifetime
+ * and consistency of the buffer and the immutability of the object as a whole
+ * when passed as input.
+ */
 export interface FileData {
-  /** File name with extension. */
-  name: string;
+  /** File name with extension.
+   *
+   * **Please note:** _handlers_ are responsible for ensuring the lifetime
+   * and consistency of the buffer and the immutability of the object as a whole
+   * when passed as input.
+   */
+  readonly name: string;
   /**
    * File contents in bytes.
    *
    * **Please note:** _handlers_ are responsible for ensuring the lifetime
-   * and consistency of this buffer. If you're not sure that your handler
-   * won't modify it, wrap it in `new Uint8Array()`.
+   * and consistency of the buffer and the immutability of the object as a whole
+   * when passed as input. If you're not sure that your handler won't modify
+   * this, wrap it in `new Uint8Array()`.
    */
   readonly bytes: Uint8Array;
 }
 
-/**
- * Establishes a common interface for converting between file formats.
- * Often a "wrapper" for existing tools.
- */
-export interface FormatHandler {
+export interface HandlerDefinition {
   /** Name of the tool being wrapped (e.g. "FFmpeg"). */
   name: string;
   /** List of supported input/output {@link FileFormat}s. */
@@ -168,6 +178,19 @@ export interface FormatHandler {
    */
   supportAnyInput?: boolean;
 
+  /** Whether the handler supports running in a Web Worker.
+   * Unless you are doing something extraordinary, this should be enabled. If you do need to disable it,
+   * make sure your reason is really good. Try replacing `HTMLCanvasElement` -> `OffscreenCanvas`
+   * (`toBlob()` -> `convertToBlob()`), `new Image()` -> `createImageBitmap()`, and avoiding audio APIs.
+   */
+  offload: boolean;
+}
+
+/**
+ * Establishes a common interface for converting between file formats.
+ * Often a "wrapper" for existing tools.
+ */
+export interface FormatHandler extends HandlerDefinition {
   /**
    * Whether the handler is ready for use. Should be set in {@link init}.
    * If true, {@link doConvert} is expected to work.
@@ -193,15 +216,46 @@ export interface FormatHandler {
     inputFormat: FileFormat,
     outputFormat: FileFormat,
     args?: string[],
-    ctx?: import("./ui/ProgressStore.js").ConvertContext
+    ctx?: import("./ui/ProgressStore.js").ConvertContext,
   ) => Promise<FileData[]>;
 }
 
 export class ConvertPathNode {
-  public handler: FormatHandler;
+  public handler: HandlerDefinition;
   public format: FileFormat;
-  constructor(handler: FormatHandler, format: FileFormat) {
+  constructor(handler: HandlerDefinition, format: FileFormat) {
     this.handler = handler;
     this.format = format;
   }
+}
+
+// i hate these
+export function stripFormat(format: FileFormat): FileFormat {
+  return {
+    name: format.name,
+    format: format.format,
+    extension: format.extension,
+    mime: format.mime,
+    category: format.category,
+    from: format.from,
+    to: format.to,
+    internal: format.internal,
+    lossless: format.lossless,
+  };
+}
+
+export function stripHandler(handler: HandlerDefinition): HandlerDefinition {
+  return {
+    name: handler.name,
+    supportAnyInput: handler.supportAnyInput,
+    supportedFormats: handler.supportedFormats?.map(stripFormat),
+    offload: handler.offload,
+  };
+}
+
+export function stripPathNode(node: ConvertPathNode): ConvertPathNode {
+  return {
+    handler: stripHandler(node.handler),
+    format: stripFormat(node.format),
+  };
 }

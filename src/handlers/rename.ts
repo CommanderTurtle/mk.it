@@ -1,29 +1,31 @@
 import CommonFormats, { Category } from "src/CommonFormats.ts";
-import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
+import type { FileData, FileFormat } from "../FormatHandler.ts";
 
-// base class for handling renames
-function renameHandler(name: string, formats: FileFormat[]): FormatHandler {
-  return {
-    name: name,
-    ready: true,
-    supportedFormats: formats,
+function createRenameHandler(name: string, formats: FileFormat[]) {
+  return class {
+    public name = name;
+    public ready = true;
+    public supportedFormats = formats;
+    public offload = true;
+
     async init() {
-      this.ready = true
-    },
+      this.ready = true;
+    }
+
     async doConvert(
       inputFiles: FileData[],
       inputFormat: FileFormat,
-      outputFormat: FileFormat
+      outputFormat: FileFormat,
     ): Promise<FileData[]> {
-      return inputFiles.map(file => {
-        file.name = file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
-        return file;
-      });
+      return inputFiles.map((file) => ({
+        ...file,
+        name: file.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension,
+      }));
     }
   };
 }
 /// handler for renaming various aliased zip files
-export const renameZipHandler = renameHandler("renamezip", [
+export const renameZipHandler = createRenameHandler("renameZip", [
   CommonFormats.ZIP.builder("zip").allowTo(),
   CommonFormats.DOCX.builder("docx").allowFrom(),
   CommonFormats.XLSX.builder("xlsx").allowFrom(),
@@ -37,7 +39,7 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "odt",
     category: Category.DOCUMENT,
-    lossless: true
+    lossless: true,
   },
   {
     name: "OpenDocument Presentation",
@@ -48,7 +50,7 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "odp",
     category: Category.PRESENTATION,
-    lossless: true
+    lossless: true,
   },
   {
     name: "OpenDocument Spreadsheet",
@@ -59,7 +61,7 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "ods",
     category: Category.SPREADSHEET,
-    lossless: true
+    lossless: true,
   },
   {
     name: "Firefox Plugin",
@@ -70,16 +72,24 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "xpi",
     category: Category.ARCHIVE,
-    lossless: true
+    lossless: true,
   },
-  CommonFormats.ZIP.builder("love").allowFrom()
-    .withFormat("love").withExt("love").named("LÖVE Game Package"),
-  CommonFormats.ZIP.builder("osz").allowFrom()
-    .withFormat("osz").withExt("osz").named("osu! Beatmap"),
-  CommonFormats.ZIP.builder("osk").allowFrom()
-    .withFormat("osk").withExt("osk").named("osu! Skin"),
-  CommonFormats.ZIP.builder("apworld").allowFrom()
-    .withFormat("apworld").withExt("apworld").named("Archipelago World"),
+  CommonFormats.ZIP.builder("love")
+    .allowFrom()
+    .withFormat("love")
+    .withExt("love")
+    .named("LÖVE Game Package"),
+  CommonFormats.ZIP.builder("osz")
+    .allowFrom()
+    .withFormat("osz")
+    .withExt("osz")
+    .named("osu! Beatmap"),
+  CommonFormats.ZIP.builder("osk").allowFrom().withFormat("osk").withExt("osk").named("osu! Skin"),
+  CommonFormats.ZIP.builder("apworld")
+    .allowFrom()
+    .withFormat("apworld")
+    .withExt("apworld")
+    .named("Archipelago World"),
   {
     name: "Java Archive",
     format: "jar",
@@ -89,7 +99,7 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "jar",
     category: Category.ARCHIVE,
-    lossless: true
+    lossless: true,
   },
   {
     name: "Android Package Archive",
@@ -100,14 +110,24 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "apk",
     category: Category.ARCHIVE,
-    lossless: true
+    lossless: true,
   },
-  CommonFormats.ZIP.builder("sb3").allowFrom()
-    .withFormat("sb3").withExt("sb3").named("Scratch 3 Project").withMime("application/x.scratch.sb3"),
-  CommonFormats.ZIP.builder("ipa").allowFrom()
-    .withFormat("ipa").withExt("ipa").named("iOS Application"),
-  CommonFormats.ZIP.builder("app").allowFrom()
-    .withFormat("app").withExt("app").named("macOS Application Bundle"),
+  CommonFormats.ZIP.builder("sb3")
+    .allowFrom()
+    .withFormat("sb3")
+    .withExt("sb3")
+    .named("Scratch 3 Project")
+    .withMime("application/x.scratch.sb3"),
+  CommonFormats.ZIP.builder("ipa")
+    .allowFrom()
+    .withFormat("ipa")
+    .withExt("ipa")
+    .named("iOS Application"),
+  CommonFormats.ZIP.builder("app")
+    .allowFrom()
+    .withFormat("app")
+    .withExt("app")
+    .named("macOS Application Bundle"),
   {
     name: "Comic Book Archive (ZIP)",
     format: "cbz",
@@ -117,18 +137,18 @@ export const renameZipHandler = renameHandler("renamezip", [
     to: false,
     internal: "cbz",
     category: Category.ARCHIVE,
-    lossless: true
+    lossless: true,
   },
 ]);
 /// handler for renaming text-based formats
-export const renameTxtHandler = renameHandler("renametxt", [
+export const renameTxtHandler = createRenameHandler("renameTxt", [
   CommonFormats.TEXT.builder("text").allowTo(),
   CommonFormats.JSON.builder("json").allowFrom(),
   CommonFormats.XML.builder("xml").allowFrom(),
-  CommonFormats.YML.builder("yaml").allowFrom()
+  CommonFormats.YML.builder("yaml").allowFrom(),
 ]);
 /// handler for renaming json-based formats
-export const renameJsonHandler = renameHandler("renamejson", [
+export const renameJsonHandler = createRenameHandler("renameJson", [
   CommonFormats.JSON.builder("json").allowTo(),
   {
     name: "HTTP Archive",
@@ -138,7 +158,7 @@ export const renameJsonHandler = renameHandler("renamejson", [
     from: true,
     to: false,
     category: Category.ARCHIVE,
-    internal: "har"
+    internal: "har",
   },
   {
     name: "Piskel Sprite Save File",
@@ -149,6 +169,51 @@ export const renameJsonHandler = renameHandler("renamejson", [
     to: false,
     category: Category.IMAGE,
     internal: "piskel",
-    lossless: true
-  }
+    lossless: true,
+  },
+]);
+/// handler for renaming tar-based formats
+export const renameTarHandler = createRenameHandler("renameTar", [
+  CommonFormats.TAR.builder("tar").allowTo(),
+  {
+    name: "Comic Book Archive (TAR)",
+    format: "cbt",
+    extension: "cbt",
+    mime: "application/vnd.comicbook+tar",
+    from: true,
+    to: false,
+    internal: "cbt",
+    category: Category.ARCHIVE,
+    lossless: true,
+  },
+]);
+/// handler for renaming rar-based formats
+export const renameRarHandler = createRenameHandler("renameRar", [
+  CommonFormats.RAR.builder("rar").allowTo(),
+  {
+    name: "Comic Book Archive (RAR)",
+    format: "cbr",
+    extension: "cbr",
+    mime: "application/vnd.comicbook+rar",
+    from: true,
+    to: false,
+    internal: "cbr",
+    category: Category.ARCHIVE,
+    lossless: true,
+  },
+]);
+/// handler for renaming 7z-based formats
+export const rename7zHandler = createRenameHandler("rename7z", [
+  CommonFormats.SZ.builder("7z").allowTo(),
+  {
+    name: "Comic Book Archive (7Z)",
+    format: "cb7",
+    extension: "cb7",
+    mime: "application/vnd.comicbook+7z",
+    from: true,
+    to: false,
+    internal: "cb7",
+    category: Category.ARCHIVE,
+    lossless: true,
+  },
 ]);

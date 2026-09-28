@@ -1,33 +1,30 @@
-// file: pdfparse.ts
-
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
-import { PDFParse } from 'pdf-parse';
-
+import { PDFParse } from "pdf-parse";
 
 class pdfparseHandler implements FormatHandler {
-
   public name: string = "pdfparse";
   public supportedFormats?: FileFormat[] = [
     CommonFormats.PDF.builder("pdf").allowFrom(),
     CommonFormats.TEXT.builder("txt").allowTo(),
   ];
   public ready: boolean = false;
+  public offload: boolean = true;
 
-  async init () {
-    PDFParse.setWorker('/make/js/pdf.worker.mjs');
+  async init() {
+    PDFParse.setWorker("/make/js/pdf.worker.mjs");
     this.ready = true;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
     const outputFiles: FileData[] = [];
 
     for (const inputFile of inputFiles) {
-      const parser = new PDFParse({ data: inputFile.bytes });
+      const parser = new PDFParse({ data: new Uint8Array(inputFile.bytes) });
       const text = await parser.getText();
       await parser.destroy();
 
@@ -39,7 +36,6 @@ class pdfparseHandler implements FormatHandler {
 
     return outputFiles;
   }
-
 }
 
 export default pdfparseHandler;

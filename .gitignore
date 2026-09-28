@@ -2,6 +2,7 @@ bun.lock
 package-lock.json
 node_modules
 .cache
+public/icons.json
 public/material-file-icons
 start.sh
 dist

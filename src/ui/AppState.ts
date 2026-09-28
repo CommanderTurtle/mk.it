@@ -4,20 +4,20 @@ import type { PopupDataContainer } from "./PopupStore";
 import type { SharedFileData } from "src/tools/share";
 
 export const enum Pages {
-	Upload = "uploadPage",
-	Conversion = "conversionPage",
-	Ocr = "ocrPage",
-	Combine = "combinePage",
-	Share = "sharePage"
+  Upload = "uploadPage",
+  Conversion = "conversionPage",
+  Ocr = "ocrPage",
+  Combine = "combinePage",
+  Share = "sharePage",
 }
 
 export const CurrentPage = signal<Pages>(Pages.Upload);
 
 export const PopupData = signal<PopupDataContainer>({
-	title: "Loading tools...",
-	text: "Please wait while the app loads conversion tools.",
-	dismissible: false,
-	buttonText: "Ignore"
+  title: "Loading tools...",
+  text: "Please wait while the app loads conversion tools.",
+  dismissible: false,
+  buttonText: "Ignore",
 });
 
 export const LoadingToolsText = signal<string | undefined>("Loading formats…");

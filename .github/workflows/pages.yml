@@ -33,6 +33,12 @@ jobs:
       - name: Install dependencies
         run: bun i --frozen-lockfile
 
+      - name: Check linting
+        run: bun run lint
+
+      - name: Check formatting
+        run: bun run fmt:check
+
       - name: Build
         run: |
           export VITE_COMMIT_SHA=${{ github.sha }}
@@ -41,11 +47,8 @@ jobs:
       - name: Generate cache
         run: bun run cache:build
 
-      - name: Test traversion graph
-        run: bun test test/TraversionGraph.test.ts
-
-      - name: Test common conversion routes
-        run: bun test test/commonFormats.test.ts
+      - name: Test
+        run: bun test ./test/
 
       - name: Upload Pages artifact
         if: github.event_name == 'push'

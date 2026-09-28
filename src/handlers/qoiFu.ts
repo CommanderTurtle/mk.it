@@ -3,17 +3,15 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 
 import { QOIDecoder, QOIEncoder } from "qoi-fu";
 
-import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";
+import { InitializationError } from "src/errors.ts";
 
 class qoiFuHandler implements FormatHandler {
-
-  public name: string = "qoi-fu";
+  public name: string = "qoiFu";
   public supportedFormats: FileFormat[] = [
     CommonFormats.PNG.supported("png", true, true, true),
     CommonFormats.JPEG.supported("jpeg", true, true),
     CommonFormats.WEBP.supported("webp", true, true),
     CommonFormats.GIF.supported("gif", true, false),
-    CommonFormats.SVG.supported("svg", true, false),
     {
       name: "Quite OK Image",
       format: "qoi",
@@ -23,23 +21,24 @@ class qoiFuHandler implements FormatHandler {
       to: true,
       internal: "qoi",
       category: Category.IMAGE,
-      lossless: true
-    }
+      lossless: true,
+    },
   ];
   public ready: boolean = false;
+  public offload: boolean = true;
 
-  #canvas?: HTMLCanvasElement;
-  #ctx?: CanvasRenderingContext2D;
+  #canvas?: OffscreenCanvas;
+  #ctx?: OffscreenCanvasRenderingContext2D;
 
-  async init () {
-    this.#canvas = document.createElement("canvas");
+  async init() {
+    this.#canvas = new OffscreenCanvas(1, 1);
     const ctx = this.#canvas.getContext("2d");
     if (!ctx) throw new InitializationError("Failed to create 2D rendering context.");
     this.#ctx = ctx;
     this.ready = true;
   }
 
-  static rgbaToArgb (rgba: Uint8ClampedArray): Int32Array {
+  static rgbaToArgb(rgba: Uint8ClampedArray): Int32Array {
     const length = rgba.length / 4;
     const argb = new Int32Array(length);
 
@@ -55,58 +54,51 @@ class qoiFuHandler implements FormatHandler {
 
     return argb;
   }
-  static argbToRgba (argb: Int32Array): Uint8ClampedArray {
+  static argbToRgba(argb: Int32Array): Uint8ClampedArray {
     const rgba = new Uint8ClampedArray(argb.length * 4);
 
     for (let i = 0; i < argb.length; i++) {
       const pixel = argb[i];
       const offset = i * 4;
 
-      rgba[offset] = (pixel >> 16) & 0xFF;     // R
-      rgba[offset + 1] = (pixel >> 8) & 0xFF;  // G
-      rgba[offset + 2] = pixel & 0xFF;         // B
-      rgba[offset + 3] = (pixel >> 24) & 0xFF; // A
+      rgba[offset] = (pixel >> 16) & 0xff; // R
+      rgba[offset + 1] = (pixel >> 8) & 0xff; // G
+      rgba[offset + 2] = pixel & 0xff; // B
+      rgba[offset + 3] = (pixel >> 24) & 0xff; // A
     }
 
     return rgba;
   }
 
-  async doConvert (
+  async doConvert(
     inputFiles: FileData[],
     inputFormat: FileFormat,
-    outputFormat: FileFormat
+    outputFormat: FileFormat,
   ): Promise<FileData[]> {
-
     if (!this.#canvas || !this.#ctx) {
       throw new InitializationError("Handler not initialized.");
     }
 
     const outputFiles: FileData[] = [];
 
-    const inputIsQOI = (inputFormat.internal === "qoi");
-    const outputIsQOI = (outputFormat.internal === "qoi");
+    const inputIsQOI = inputFormat.internal === "qoi";
+    const outputIsQOI = outputFormat.internal === "qoi";
 
     if (inputIsQOI === outputIsQOI) {
-      throw new TypeError(`Unsupported conversion path: ${inputFormat.internal} -> ${outputFormat.internal}`);
+      throw new TypeError(
+        `Unsupported conversion path: ${inputFormat.internal} -> ${outputFormat.internal}`,
+      );
     }
 
     if (outputIsQOI) {
       for (const inputFile of inputFiles) {
-
         this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.width);
 
         const blob = new Blob([inputFile.bytes as BlobPart], { type: inputFormat.mime });
-        const url = URL.createObjectURL(blob);
+        const image = await createImageBitmap(blob);
 
-        const image = new Image();
-        await new Promise((resolve, reject) => {
-          image.addEventListener("load", resolve);
-          image.addEventListener("error", reject);
-          image.src = url;
-        });
-
-        const width = image.naturalWidth;
-        const height = image.naturalHeight;
+        const width = image.width;
+        const height = image.height;
 
         this.#canvas.width = width;
         this.#canvas.height = height;
@@ -122,13 +114,12 @@ class qoiFuHandler implements FormatHandler {
         const bytesSize = qoiEncoder.getEncodedSize();
         const bytes = new Uint8Array(qoiEncoder.getEncoded().slice(0, bytesSize));
 
-        const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const name =
+          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
         outputFiles.push({ bytes, name });
-
       }
     } else {
       for (const inputFile of inputFiles) {
-
         const qoiDecoder = new QOIDecoder();
         const success = qoiDecoder.decode(inputFile.bytes, inputFile.bytes.length);
         if (!success) throw new Error(`Failed to decode QOI image "${inputFile.name}".`);
@@ -139,28 +130,25 @@ class qoiFuHandler implements FormatHandler {
         const pixelBuffer = qoiFuHandler.argbToRgba(qoiDecoder.getPixels());
 
         const imageData = new ImageData(pixelBuffer as ImageDataArray, width, height, {
-          colorSpace: colorSpace
+          colorSpace: colorSpace,
         });
 
         this.#canvas.width = width;
         this.#canvas.height = height;
         this.#ctx.putImageData(imageData, 0, 0);
 
-        const bytes: Uint8Array = await new Promise((resolve, reject) => {
-          this.#canvas!.toBlob((blob) => {
-            if (!blob) return reject("Canvas output failed.");
-            blob.arrayBuffer().then(buf => resolve(new Uint8Array(buf)));
-          }, outputFormat.mime);
+        const blob = await this.#canvas.convertToBlob({
+          type: outputFormat.mime,
         });
-        const name = inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        const name =
+          inputFile.name.split(".").slice(0, -1).join(".") + "." + outputFormat.extension;
         outputFiles.push({ bytes, name });
-
       }
     }
 
     return outputFiles;
   }
-
 }
 
 export default qoiFuHandler;
