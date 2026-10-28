@@ -408,7 +408,7 @@ export default function UploadPage() {
             </span>
             <span className="route-copy">
               <strong>Image OCR</strong>
-              <small>Recognize text locally with Tesseract WebAssembly.</small>
+              <small>Tesseract WebAssembly with optional Paddle-OCR.</small>
             </span>
             <ArrowRight size={18} />
           </button>

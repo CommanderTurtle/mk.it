@@ -1,0 +1,2 @@
+# Keep the self-contained OCR bundle byte-for-byte identical to its SHA manifest.
+/public/ocr/paddle/** -text -whitespace

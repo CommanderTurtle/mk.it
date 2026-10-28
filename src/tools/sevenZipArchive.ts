@@ -18,7 +18,7 @@ export async function readSevenZipEntries(file: File, limits: Limits, factory: S
 		output.push(line);
 	};
 	const engine = await factory({
-		locateFile: () => (typeof Bun !== "undefined" ? new URL("../../node_modules/7z-wasm/" + "7zz.wasm", import.meta.url).pathname : `${import.meta.env.BASE_URL || "/make/"}wasm/7zz.wasm`),
+		locateFile: () => `${import.meta.env.BASE_URL || "/make/"}wasm/7zz.wasm`,
 		print: capture, printErr: capture, stdin: () => -1
 	});
 	const run = (args: string[]) => {

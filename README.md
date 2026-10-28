@@ -1,7 +1,11 @@
-# [mk.it](https://app.shel.sh/make/)
-**Private browser-based conversion, OCR, base64, and archive tools.**
+# [make it! - app.shel.sh/make](https://app.shel.sh/make/)
+**Private browser-based conversion, OCR, base64, and archive tools.** 
 
-mk.it is the `app.shel.sh/make` fork of [p2r3/convert](https://github.com/p2r3/convert). It preserves the upstream conversion graph and handlers, then adds focused ways to decode, recognize, and combine files entirely in the browser.
+## mk.it is my fork of convert.to.it, [see the upstream repo! - p2r3/convert](https://github.com/p2r3/convert)
+
+It adds OCR, Base64, and Static-Page Document Sharing Tools.
+
+It preserves the upstream conversion graph and handlers, then adds focused ways to decode, recognize, and combine files entirely in the browser.
 
 Bun guidance:
 
@@ -11,30 +15,35 @@ bun install && `
 bun pm trust tesseract.js && `
 bun pm trust @parcel/watcher && `
 bun pm trust puppeteer esbuild canvas electron-winstaller && `
-bun pm trust es5-ext && bun install && cd src/handlers/sppd && bun install && `
+bun pm trust es5-ext; bun install; cd src/handlers/sppd && bun install && `
 cd ../../../ && bun install && bun run build && `
 echo "not convoluted at all, build ready"
 ```
 
-Many online file conversion tools are **boring** and **insecure**. They only allow conversion between two formats in the same medium (images to images, videos to videos, etc.), and they require that you _upload your files to some server_.
+Check out the upstream viral showcase of convert.to.it : https://youtu.be/btUbcsTbVA8
 
-This is not just terrible for privacy, it's also incredibly lame. What if you _really_ need to convert an AVI video to a PDF document? Try to find an online tool for that, I dare you.
-
-[mk.it](https://app.shel.sh/make/) aims to be a tool that "just works". You're almost _guaranteed_ to get an output - perhaps not always the one you expected, but it'll try its best to not leave you hanging.
-
-For a semi-technical overview of this tool, check out the video: https://youtu.be/btUbcsTbVA8
-
-## Added browser workflows
+## All browser workflows in this fork :
 
 This fork keeps the upstream conversion graph and its handlers intact, while expanding the home page to four entry points:
 
 - **Convert a file** is the original Convert to it workflow. A single selected file can also be copied directly as a MIME-correct Base64 data URL without changing its bytes.
 - **Base64 file** accepts raw base64 or a base64 data URL, or encodes any selected file without changing its bytes. The **Include MIME** switch chooses between a MIME-correct data URL and plain Base64. Decoded ZIP/TAR/7z uploads can continue directly into `combined.md`; other files can be named, downloaded, converted, or shared.
 - **Shared files** use a versioned `#share:` fragment containing level-9 DEFLATE-compressed metadata and exact file bytes, followed by URL-safe Base64. The fragment is decoded locally and is never sent in the HTTP request. Textual files receive highlighted, copyable source; SVG images expose both source and image views; images, video, audio, and PDF files receive native previews with a full-window expander and copyable self-contained HTML. Images additionally expose ln.kr's self-contained pan-and-zoom viewer. HTML and Markdown expose a direct `#p:` preview URL using the same compact, lossless payload.
-- **Image OCR** uses pinned Tesseract.js 7 worker, WebAssembly core, and English language assets copied into the static build. Browser-readable images are scanned directly; other installed image formats are first normalized to PNG through the existing conversion graph. The result includes an isolated image viewer with a selectable text layer and a plain-text view.
+- **Image OCR** defaults to pinned Tesseract.js 7 with English recognition data. The adjacent **Paddle-OCR** button opts into the bundled multilingual PP-OCRv6 small models and ONNX WebAssembly runtime. Neither engine loads until selected. Paddle uses a temporary, single-threaded worker released after each scan (also on navigation, failure or its two-minute worker timeout); it needs neither WebGPU nor cross-origin isolation. Browser-readable images are scanned directly; other installed image formats are first normalized to PNG through the existing conversion graph. Both provide selectable image text and a plain-text view; Paddle overlays its real line boxes, without inventing word boxes.
 - **Archive to Markdown** reads ZIP, TAR and 7z archives in memory, sorts paths, preserves text inside extension-aware code fences, and writes an explicit `(omitted)` entry for binary or oversized files. The result can be copied, browsed by file, or downloaded as `combined.md`. Archive share links show this same viewer alongside the original archive download and checksums. The viewer can reconstruct a ZIP of preserved text files; omitted binaries remain in the original archive. Stored and compressed 7z files use the bundled WebAssembly engine in a temporary browser thread, with no backend.
 
 The new paths do not upload user data or extract archives onto the filesystem. OCR runtime files are served from the same build rather than a CDN. Archive processing is bounded to 20,000 entries, 512 MiB expanded data, 8 MiB per text file, and 64 MiB of combined source text to avoid accidental archive bombs or an unresponsive tab.
+
+[Paddle](https://github.com/CommanderTurtle/ppocr-wasm) is already vendored under `public/ocr/paddle/` and copied unchanged by the normal Vite build. Deploy the complete directory, including models, worker chunks and both runtime files (`.mjs` and `.wasm`), below the configured base (`/make/` by default). This adds about 101 MB to the static build, not the initial page download. Paddle accepts images up to 32 MiB / 16 megapixels. Serve JavaScript modules and WASM with their correct MIME types; a restrictive CSP must allow same-origin module workers and the bundled OpenCV/ONNX runtime's evaluation requirements. The bundle's licenses, build metadata and SHA-256 manifest are retained alongside it.
+
+To deliberately refresh that vendor snapshot from [our built](https://github.com/CommanderTurtle/ppocr-wasm) `ppocr-wasm` project (not needed for normal installs):
+
+```sh
+bun scripts/vendor-ppocr.mjs /path/to/ppocr-wasm/dist
+bun run build
+```
+
+The maintenance importer pins the SDK/runtime versions and both model hashes. Updating those pins is an explicit maintenance change, never a runtime download from upstream.
 
 **Edit** on shared Markdown, HTML, JavaScript and TXT files opens their decoded text in [ln.kr](https://a.shel.sh/) in a new tab; use its **Edit a copy** action to edit. The normal v4 document link is generated only on click using the existing DEFLATE dependency (JavaScript is not auto-run). Header links also connect to ln.kr and [Webclip](https://app.shel.sh/webclip). Media and PDF previews are unchanged.
 
@@ -47,26 +56,7 @@ The new paths do not upload user data or extract archives onto the filesystem. O
 5. Click **Convert**!
 6. Hopefully, after a bit (or a lot) of thinking, the program will spit out the file you wanted. If not, see the "Issues" section below.
 
-## Issues
-
-Ever since the YouTube video released, we've been getting spammed with issues suggesting the addition of all kinds of niche file formats. To keep things organized, I've decided to specify what counts as a valid issue and what doesn't.
-
-> [!IMPORTANT]
-> **SIMPLY ASKING FOR A FILE FORMAT TO BE ADDED IS NOT A MEANINGFUL ISSUE!**
-
-There are thousands of file formats out there. It can take hours to add support for just one. The math is simple - we can't possibly support every single file. As such, simply listing your favorite file formats is not helpful. We already know that there are formats we don't support, we don't need tickets to tell us that.
-
-When suggesting a file format, you must _at minimum_:
-
-- Make sure that there isn't already an issue about the same thing, and that we don't already support the format.
-- Explain what you expect the conversion to be like (what medium is it converting to/from). It's important to note here that simply parsing the underlying data is _not sufficient_. Imagine if we only treated SVG images as raw XML data and didn't support converting them to raster images - that would defeat the point. In other words, try to avoid crude "binary waterfalls".
-- Provide links to existing browser-based solutions if possible, or at the very least a reference for implementing the format, and make sure the license is compatible with GPL-2.0.
-
-If this seems like a lot, please remember - a developer will have to do 100x more work to actually implement the format. Doing a bit of research not only saves them precious time, it also weeds out "unserious" proposals that would only bloat our to-do list.
-
-**If you're submitting a bug report,** you only need to do step 1 - check if the problem isn't already reported by someone else. Bug reports are generally quite important otherwise.
-
-Though please note, "converting X to Y doesn't work" is **not** a bug report.  However, "converting X to Y works but not how I expected" likely **is** a bug report.
+<details><summary>Upstream Copypasta From Readme - Helpful for Agents</summary>
 
 ## Deployment
 
@@ -106,12 +96,6 @@ docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.ym
 ```
 
 The first Docker build is expected to be slow because Chromium and related system packages are installed in the build stage (needed for puppeteer in `buildCache.js`). Later builds are usually much faster due to Docker layer caching.
-
-## Contributing
-
-The best way to contribute is by adding support for new file formats (duh). If you don't have a format to add but are eager to help, take a look at our issues. There are plenty of suggestions there.
-
-Here's how adding a format works works:
 
 ### Creating a handler
 
@@ -209,15 +193,4 @@ If your tool requires an external dependency (which it likely does), there are c
 
 - If you need to load a WebAssembly binary (or similar), add its path to [vite.config.js](vite.config.js) and target it under `/make/wasm/`. **Do not link to node_modules**.
 
-### AI Usage Policy
-
-If you intend to use an LLM, agent-enabled IDE, or other AI-driven tool for your contribution, please follow these guidelines:
-
-- Clearly state that you've used an LLM, ideally in your pull request's description. Do not attempt to pass off an AI's work as your own. I'm far more likely to accept a pull request that openly admits to using AI than one that does but pretends it doesn't. Transparency helps the maintainer (me) know what to keep an eye out for (e.g. hallucinations), and helps you keep yourself in check.
-- Do not overindulge. If your contribution is trivial or simple enough to be written by hand, please opt to write it by hand. This is especially true if it's your first contribution. You're much more likely to retain knowledge and understanding about architectural details if you've familiarized yourself with the process hands-on first.
-- Keep the scope to things you _could_ do by hand. LLMs are tools, and this is a community-driven project. Orchestrating an AI to write logic that you don't fully comprehend is not only reckless for a community project, it's also disrespectful towards human contributors who took the time to research their additions. In other words, there should _never_ be a scenario where you _need_ an LLM.
-- Explain what you (and the LLM) are doing, in a way that makes it clear that you understand the changes you're making.
-
-Not adhering to these rules will likely get your pull request closed.
-
-I figure that there are people who'd prefer if I merged _zero_ AI-written code, but I believe that's simply not feasible. Just from a code integrity perspective, it's much safer to be transparent about AI usage and define clear guidelines than to make it a taboo and risk people "sneaking in" unvetted AI code. Making things illegal doesn't stop everyone from doing those things - some will still do them, just in secret and with less oversight.
+</details>

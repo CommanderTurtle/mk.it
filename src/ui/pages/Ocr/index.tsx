@@ -5,6 +5,7 @@ import type { Block, LoggerMessage, Worker } from "tesseract.js";
 import { ConversionOptions } from "src/main";
 import { findMatchingFromFormats, findPngOutput } from "src/tools/fileFormats";
 import { buildOcrViewerDocument, flattenOcrWords, readImageDimensions } from "src/tools/ocr";
+import { recognizeWithPaddle } from "src/tools/paddleOcr";
 import { LoadingToolsText } from "src/ui/AppState";
 import StyledButton, { ButtonVariant } from "src/ui/components/StyledButton";
 import ToolShell from "src/ui/components/ToolShell";
@@ -63,11 +64,13 @@ export default function OcrPage() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const workerRef = useRef<Worker | null>(null);
 	const objectUrlRef = useRef<string | null>(null);
+	const requestRef = useRef<AbortController | null>(null);
 	const [sourceFile, setSourceFile] = useState<File | null>(null);
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 	const [viewerDocument, setViewerDocument] = useState<string | null>(null);
 	const [recognizedText, setRecognizedText] = useState("");
 	const [busy, setBusy] = useState(false);
+	const [activeEngine, setActiveEngine] = useState<"tesseract" | "paddle">("tesseract");
 	const [status, setStatus] = useState("");
 	const [progress, setProgress] = useState(0);
 	const [error, setError] = useState<string | null>(null);
@@ -91,7 +94,7 @@ export default function OcrPage() {
 	};
 
 	const chooseFile = (file: File | undefined) => {
-		if (!file) return;
+		if (!file || requestRef.current) return;
 		setSourceFile(file);
 		replacePreviewUrl(file);
 		setViewerDocument(null);
@@ -112,8 +115,17 @@ export default function OcrPage() {
 		if (inputRef.current) inputRef.current.value = "";
 	};
 
-	const runOcr = async () => {
-		if (!sourceFile || busy) return;
+	const runOcr = async (engine: "tesseract" | "paddle" = "tesseract") => {
+		if (!sourceFile || requestRef.current) return;
+		const request = new AbortController();
+		requestRef.current = request;
+		const isCurrent = () => requestRef.current === request && !request.signal.aborted;
+		const logger = (message: { status: string; progress: number }) => {
+			if (!isCurrent()) return;
+			setStatus(message.status);
+			setProgress(Number.isFinite(message.progress) ? message.progress : 0);
+		};
+		setActiveEngine(engine);
 		setBusy(true);
 		setError(null);
 		setViewerDocument(null);
@@ -122,21 +134,44 @@ export default function OcrPage() {
 		setProgress(0);
 		try {
 			const prepared = await prepareImage(sourceFile);
+			if (!isCurrent()) return;
 			const url = replacePreviewUrl(prepared.file);
 			if (!url) throw new Error("Could not create the local image preview.");
+
+			if (engine === "paddle") {
+				setStatus("Loading Paddle-OCR");
+				const data = await recognizeWithPaddle(prepared.file, request.signal, logger);
+				if (!isCurrent()) return;
+				// Paddle supplies line boxes, not Tesseract word boxes. Keep those
+				// honest instead of synthesizing guessed per-word coordinates.
+				setRecognizedText(data.text);
+				setViewerDocument(buildOcrViewerDocument(url, data.image.width, data.image.height, data.lines));
+				setStatus(`Paddle-OCR: ${data.lines.length.toLocaleString()} lines at ${Math.round(data.confidence)}% confidence`);
+				setProgress(1);
+				return;
+			}
 
 			if (!workerRef.current) {
 				setStatus("Loading English recognition data");
 				const { createWorker } = await import("tesseract.js");
-				workerRef.current = await createWorker("eng", undefined, {
+				if (!isCurrent()) return;
+				const worker = await createWorker("eng", undefined, {
 					workerPath: `${import.meta.env.BASE_URL}js/tesseract/worker.min.js`,
 					corePath: `${import.meta.env.BASE_URL}js/tesseract-core`,
 					langPath: `${import.meta.env.BASE_URL}tesseract-lang`,
 					logger: (message: LoggerMessage) => {
+						// The Tesseract worker is reused, so this callback must not
+						// retain the first scan's now-completed request identity.
+						if (!requestRef.current || requestRef.current.signal.aborted) return;
 						setStatus(message.status);
 						setProgress(Number.isFinite(message.progress) ? message.progress : 0);
 					}
 				});
+				if (!isCurrent()) {
+					await worker.terminate();
+					return;
+				}
+				workerRef.current = worker;
 			}
 
 			setStatus("Recognizing text");
@@ -145,16 +180,21 @@ export default function OcrPage() {
 				{},
 				{ text: true, blocks: true, hocr: true }
 			);
+			if (!isCurrent()) return;
 			const words = flattenOcrWords(recognition.data.blocks as Block[] | null);
 			setRecognizedText(recognition.data.text);
 			setViewerDocument(buildOcrViewerDocument(url, prepared.width, prepared.height, words));
 			setStatus(`Recognized ${words.length.toLocaleString()} words at ${Math.round(recognition.data.confidence)}% confidence`);
 			setProgress(1);
 		} catch (caught) {
+			if (!isCurrent()) return;
 			setError(caught instanceof Error ? caught.message : String(caught));
 			setStatus("");
 		} finally {
-			setBusy(false);
+			if (isCurrent()) {
+				requestRef.current = null;
+				setBusy(false);
+			}
 		}
 	};
 
@@ -169,6 +209,8 @@ export default function OcrPage() {
 	};
 
 	useEffect(() => () => {
+		requestRef.current?.abort();
+		requestRef.current = null;
 		if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
 		if (workerRef.current) void workerRef.current.terminate();
 	}, []);
@@ -176,7 +218,7 @@ export default function OcrPage() {
 	return (
 		<ToolShell
 			title="Image OCR"
-			description="Tesseract and its pinned English recognition data run locally in WebAssembly. No image, OCR text, worker, core, or language asset is fetched from a third-party service."
+			description="Tesseract is the default; Paddle-OCR is optional. Both run locally in WebAssembly with recognition assets served from this build, never a third-party service."
 		>
 			<section className="tool-surface ocr-surface">
 				{!sourceFile ? (
@@ -214,7 +256,8 @@ export default function OcrPage() {
 							<div className="ocr-actions">
 								<StyledButton disabled={busy} onClick={reset}><RotateCcw size={14} /> New image</StyledButton>
 								{recognizedText && <StyledButton onClick={copyText}>{copied ? <Check size={14} /> : <Clipboard size={14} />} {copied ? "Copied" : "Copy text"}</StyledButton>}
-								<StyledButton variant={ButtonVariant.Primary} disabled={busy} onClick={() => void runOcr()}>{busy ? <LoaderCircle className="spin" size={14} /> : <Play size={14} />} {recognizedText ? "Run again" : "Run OCR"}</StyledButton>
+								<StyledButton variant={ButtonVariant.Primary} disabled={busy} onClick={() => void runOcr()}>{busy && activeEngine === "tesseract" ? <LoaderCircle className="spin" size={14} /> : <Play size={14} />} {recognizedText ? "Run again" : "Run OCR"}</StyledButton>
+								<StyledButton disabled={busy} onClick={() => void runOcr("paddle")}>{busy && activeEngine === "paddle" ? <LoaderCircle className="spin" size={14} /> : <ScanText size={14} />} Paddle-OCR</StyledButton>
 							</div>
 						</div>
 
