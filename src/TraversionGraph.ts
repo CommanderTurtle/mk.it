@@ -598,26 +598,28 @@ export class TraversionGraph {
       const category = p.format.category || p.format.mime.split("/")[0];
       return Array.isArray(category) ? category : [category];
     });
-    this.categoryAdaptiveCosts.forEach((c) => {
-      let pathPtr = categoriesInPath.length - 1,
-        categoryPtr = c.categories.length - 1;
-      while (true) {
-        if (categoriesInPath[pathPtr]?.includes(c.categories[categoryPtr])) {
+    const endsWithSequence = (categories: string[], end: number) => {
+      let pathPtr = end,
+        categoryPtr = categories.length - 1;
+      while (pathPtr >= 0) {
+        if (categoriesInPath[pathPtr].includes(categories[categoryPtr])) {
           categoryPtr--;
           pathPtr--;
-
-          if (categoryPtr < 0) {
-            costs.push({ reason: `Adaptive ${c.categories.join(" → ")}`, cost: c.cost });
-            break;
-          }
-          if (pathPtr < 0) break;
+          if (categoryPtr < 0) return true;
         } else if (
-          categoryPtr + 1 < c.categories.length &&
-          categoriesInPath[pathPtr]?.includes(c.categories[categoryPtr + 1])
+          categoryPtr + 1 < categories.length &&
+          categoriesInPath[pathPtr].includes(categories[categoryPtr + 1])
         ) {
           pathPtr--;
-          if (pathPtr < 0) break;
-        } else break;
+        } else return false;
+      }
+      return false;
+    };
+    const last = categoriesInPath.length - 1;
+    this.categoryAdaptiveCosts.forEach((c) => {
+      // Charge a category transition once, rather than again on later same-category steps.
+      if (endsWithSequence(c.categories, last) && !endsWithSequence(c.categories, last - 1)) {
+        costs.push({ reason: `Adaptive ${c.categories.join(" → ")}`, cost: c.cost });
       }
     });
     return costs;

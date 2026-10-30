@@ -231,9 +231,11 @@ class pandocHandler implements FormatHandler {
 
     // Move HTML up, it's the only format that can embed resources
     const htmlIndex = this.supportedFormats.findIndex((c) => c.internal === "html");
-    const htmlFormat = this.supportedFormats[htmlIndex];
-    this.supportedFormats.splice(htmlIndex, 1);
-    this.supportedFormats.unshift(htmlFormat);
+    if (htmlIndex !== -1) {
+      const htmlFormat = this.supportedFormats[htmlIndex];
+      this.supportedFormats.splice(htmlIndex, 1);
+      this.supportedFormats.unshift(htmlFormat);
+    }
     const typstIndex = this.supportedFormats.findIndex((c) => c.internal === "typst");
     if (typstIndex !== -1) {
       const typstFormat = this.supportedFormats[typstIndex];

@@ -99,7 +99,7 @@ class PriorityQueue<T extends object> {
       let object = this._queue[child];
       const right = child + 1;
 
-      if (right < this._size && object!.toString().localeCompare(this._queue[right]!.toString())) {
+      if (right < this._size && object!.toString().localeCompare(this._queue[right]!.toString()) > 0) {
         object = this._queue[(child = right)];
       }
       if (item.toString().localeCompare(object!.toString()) <= 0) {

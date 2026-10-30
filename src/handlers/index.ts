@@ -137,6 +137,9 @@ export async function getHandler(name: HandlerName) {
 }
 
 export async function initDefinitions(cache: HandlerDefinition[]) {
+  for (let i = cache.length - 1; i >= 0; i--) {
+    if (!Object.hasOwn(HANDLERS, cache[i].name)) cache.splice(i, 1);
+  }
   for (const handlerName of Object.keys(HANDLERS) as HandlerName[]) {
     if (cache.some(h => h.name === handlerName)) continue;
 

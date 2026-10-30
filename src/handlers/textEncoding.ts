@@ -36,10 +36,9 @@ function decodeUTF16(bytes: Uint8Array, littleEndian: boolean) {
 }
 
 function encodeUTF16(str: string, littleEndian: boolean, addBOM = false) {
-  // count code units
   const codepoints = Array.from(str);
-  // worst case 2 units per code point
-  const buf = new ArrayBuffer(codepoints.length * 2 + (addBOM ? 2 : 0));
+  // JavaScript string length counts UTF-16 code units, including surrogate pairs.
+  const buf = new ArrayBuffer(str.length * 2 + (addBOM ? 2 : 0));
   const dv = new DataView(buf);
   let offset = 0;
   if (addBOM) {
@@ -69,8 +68,7 @@ function encodeUTF32(str: string, littleEndian: boolean, addBOM = false) {
   const dv = new DataView(buf);
   let offset = 0;
   if (addBOM) {
-    if (littleEndian) dv.setUint32(0, 0xff_fe_00_00, true);
-    else dv.setUint32(0, 0x00_00_fe_ff, false);
+    dv.setUint32(0, 0x00_00_fe_ff, littleEndian);
     offset += 4;
   }
   for (const cp of codepoints) {

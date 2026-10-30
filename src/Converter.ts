@@ -92,6 +92,7 @@ export class Converter {
 
       ctx.log(`Step ${currentStep}/${totalSteps} complete`);
       if (outputFiles.some((c) => !c.bytes.length)) throw "Output is empty.";
+      if (inputFiles.length !== 0 && outputFiles.length === 0) throw new Error("No files produced.");
 
       return comlink.transfer({ ok: true, inputFiles, outputFiles }, [
         ...new Set([...inputFiles, ...outputFiles].map((file) => file.bytes.buffer)),

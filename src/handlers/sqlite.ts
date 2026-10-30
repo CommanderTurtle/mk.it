@@ -143,7 +143,6 @@ class sqliteHandler implements FormatHandler {
 export default sqliteHandler;
 
 function formatValue(value: string, type: string) {
-  value = value.substring(1); // Strip of space from left
   if (value == "") return "NULL";
   if (type === "TEXT") return `'${value.replace(/'/g, "''")}'`;
   return value;

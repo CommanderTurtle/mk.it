@@ -143,7 +143,7 @@ async function attemptConvertPath(
   const totalSteps = path.length - 1;
   for (let i = 0; i < path.length - 1; i++) {
     if (!abort) abort = ProgressStore.controller.signal;
-    if (abort.aborted) return null;
+    abort.throwIfAborted();
 
     const handlerDef = path[i + 1].handler;
     const channel = new MessageChannel();
@@ -238,9 +238,9 @@ window.tryConvertByTraversing = async function (
   );
   while (true) {
     const { value: path, done } = await paths.next();
+    abort.throwIfAborted();
     if (done) return null;
-    if (abort?.aborted) return null;
-    if (path.at(-1)?.handler === to.handler) {
+    if (path.at(-1)?.handler.name === to.handler.name) {
       path[path.length - 1] = to;
     }
     const attempt = await attemptConvertPath(files, path, abort);
