@@ -3,8 +3,10 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import ts from "typescript";
 import { extraExtensionToIcon } from "./extra-language-extensions";
+import upstreamPin from "../upstream-pin.json";
 
-const REPO_URL = "https://github.com/material-extensions/vscode-material-icon-theme.git";
+const REPO_URL = upstreamPin.materialIcons.repository;
+const REPO_REVISION = upstreamPin.materialIcons.revision;
 const CACHE_DIR = join(process.cwd(), ".cache/material-icon-theme");
 const ICONS_SRC = join(CACHE_DIR, "icons");
 const FILE_ICONS_TS = join(CACHE_DIR, "src/core/icons/fileIcons.ts");
@@ -21,24 +23,28 @@ interface FileIconEntry {
 }
 
 function ensureRepo(): void {
-  if (existsSync(join(CACHE_DIR, ".git"))) {
-    const r = spawnSync("git", ["-C", CACHE_DIR, "pull", "--ff-only"], {
+  if (!existsSync(join(CACHE_DIR, ".git"))) {
+    mkdirSync(join(process.cwd(), ".cache"), { recursive: true });
+    const cloned = spawnSync("git", ["clone", "--depth", "1", REPO_URL, CACHE_DIR], {
       stdio: "inherit",
       encoding: "utf-8",
     });
-    if (r.status !== 0) {
-      console.warn("[material-icons] git pull failed; using cached tree");
-    }
-    return;
+    if (cloned.status !== 0) throw new Error("[material-icons] git clone failed");
   }
-  mkdirSync(join(process.cwd(), ".cache"), { recursive: true });
-  const r = spawnSync("git", ["clone", "--depth", "1", REPO_URL, CACHE_DIR], {
+
+  const current = spawnSync("git", ["-C", CACHE_DIR, "rev-parse", "HEAD"], { encoding: "utf-8" });
+  if (current.status === 0 && current.stdout.trim() === REPO_REVISION) return;
+
+  const fetched = spawnSync("git", ["-C", CACHE_DIR, "fetch", "--depth", "1", REPO_URL, REPO_REVISION], {
     stdio: "inherit",
     encoding: "utf-8",
   });
-  if (r.status !== 0) {
-    throw new Error("[material-icons] git clone failed");
-  }
+  if (fetched.status !== 0) throw new Error(`[material-icons] could not fetch pinned revision ${REPO_REVISION}`);
+  const selected = spawnSync("git", ["-C", CACHE_DIR, "checkout", "--detach", REPO_REVISION], {
+    stdio: "inherit",
+    encoding: "utf-8",
+  });
+  if (selected.status !== 0) throw new Error(`[material-icons] could not select pinned revision ${REPO_REVISION}`);
 }
 
 function extractFileIconEntries(sourcePath: string): FileIconEntry[] {

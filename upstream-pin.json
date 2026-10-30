@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/p2r3/convert",
+  "revision": "0e5a7d1d5505c63762b413273ac5b00f84280039",
+  "reviewBase": "eb353251f3399c3bba13ff9874d8908dfa4715a6",
+  "forkBase": "7027d0a92b119e7f35337ab54e6cc3b051beca46",
+  "reviewedCommits": 123,
+  "strategy": "retain-mkit-with-selected-upstream-changes",
+  "materialIcons": {
+    "repository": "https://github.com/material-extensions/vscode-material-icon-theme.git",
+    "revision": "cb1dfb6d9cb73b15681a93939983d75dbba7bf5b",
+    "archiveSha256": "fcf933b7b9fe2a8b54366abc6c88d0c902f8846eb436074d151e7a135c13c444"
+  }
+}
