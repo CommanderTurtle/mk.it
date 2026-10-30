@@ -1,7 +1,7 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import JSZip from "jszip";
-import pako from "pako";
+import * as pako from "pako";
 import { isMOBI, MOBI } from "./azw3/mobi.js";
 import { DOMParser } from "linkedom/worker";
 

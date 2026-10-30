@@ -1,4 +1,4 @@
-import pako from "pako";
+import * as pako from "pako";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 

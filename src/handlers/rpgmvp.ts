@@ -43,10 +43,7 @@ class rpgmvpHandler implements FormatHandler {
       const as_buffer = inputFile.bytes.buffer as ArrayBuffer;
 
       const encryption_key = Decrypter.getKeyFromPNG(16, as_buffer);
-      const decrypter = new Decrypter(encryption_key) as Decrypter & {
-        verifyFakeHeader(header: Uint8Array): boolean;
-        decrypt(buffer: ArrayBuffer): ArrayBuffer;
-      };
+      const decrypter = new Decrypter(encryption_key);
       if (!decrypter.verifyFakeHeader(new Uint8Array(as_buffer, 0, 16))) {
         throw new Error(`Invalid RPGMVP header: ${inputFile.name}`);
       }

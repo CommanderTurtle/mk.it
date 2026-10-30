@@ -6,7 +6,12 @@ import { TraversionGraph } from "../src/TraversionGraph.ts";
 import textEncodingHandler from "../src/handlers/textEncoding.ts";
 import configHandler from "../src/handlers/config.ts";
 import sqliteHandler from "../src/handlers/sqlite.ts";
+import toonHandler from "../src/handlers/toon.ts";
+import fontHandler from "../src/handlers/font.ts";
+import pyTurtleHandler from "../src/handlers/pyTurtle.ts";
+import { parse as parseFont } from "opentype.js";
 import { jsPDF } from "jspdf";
+import { GlobalRegistrator } from "@happy-dom/global-registrator";
 
 test("UTF-16 preserves supplementary characters in both byte orders", async () => {
   const handler = new textEncodingHandler();
@@ -105,4 +110,73 @@ test("jsPDF retains the image/PDF export API used by the slide renderer", () => 
   doc.addImage({ imageData: { data: new Uint8ClampedArray([255, 0, 0, 255]), width: 1, height: 1 },
     format: "RGBA", x: 0, y: 0, width: 640, height: 360 });
   expect(new TextDecoder().decode(new Uint8Array(doc.output("arraybuffer")).subarray(0, 5))).toBe("%PDF-");
+});
+
+test("TOON 4 round trips nested records and ambiguous strings through the converter", async () => {
+  const handler = new toonHandler();
+  const json = handler.supportedFormats!.find((format) => format.internal === "json")!;
+  const toon = handler.supportedFormats!.find((format) => format.internal === "toon")!;
+  const data = { items: [{ name: "雪", value: 1 }, { name: "#tag", value: 2 }],
+    nested: { active: true, empty: null }, label: "+12" };
+  const encoded = await handler.doConvert(
+    [{ name: "records.json", bytes: new TextEncoder().encode(JSON.stringify(data)) }], json, toon,
+  );
+  const [decoded] = await handler.doConvert(encoded, toon, json);
+  expect(JSON.parse(new TextDecoder().decode(decoded.bytes))).toEqual(data);
+});
+
+test("updated SVG path/font libraries preserve the converter's glyph geometry", async () => {
+  const handler = new fontHandler();
+  await handler.init();
+  const svg = handler.supportedFormats!.find((format) => format.internal === "svg")!;
+  const otf = handler.supportedFormats!.find((format) => format.internal === "otf")!;
+  const source = `<svg xmlns="http://www.w3.org/2000/svg"><defs>
+    <font id="fixture" horiz-adv-x="600"><font-face font-family="Fixture" units-per-em="1000" ascent="800" descent="-200"/>
+    <glyph unicode="A" glyph-name="A" horiz-adv-x="600" d="M10 20 l30 40 q50 60 70 80 c10 20 30 40 50 60 z"/>
+    </font></defs></svg>`;
+  const [encoded] = await handler.doConvert(
+    [{ name: "fixture.svg", bytes: new TextEncoder().encode(source) }], svg, otf,
+  );
+  const font = parseFont(encoded.bytes.buffer as ArrayBuffer);
+  expect(font.unitsPerEm).toBe(1000);
+  expect(font.charToGlyph("A").advanceWidth).toBe(600);
+  expect(font.charToGlyph("A").path.commands.map((command) => command.type)).toEqual(["M", "L", "C", "C", "Z"]);
+});
+
+test("updated Three SVG loading retains turtle stroke/fill output and restores the parser", () => {
+  const originalParser = globalThis.DOMParser;
+  const python = pyTurtleHandler.convert_program(`<svg xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0 L20 20 L40 0 Z" fill="#ff0000" stroke="#0000ff" stroke-width="3"/>
+    </svg>`);
+  expect(python).toContain('t.fillcolor("#ff0000")');
+  expect(python).toContain('t.pencolor("#0000ff")');
+  expect(python).toContain("t.pensize(3)");
+  expect(python).toContain("t.goto(");
+  expect(globalThis.DOMParser).toBe(originalParser);
+});
+
+test("Preact 11 preserves file icon dimensions and the loaded SVG", async () => {
+  GlobalRegistrator.register();
+  const originalFetch = globalThis.fetch;
+  const { h, render } = await import("preact");
+  const { act } = await import("preact/test-utils");
+  const { default: FileIcon } = await import("../src/ui/components/FileIcon/index.tsx");
+  const container = document.createElement("div");
+  document.body.append(container);
+  globalThis.fetch = (async () => Response.json({
+    extensions: { txt: "document" }, icons: { document: '<svg viewBox="0 0 16 16"><path d="M0 0h16v16z"/></svg>' },
+  })) as typeof fetch;
+  try {
+    await act(async () => { render(h(FileIcon, { extension: "txt", size: 28 }), container); });
+    // Fetch completion follows the first passive-effect flush.
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    const icon = container.querySelector<HTMLElement>(".file-icon")!;
+    expect(icon.style.width).toBe("28px");
+    expect(icon.style.height).toBe("28px");
+    expect(icon.querySelector("svg path")).not.toBeNull();
+  } finally {
+    await act(() => { render(null, container); });
+    globalThis.fetch = originalFetch;
+    await GlobalRegistrator.unregister();
+  }
 });

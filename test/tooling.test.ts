@@ -38,6 +38,14 @@ describe("ln.kr text handoff", () => {
 		}
 	});
 
+	test("keeps long canonical v4 links byte-stable across Pako upgrades", () => {
+		const text = Array.from({ length: 512 }, (_, i) =>
+			`${i % 19}: A snowflake 雪, a note 🎵, and a repeating rhythm ${i % 7}.`).join("\n");
+		// Captured with Pako 2.2.0 before the migration to Pako 3.
+		const checksum = new Bun.CryptoHasher("sha256").update(lnkrEditUrl(text, "markdown")).digest("hex");
+		expect(checksum).toBe("22ba01c4b14fbf62ae498bd75e0537aea4b830d3a81de688bbc53bbaf1e96def");
+	});
+
 	test("preserves a leading # alphabet digit in an empty Markdown document", () => {
 		expect(lnkrEditUrl("", "markdown")).toBe("https://a.shel.sh/##VDnGzHk5xNDIbSb$vb-");
 	});
@@ -86,6 +94,14 @@ describe("base64 input", () => {
 });
 
 describe("fragment file sharing", () => {
+	test("reads existing Pako 2 share links with Pako 3", () => {
+		const payload = "eNrz9fYMYWRgYNCtVspLzE1VslLKSU1PTK7UfTl7lV5JRYmSjlJuJli8JLWiRL8gJzEzT6k2oCi1OLWoLFWhJCOzWKE4I7EoNUUhLTMnVeHD_L6tXACm9x4y";
+		expect(decodeSharedFile(payload)).toEqual({
+			name: "legacy-雪.txt", mime: "text/plain",
+			bytes: new TextEncoder().encode("Preserve this shared file 🎵\n")
+		});
+	});
+
 	test("hashes the exact file bytes with standard checksum algorithms", async () => {
 		const bytes = new TextEncoder().encode("abc");
 		expect(await hashBytes(bytes)).toEqual({

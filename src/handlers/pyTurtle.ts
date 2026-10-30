@@ -87,7 +87,7 @@ class pyTurtleHandler implements FormatHandler {
     const allPoints = [];
     const shapeData = [];
     for (const path of paths.slice(0, MAX_ELEMENTS)) {
-      const style = path.userData!.style;
+      const style = path.userData!.style as { fill: string; stroke: string; strokeWidth: number };
       const fill = formatColor(style.fill);
       const stroke = formatColor(style.stroke);
       const sw = style.strokeWidth;

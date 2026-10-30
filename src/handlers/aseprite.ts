@@ -1,4 +1,4 @@
-import pako from "pako";
+import * as pako from "pako";
 import CommonFormats, { Category } from "src/CommonFormats.ts";
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import { BadMagicError, EOFError, InitializationError } from "src/errors.ts";

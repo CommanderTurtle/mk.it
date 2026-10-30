@@ -80,7 +80,8 @@ function alphabetEncode(number: bigint): string {
 /** Called only by Edit: opens a normal document, not an auto-executing JS link. */
 export function lnkrEditUrl(text: string, kind: LnkrKind): string {
 	const bytes = new TextEncoder().encode(text);
-	const compressed = deflate(bytes, { level: 9 });
+	// Keep canonical v4 links byte-stable across Pako's new hash default.
+	const compressed = deflate(bytes, { level: 9, legacyHash: true });
 	const hex = Array.from(compressed, byte => byte.toString(16).padStart(2, "0")).reverse().join("");
 	let number = BigInt(`0x1${hex}`);
 	number = prependBits(number, gammaBits(compressed.length + 1));

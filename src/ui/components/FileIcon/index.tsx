@@ -102,7 +102,7 @@ export default function FileIcon({
   return (
     <div
       className={`file-icon ${className}`}
-      style={{ width: size, height: size }}
+      style={{ width: `${size}px`, height: `${size}px` }}
       aria-hidden="true"
       // this is safe cuz it comes from the server
       dangerouslySetInnerHTML={{ __html: svg ?? "" }}
